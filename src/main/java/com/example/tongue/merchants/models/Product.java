@@ -11,7 +11,7 @@ public class Product {
     private @Id @GeneratedValue Long id;
 
 
-    @Size(min = 0, max=200,
+    @Size(max=200,
             message = "Description must be between 0 and 200 characters")
     private String description;
 
@@ -24,7 +24,7 @@ public class Product {
 
 
     @NotBlank(message = "Null value not admitted for title")
-    @Size(min = 0, max = 50, message = "Title must be between 0 and 50 characters")
+    @Size(max = 50, message = "Title must be between 0 and 50 characters")
     private String title;
 
 
@@ -51,8 +51,6 @@ public class Product {
             fetch = FetchType.EAGER)
     @NotNull(message = "Store variant is mandatory")
     private StoreVariant storeVariant;
-
-
 
 
     private String inventorId; //identifier for vendor
@@ -184,6 +182,8 @@ public class Product {
     public void setAdjustments(String adjustments) {
         this.adjustments = adjustments;
     }
+
+
 
     @Override
     public boolean equals(Object obj) {

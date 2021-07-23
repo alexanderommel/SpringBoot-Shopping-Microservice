@@ -103,8 +103,8 @@ public class Discount {
     @UniqueElements(message = "Entitled products must be unique")
     private List<Product> entitledProducts=null;
 
-
-    private String entitledCustomers;
+    @OneToMany(mappedBy = "customer")
+    private List<DiscountCustomerEntitlement> entitledCustomers;
 
 
     @Positive(message = "Priority value must be higher than zero")
@@ -264,11 +264,11 @@ public class Discount {
         this.entitledProducts = entitledProducts;
     }
 
-    public String getEntitledCustomers() {
+    public List<DiscountCustomerEntitlement> getEntitledCustomers() {
         return entitledCustomers;
     }
 
-    public void setEntitledCustomers(String entitledCustomers) {
+    public void setEntitledCustomers(List<DiscountCustomerEntitlement> entitledCustomers) {
         this.entitledCustomers = entitledCustomers;
     }
 
