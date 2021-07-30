@@ -48,13 +48,12 @@ public class CheckoutWebService {
     @PostMapping(value = "/checkouts/update")
     public ResponseEntity<Map<String,Object>> update(HttpSession session,@RequestBody String checkoutAttribute){
         try {
-            System.out.println("\nJSON\n" + checkoutAttribute);
             Checkout checkout = (Checkout) session.getAttribute("CHECKOUT");
             StringToCheckoutAttribute converter = new StringToCheckoutAttribute();
             CheckoutAttribute attribute = converter.convert(checkoutAttribute);
-            Location location = (Location) attribute.getAttribute();
-            System.out.print(location.getGooglePlaceId());
-            return new ResponseEntity<>(HttpStatus.OK);
+            Map<String,Object> response = new HashMap<>();
+            response.put("response",attribute);
+            return new ResponseEntity<>(response,HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
