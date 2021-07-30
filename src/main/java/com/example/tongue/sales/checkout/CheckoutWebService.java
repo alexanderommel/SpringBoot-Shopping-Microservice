@@ -1,11 +1,11 @@
 package com.example.tongue.sales.checkout;
 
+import com.example.tongue.core.converters.StringToCheckoutAttribute;
+import com.example.tongue.locations.models.Location;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
@@ -46,7 +46,17 @@ public class CheckoutWebService {
      * @param checkoutAttribute
      */
     @PostMapping(value = "/checkouts/update")
-    public void update(HttpSession session, CheckoutAttribute checkoutAttribute){
-        Checkout checkout = (Checkout) session.getAttribute("CHECKOUT");
+    public ResponseEntity<Map<String,Object>> update(HttpSession session,@RequestBody String checkoutAttribute){
+        try {
+            System.out.println("\nJSON\n" + checkoutAttribute);
+            Checkout checkout = (Checkout) session.getAttribute("CHECKOUT");
+            StringToCheckoutAttribute converter = new StringToCheckoutAttribute();
+            CheckoutAttribute attribute = converter.convert(checkoutAttribute);
+            Location location = (Location) attribute.getAttribute();
+            System.out.print(location.getGooglePlaceId());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

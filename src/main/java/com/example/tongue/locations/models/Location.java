@@ -21,4 +21,12 @@ public class Location {
     public Boolean validate(){
         return true;
     }
+
+    public String getGooglePlaceId() {
+        return googlePlaceId;
+    }
+
+    public void setGooglePlaceId(String googlePlaceId) {
+        this.googlePlaceId = googlePlaceId;
+    }
 }

@@ -23,7 +23,8 @@ public class CheckoutAttributeValidation {
     }
 
     public Boolean supports(CheckoutAttribute checkoutAttribute){
-        return true;
+
+    return true;
     }
 
     public Boolean validate(CheckoutAttribute checkoutAttribute){
