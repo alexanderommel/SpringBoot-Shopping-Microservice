@@ -14,10 +14,10 @@ public class Cart {
     @OneToMany
     private List<LineItem> items;
 
-    private String instructions;
+    private String instructions=null;
 
     @ManyToOne
-    private Discount discount;
+    private Discount discount=null;
 
     @Embedded
     private CartPrice price;

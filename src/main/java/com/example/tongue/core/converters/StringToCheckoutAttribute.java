@@ -1,5 +1,8 @@
 package com.example.tongue.core.converters;
 
+import com.example.tongue.core.annotations.CartConversion;
+import com.example.tongue.core.exceptions.EnumerationContainsException;
+import com.example.tongue.core.exceptions.JsonBadFormatException;
 import com.example.tongue.locations.models.Location;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.Product;
@@ -7,17 +10,22 @@ import com.example.tongue.sales.checkout.CheckoutAttribute;
 import com.example.tongue.sales.checkout.CheckoutAttributeName;
 import com.example.tongue.sales.models.Cart;
 import com.example.tongue.sales.models.LineItem;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.JsonParserDelegate;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.boot.json.JsonParserFactory;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.management.Descriptor;
+import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class StringToCheckoutAttribute  implements Converter<String,CheckoutAttribute> {
+public class StringToCheckoutAttribute {
+
+    /*
+    private Object CheckoutAttributeName2;
 
     private Location unwrapLinkedHashToLocation(LinkedHashMap hashMap){
         Location location = new Location();
@@ -31,8 +39,8 @@ public class StringToCheckoutAttribute  implements Converter<String,CheckoutAttr
 
         Cart cart = new Cart();
         Boolean cartLevelDiscount=Boolean.FALSE;
-
         // Instructions attribute population
+
         String instructions = (String) hashMap.get("instructions");
         if (instructions!=null) cart.setInstructions(instructions);
 
@@ -107,6 +115,8 @@ public class StringToCheckoutAttribute  implements Converter<String,CheckoutAttr
                 cart.setItems(items);
             }
         }
+
+
         return cart;
     }
 
@@ -141,7 +151,8 @@ public class StringToCheckoutAttribute  implements Converter<String,CheckoutAttr
             // Map JSON attributes to map keys
             Map<?,?> map = objectMapper.readValue(s,Map.class);
             String name = (String) mapGetIgnoringCase(map,"name");
-            if (name==null) return null;
+            if (name==null)
+                throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"Field 'name' is missing");
 
             // Get checkout enumerations
             Set<String> enums =
@@ -177,10 +188,14 @@ public class StringToCheckoutAttribute  implements Converter<String,CheckoutAttr
 
                 // Populate checkout attribute with payment
 
+            }else {
+                return null;
             }
         } catch (JsonProcessingException exception){
-            return null;
+            throw new JsonBadFormatException();
         }
         return null;
     }
+
+     */
 }

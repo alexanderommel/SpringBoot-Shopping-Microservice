@@ -12,10 +12,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.util.HashMap;
 import java.util.Map;
 
-@EnableWebMvc
+
 public class ValidationsConfig {
-    @Bean
-    public LocalValidatorFactoryBean factoryBean(){
-        return new LocalValidatorFactoryBean();
-    }
+
 }

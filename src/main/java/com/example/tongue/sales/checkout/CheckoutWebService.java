@@ -1,6 +1,11 @@
 package com.example.tongue.sales.checkout;
 
+import com.example.tongue.core.annotations.CheckoutAttributeConversion;
+import com.example.tongue.core.converters.CheckoutAttributeConverter;
 import com.example.tongue.core.converters.StringToCheckoutAttribute;
+import com.example.tongue.core.exceptions.JsonBadFormatException;
+import com.example.tongue.core.exceptions.OrderNotFoundException;
+import com.example.tongue.core.exceptions.ProductNotFoundException;
 import com.example.tongue.locations.models.Location;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,22 +45,17 @@ public class CheckoutWebService {
         }
     }
 
-    /**
-     * Checkout attribute updating process is done one by one
-     * @param session
-     * @param checkoutAttribute
-     */
+
     @PostMapping(value = "/checkouts/update")
-    public ResponseEntity<Map<String,Object>> update(HttpSession session,@RequestBody String checkoutAttribute){
-        try {
+    public ResponseEntity<Map<String,Object>> update(HttpSession session,
+                                                     @CheckoutAttributeConversion @RequestBody  CheckoutAttribute attribute){
+
             Checkout checkout = (Checkout) session.getAttribute("CHECKOUT");
-            StringToCheckoutAttribute converter = new StringToCheckoutAttribute();
-            CheckoutAttribute attribute = converter.convert(checkoutAttribute);
+            //CheckoutAttributeConverter converter = new CheckoutAttributeConverter();
+            //CheckoutAttribute conversion = (CheckoutAttribute) converter.convert(attribute,null,null);
             Map<String,Object> response = new HashMap<>();
-            response.put("response",attribute);
+            response.put("response","conversion");
             return new ResponseEntity<>(response,HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
     }
 }

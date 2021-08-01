@@ -22,7 +22,7 @@ public class ClassCastExceptionHandler {
 
     public ClassCastExceptionHandler.Error ClassCastException(ClassCastException ex) {
         ClassCastExceptionHandler.Error error = new ClassCastExceptionHandler.Error(BAD_REQUEST.value(), "validation error");
-        error.addFieldError(null, ex.getMessage());
+        error.addFieldError("raton", ex.getMessage());
         return error;
     }
 

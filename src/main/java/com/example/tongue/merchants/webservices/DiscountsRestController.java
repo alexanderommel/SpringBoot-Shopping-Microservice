@@ -38,16 +38,14 @@ public class DiscountsRestController {
      */
   @PostMapping(value="/discounts", consumes={"application/json"})
   public ResponseEntity<Map<String,Object>> insert(@Valid @RequestBody Discount discount){
-      try {
+
           //OffsetDateTime.parse(discount.getExpiresAt());
           Map<String,Object> response = new HashMap<>();
           discount.setId(null);
           Discount discount1 = discountRepository.save(discount);
           response.put("discount",discount1);
           return new ResponseEntity<>(response,HttpStatus.OK);
-      } catch (Exception e){
-          return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-      }
+
   }
     /*
    POST MAPPINGS ----------------------------------------------------------------------------------------------------------- END

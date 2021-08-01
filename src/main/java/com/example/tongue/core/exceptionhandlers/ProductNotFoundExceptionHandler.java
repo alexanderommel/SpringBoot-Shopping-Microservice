@@ -1,5 +1,7 @@
 package com.example.tongue.core.exceptionhandlers;
 
+import com.example.tongue.core.exceptions.JsonBadFormatException;
+import com.example.tongue.core.exceptions.ProductNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -8,29 +10,27 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.time.format.DateTimeParseException;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
-public class DateTimeParseExceptionHandler {
-    @ResponseStatus(value = BAD_REQUEST)
+public class ProductNotFoundExceptionHandler {
+    @ResponseStatus(value = NOT_FOUND)
     @ResponseBody
-    @ExceptionHandler(DateTimeParseException.class)
-    public Error DateTimeParseException(DateTimeParseException ex) {
+    //@ExceptionHandler(ProductNotFoundException.class)
+    public Error ProductNotFoundException(ProductNotFoundException ex) {
         Error error = new Error();
-        error.setError(BAD_REQUEST);
-        error.setReason("Dates must follow ISO8601 standard");
-        error.setValue(ex.getParsedString());
-        error.setErrorAtIndex(ex.getErrorIndex());
+        error.setError(NOT_FOUND);
+        Long id = ex.getId();
+        error.setReason("No such Product");
+        if (id!=null) error.setId(id);
         return error;
     }
     static class Error{
         private HttpStatus error;
         private String reason;
-        private String value;
-        private int errorAtIndex;
+        private Long id;
+
 
         public HttpStatus getError() {
             return error;
@@ -48,20 +48,12 @@ public class DateTimeParseExceptionHandler {
             this.reason = reason;
         }
 
-        public String getValue() {
-            return value;
+        public Long getId() {
+            return id;
         }
 
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public int getErrorAtIndex() {
-            return errorAtIndex;
-        }
-
-        public void setErrorAtIndex(int errorAtIndex) {
-            this.errorAtIndex = errorAtIndex;
+        public void setId(Long id) {
+            this.id = id;
         }
     }
 }
