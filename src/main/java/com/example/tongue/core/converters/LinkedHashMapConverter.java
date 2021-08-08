@@ -2,6 +2,7 @@ package com.example.tongue.core.converters;
 
 import com.example.tongue.locations.models.Location;
 import com.example.tongue.merchants.models.Discount;
+import com.example.tongue.merchants.models.Modifier;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.sales.models.Cart;
 import com.example.tongue.sales.models.LineItem;
@@ -108,7 +109,42 @@ public class LinkedHashMapConverter {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Nested object 'discount' must be a valid Discount object");
 
+        // Modifiers population
+        Object modifiersHashes = hashMap.get("modifiers");
+        if (modifiersHashes==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Nested Modifier object list 'modifiers' is mandatory");
+        }
+        if (modifiersHashes instanceof List){
+            List<LinkedHashMap> linkedHashMaps = (List<LinkedHashMap>) modifiersHashes;
+            List<Modifier> modifiers = new ArrayList<>();
+            for (LinkedHashMap hash: linkedHashMaps) {
+                Modifier modifier = toModifier(hash);
+                if (item==null)
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Nested object 'modifier' must be a valid Modifier object");
+                modifiers.add(modifier);
+            }
+            item.setModifiers(modifiers);
+        }else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Attribute 'modifiers' must be a list of nested Modifier objects");
+
         return item;
+    }
+
+    public static Modifier toModifier(LinkedHashMap hashMap){
+        Modifier modifier = new Modifier();
+        Object id = hashMap.get("id");
+        if (id==null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Modifier 'id' field is mandatory");
+        if (id instanceof Number){
+            modifier.setId(((Number) id).longValue());
+        }else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Attribute 'id' must be an integer");
+        return modifier;
     }
 
     public static Cart toCart(LinkedHashMap hashMap){

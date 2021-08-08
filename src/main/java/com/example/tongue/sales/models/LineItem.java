@@ -1,11 +1,14 @@
 package com.example.tongue.sales.models;
 
 import com.example.tongue.merchants.models.Discount;
+import com.example.tongue.merchants.models.GroupModifier;
+import com.example.tongue.merchants.models.Modifier;
 import com.example.tongue.merchants.models.Product;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 public class LineItem {
@@ -25,6 +28,17 @@ public class LineItem {
 
     @ManyToOne
     private Discount discount;
+
+    @ManyToMany
+    private List<Modifier> modifiers;
+
+    public List<Modifier> getModifiers() {
+        return modifiers;
+    }
+
+    public void setModifiers(List<Modifier> modifiers) {
+        this.modifiers = modifiers;
+    }
 
     @JsonIgnore
     public void updatePrice(){
