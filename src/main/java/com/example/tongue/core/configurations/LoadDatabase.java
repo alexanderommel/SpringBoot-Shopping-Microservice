@@ -4,6 +4,7 @@ import com.example.tongue.locations.models.Location;
 import com.example.tongue.locations.repositories.LocationRepository;
 import com.example.tongue.merchants.models.*;
 import com.example.tongue.merchants.repositories.*;
+import com.example.tongue.sales.checkout.CheckoutRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -24,18 +25,23 @@ public class LoadDatabase {
                                    LocationRepository locationRepository,
                                    MerchantRepository merchantRepository,
                                    StoreVariantRepository variantRepository,
-                                   StoreRepository storeRepository) {
+                                   StoreRepository storeRepository,
+                                   CheckoutRepository checkoutRepository) {
+
         ArrayList<Product> products = createProducts();
         ArrayList<ProductImage> images = createImages();
         return args -> {
             //Fill database with one merchant,location,store and storevariant
             Merchant merchant = new Merchant();
-            Location origin = new Location();
+            merchant.setOwnerName("Rommel");
             merchant = merchantRepository.save(merchant);
+
+            Location origin = new Location();
             origin = locationRepository.save(origin);
 
             Store store = new Store();
             store.setMerchant(merchant);
+            store.setName("Sushi Alexander");
             store = storeRepository.save(store);
 
             StoreVariant variant = new StoreVariant();

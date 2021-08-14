@@ -58,7 +58,10 @@ public class LinkedHashMapConverter {
     }
 
     public static LineItem toLineItem(LinkedHashMap hashMap, Boolean ignoreDiscount){
+
         LineItem item = new LineItem();
+
+
 
         // Quantity population is default 1 if not found
         Object quantity = hashMap.get("quantity");
@@ -71,6 +74,8 @@ public class LinkedHashMapConverter {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Attribute 'quantity' must be an integer");
 
+
+
         // Instructions population is optional
         Object instructions = hashMap.get("instructions");
         if (instructions!=null){
@@ -80,6 +85,33 @@ public class LinkedHashMapConverter {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Attribute 'instructions' must be a string");
         }
+        // End instructions population
+
+
+
+        // Modifiers population is self-optional (Validated on further step)
+        Object modifiersHashes = hashMap.get("modifiers");
+        if (modifiersHashes!=null){
+            if (modifiersHashes instanceof List){
+                List<LinkedHashMap> linkedHashMaps = (List<LinkedHashMap>) modifiersHashes;
+                List<Modifier> modifiers = new ArrayList<>();
+                for (LinkedHashMap hash: linkedHashMaps) {
+                    Modifier modifier = toModifier(hash);
+                    if (item==null)
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                "Nested object 'modifier' must be a valid Modifier object");
+                    modifiers.add(modifier);
+                }
+                System.out.println("MODIFIER BEING INSERTED ON LINE ITEM");
+                item.setModifiers(modifiers);
+            }else
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Attribute 'modifiers' must be a list of nested Modifier objects");
+        }
+
+
+        // Modifiers population end
+
 
         // Product population
         Object product = hashMap.get("product");
@@ -96,6 +128,9 @@ public class LinkedHashMapConverter {
         if (ignoreDiscount){
             return item;
         }
+        // End Product population
+
+
 
         // Discount population
         Object discount = hashMap.get("discount");
@@ -109,26 +144,7 @@ public class LinkedHashMapConverter {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Nested object 'discount' must be a valid Discount object");
 
-        // Modifiers population
-        Object modifiersHashes = hashMap.get("modifiers");
-        if (modifiersHashes==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Nested Modifier object list 'modifiers' is mandatory");
-        }
-        if (modifiersHashes instanceof List){
-            List<LinkedHashMap> linkedHashMaps = (List<LinkedHashMap>) modifiersHashes;
-            List<Modifier> modifiers = new ArrayList<>();
-            for (LinkedHashMap hash: linkedHashMaps) {
-                Modifier modifier = toModifier(hash);
-                if (item==null)
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                            "Nested object 'modifier' must be a valid Modifier object");
-                modifiers.add(modifier);
-            }
-            item.setModifiers(modifiers);
-        }else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Attribute 'modifiers' must be a list of nested Modifier objects");
+        // End discount population
 
         return item;
     }

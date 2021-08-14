@@ -26,13 +26,11 @@ public class CheckoutAttributeConverter implements ConditionalGenericConverter {
 
     @Override
     public boolean matches(TypeDescriptor typeDescriptor, TypeDescriptor typeDescriptor1) {
-        System.out.println("TEST2");
         return true;
     }
 
     @Override
     public Set<ConvertiblePair> getConvertibleTypes() {
-        System.out.println("TEST3333");
         return Collections.
                 singleton(
                         new ConvertiblePair(String.class, CheckoutAttribute.class));
@@ -40,10 +38,8 @@ public class CheckoutAttributeConverter implements ConditionalGenericConverter {
 
     @Override
     public Object convert(Object o, TypeDescriptor typeDescriptor, TypeDescriptor typeDescriptor1) {
-        System.out.println("TEST4");
         ObjectMapper objectMapper = new ObjectMapper();
         CheckoutAttribute checkoutAttribute = new CheckoutAttribute();
-        System.out.println("TEST5");
         try {
 
             // Map JSON attributes to map keys
@@ -97,6 +93,7 @@ public class CheckoutAttributeConverter implements ConditionalGenericConverter {
 
                 // Populate checkout attribute with cart
                 if (name.equalsIgnoreCase(String.valueOf(CheckoutAttributeName.CART))){
+                    System.out.println("TEST8");
                     checkoutAttribute.setName(CheckoutAttributeName.CART);
                     Object linkedHashMap = mapGetIgnoringCase(map,"cart");
                     if (linkedHashMap==null)

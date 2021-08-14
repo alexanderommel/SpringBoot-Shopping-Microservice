@@ -1,25 +1,26 @@
 package com.example.tongue.sales.checkout;
 
 import com.example.tongue.locations.models.Location;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
+import java.util.List;
 
 public class CheckoutFluxDefinition {
 
-    public CheckoutBindingMessage createCheckout(HttpSession session, Checkout checkout){
-        CheckoutBindingMessage bindingMessage = new CheckoutBindingMessage();
-        Checkout sessionCheckout = new Checkout();
-        //Fill checkout with basic values
-        Boolean isLocationValid = checkout.getOrigin().validate();
-        sessionCheckout.setOrigin(checkout.getOrigin());
-        sessionCheckout.setDestination(checkout.getOrigin());
-        Boolean storeVariantExists = Boolean.TRUE;
-        sessionCheckout.setStoreVariant(checkout.getStoreVariant());
-        sessionCheckout.setPrice(new CheckoutPrice());
-        sessionCheckout.setCreated_at(Instant.now());
-        session.setAttribute("CHECKOUT",checkout);
-        bindingMessage.setCheckout(sessionCheckout);
-        return bindingMessage;
+    private List<CheckoutFilter> filters;
+
+    public CheckoutFluxDefinition(List<CheckoutFilter> filters){
+        this.filters = filters;
     }
+
+    public Checkout filter(Checkout checkout){
+        for (CheckoutFilter filter: filters) {
+            checkout = filter.doFilter(checkout);
+        }
+        return checkout;
+    }
+
 }
