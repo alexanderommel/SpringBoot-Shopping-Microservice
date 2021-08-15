@@ -24,14 +24,40 @@ public class Cart {
 
     @JsonIgnore
     public void updatePrice(){
-        for (LineItem item:
-             items) {
-            if (discount!=null){
-                //discount.validforCart
-                item.updatePrice();
-                Double itemPrice = item.getPrice().getFinalPrice();
-
+        if (discount!=null){
+            Double cumulatedItemPriceWithDiscountsIgnored = 0.0;
+            for (LineItem item: items){
+                item.ignoreDiscountAndUpdatePrice();
+                Double itemUnitPrice = item.getPrice().getFinalPrice();
+                cumulatedItemPriceWithDiscountsIgnored =
+                        cumulatedItemPriceWithDiscountsIgnored + itemUnitPrice;
             }
+            price.setTotalPrice(cumulatedItemPriceWithDiscountsIgnored);
+            String discountType = discount.getValueType();
+            //fixed_amount,percentage
+            if (discountType.equalsIgnoreCase("fixed")){
+                price.setDiscountedAmount(discount.getValue());
+            }else {
+                Double percentage = discount.getValue();
+                Double amountDiscounted = percentage*price.getTotalPrice();
+                price.setDiscountedAmount(amountDiscounted);
+            }
+            price.setFinalPrice(price.getTotalPrice()-price.getDiscountedAmount());
+        }else {
+            Double cumulatedTotalItemPrice = 0.0;
+            Double cumulatedDiscountedItemPrice = 0.0;
+            for (LineItem item:items){
+                item.updatePrice();
+                Double itemTotalPrice = item.getPrice().getTotalPrice();
+                Double itemDiscountedPrice = item.getPrice().getTotalDiscountedAmount();
+                cumulatedTotalItemPrice =
+                        cumulatedTotalItemPrice + itemTotalPrice;
+                cumulatedDiscountedItemPrice =
+                        cumulatedDiscountedItemPrice + itemDiscountedPrice;
+            }
+            price.setTotalPrice(cumulatedTotalItemPrice);
+            price.setDiscountedAmount(cumulatedDiscountedItemPrice);
+            price.setFinalPrice(price.getTotalPrice()-price.getDiscountedAmount());
         }
     }
 

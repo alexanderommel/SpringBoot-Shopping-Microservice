@@ -47,6 +47,10 @@ public class LineItemPrice {
         return finalPrice;
     }
 
+    public void update(){
+
+    }
+
     public void setFinalPrice(Double finalPrice) {
         this.finalPrice = finalPrice;
     }

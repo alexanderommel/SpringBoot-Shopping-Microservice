@@ -40,11 +40,6 @@ public class LineItem {
         this.modifiers = modifiers;
     }
 
-    @JsonIgnore
-    public void updatePrice(){
-
-    }
-
     public Long getId() {
         return id;
     }
@@ -100,6 +95,11 @@ public class LineItem {
         price.setUnitPrice(unitPrice);
         price.setTotalPrice(itemPrice);
         price.setFinalPrice(itemPrice);
+    }
+
+    @JsonIgnore
+    public void updatePrice(){ // Discounts not ignored
+
     }
 
 }

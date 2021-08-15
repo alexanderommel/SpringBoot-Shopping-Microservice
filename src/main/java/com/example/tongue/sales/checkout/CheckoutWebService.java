@@ -50,7 +50,7 @@ public class CheckoutWebService {
         Map<String,Object> response = new HashMap<>();
 
         CheckoutRequestValidationFilter validationFilter
-                = new CheckoutRequestValidationFilter();
+                = new CheckoutRequestValidationFilter(CheckoutValidationType.SIMPLE);
         CheckoutDiscountsLoadingFilter discountsLoadingFilter
                 = new CheckoutDiscountsLoadingFilter();
         CheckoutSessionFilter sessionFilter

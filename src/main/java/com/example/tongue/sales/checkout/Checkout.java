@@ -34,7 +34,7 @@ public class Checkout {
 
     private String JSESSIONID;
 
-    private Instant created_at;
+    private Instant created_at = Instant.now(); //ISO 8601;
 
     private CheckoutPrice price;
 

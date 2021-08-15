@@ -6,6 +6,7 @@ import com.example.tongue.merchants.models.Modifier;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.models.StoreVariant;
 import com.example.tongue.merchants.repositories.DiscountRepository;
+import com.example.tongue.merchants.repositories.ModifierRepository;
 import com.example.tongue.merchants.repositories.ProductRepository;
 import com.example.tongue.merchants.repositories.StoreVariantRepository;
 import com.example.tongue.sales.models.Cart;
@@ -18,6 +19,7 @@ import javax.servlet.Filter;
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public class CheckoutRequestValidationFilter implements CheckoutFilter{
 
@@ -29,9 +31,16 @@ public class CheckoutRequestValidationFilter implements CheckoutFilter{
     ProductRepository productRepository;
     private @Autowired
     DiscountRepository discountRepository;
+    private @Autowired
+    ModifierRepository modifierRepository;
 
     public CheckoutRequestValidationFilter(CheckoutValidationType validationType){
         this.validationType=validationType;
+    }
+
+    public CheckoutRequestValidationFilter(CheckoutAttribute checkoutAttribute){
+        this.validationType = CheckoutValidationType.ATTRIBUTE;
+        this.checkoutAttribute = checkoutAttribute;
     }
 
     public void setCheckoutAttribute(CheckoutAttribute checkoutAttribute) {
@@ -44,26 +53,42 @@ public class CheckoutRequestValidationFilter implements CheckoutFilter{
             validateSenderCheckout(checkout);
         }
         if (validationType==CheckoutValidationType.ATTRIBUTE){
-            validateCheckoutAttribute();
+            validateCheckoutAttribute(this.checkoutAttribute);
+            if (checkoutAttribute.getName()==CheckoutAttributeName.CART)
+                checkout.setCart((Cart) checkoutAttribute.getAttribute());
+            else if (checkoutAttribute.getName()==CheckoutAttributeName.ORIGIN)
+                checkout.setOrigin((Location) checkoutAttribute.getAttribute());
+            else if (checkoutAttribute.getName()==CheckoutAttributeName.DESTINATION)
+                checkout.setDestination((Location) checkoutAttribute.getAttribute());
         }
         return checkout;
     }
 
-    private void modifierValidation(){
-        // Modifier must share Store Variant with Checkout
+    private Boolean hasCheckoutAttributeNested(){
+        return this.checkoutAttribute==null;
     }
-
     // Validate CheckoutAttribute
-    private void validateCheckoutAttribute(){
+    // Validate Existence and Internal Rules
+    private void validateCheckoutAttribute(CheckoutAttribute checkoutAttribute){
+        if (!hasCheckoutAttributeNested())
+            throw new NullPointerException("Checkout Attribute shouldn't be null for checkout attribute validation");
         if (!(checkoutAttribute ==null)){
             if (checkoutAttribute.getName()==CheckoutAttributeName.CART){
                 Cart cart = (Cart) checkoutAttribute.getAttribute();
                 Discount discount = cart.getDiscount();
                 List<LineItem> items = cart.getItems();
                 if (discount!=null){
+                    // Existence validation
                     if (!discountRepository.existsById(discount.getId()))
                         throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                                 "No such discount with id '"+discount.getId()+"'");
+                    // Internal rules
+                    Optional<Discount> discount1 = discountRepository.findById(discount.getId());
+                    if (!discount1.isEmpty()){
+                        if (!discount1.get().isValid())
+                            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                    "Discount with 'id' has expired");
+                    }
                 }
                 if (items!=null){
                     for (LineItem item:items) {
@@ -74,14 +99,28 @@ public class CheckoutRequestValidationFilter implements CheckoutFilter{
                         // Discount validation
                         Discount itemDiscount = item.getDiscount();
                         if (itemDiscount!=null){
+                            // Existence
                             if (!discountRepository.existsById(itemDiscount.getId()))
                                 throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                                         "No such discount with id '"+itemDiscount.getId()+"'");
+                            // Internal rules
+                            Optional<Discount> discount1 = discountRepository.findById(itemDiscount.getId());
+                            if (discount1.isPresent()){
+                                if (!discount1.get().isValid())
+                                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                            "Discount with 'id' has expired");
+                            }
                         }
                         // Modifiers Validation
                         List<Modifier> modifiers = item.getModifiers();
                         if (modifiers!=null){
-
+                            for (Modifier modifier: modifiers
+                                 ) {
+                                // Existence
+                                if (!modifierRepository.existsById(modifier.getId()))
+                                    throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                            "No such modifier with id '"+modifier.getId()+"'");
+                            }
                         }
 
                     }
