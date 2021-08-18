@@ -4,6 +4,7 @@ import com.example.tongue.merchants.models.Discount;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,7 +13,7 @@ public class Cart {
     private @Id @GeneratedValue Long id;
 
     @OneToMany
-    private List<LineItem> items;
+    private List<LineItem> items= new ArrayList<>();
 
     private String instructions=null;
 
@@ -20,22 +21,27 @@ public class Cart {
     private Discount discount=null;
 
     @Embedded
-    private CartPrice price;
+    private CartPrice price=new CartPrice();
+
+    @JsonIgnore
+    public void addItem(LineItem lineItem){
+        items.add(lineItem);
+    }
 
     @JsonIgnore
     public void updatePrice(){
         if (discount!=null){
-            Double cumulatedItemPriceWithDiscountsIgnored = 0.0;
+            Double itemsFinalPriceWithDiscountsIgnored = 0.0;
             for (LineItem item: items){
                 item.ignoreDiscountAndUpdatePrice();
-                Double itemUnitPrice = item.getPrice().getFinalPrice();
-                cumulatedItemPriceWithDiscountsIgnored =
-                        cumulatedItemPriceWithDiscountsIgnored + itemUnitPrice;
+                Double itemFinalPrice = item.getPrice().getFinalPrice();
+                itemsFinalPriceWithDiscountsIgnored =
+                        itemsFinalPriceWithDiscountsIgnored + itemFinalPrice;
             }
-            price.setTotalPrice(cumulatedItemPriceWithDiscountsIgnored);
+            price.setTotalPrice(itemsFinalPriceWithDiscountsIgnored);
             String discountType = discount.getValueType();
             //fixed_amount,percentage
-            if (discountType.equalsIgnoreCase("fixed")){
+            if (discountType.equalsIgnoreCase("fixed_amount")){
                 price.setDiscountedAmount(discount.getValue());
             }else {
                 Double percentage = discount.getValue();
@@ -44,19 +50,19 @@ public class Cart {
             }
             price.setFinalPrice(price.getTotalPrice()-price.getDiscountedAmount());
         }else {
-            Double cumulatedTotalItemPrice = 0.0;
-            Double cumulatedDiscountedItemPrice = 0.0;
+            Double itemsCumulatedTotalPrice = 0.0;
+            Double itemsCumulatedDiscountedPrice = 0.0;
             for (LineItem item:items){
                 item.updatePrice();
                 Double itemTotalPrice = item.getPrice().getTotalPrice();
                 Double itemDiscountedPrice = item.getPrice().getTotalDiscountedAmount();
-                cumulatedTotalItemPrice =
-                        cumulatedTotalItemPrice + itemTotalPrice;
-                cumulatedDiscountedItemPrice =
-                        cumulatedDiscountedItemPrice + itemDiscountedPrice;
+                itemsCumulatedTotalPrice =
+                        itemsCumulatedTotalPrice + itemTotalPrice;
+                itemsCumulatedDiscountedPrice =
+                        itemsCumulatedDiscountedPrice + itemDiscountedPrice;
             }
-            price.setTotalPrice(cumulatedTotalItemPrice);
-            price.setDiscountedAmount(cumulatedDiscountedItemPrice);
+            price.setTotalPrice(itemsCumulatedTotalPrice);
+            price.setDiscountedAmount(itemsCumulatedDiscountedPrice);
             price.setFinalPrice(price.getTotalPrice()-price.getDiscountedAmount());
         }
     }

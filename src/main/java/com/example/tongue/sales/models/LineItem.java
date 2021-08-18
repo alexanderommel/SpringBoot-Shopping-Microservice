@@ -1,13 +1,11 @@
 package com.example.tongue.sales.models;
 
-import com.example.tongue.merchants.models.Discount;
-import com.example.tongue.merchants.models.GroupModifier;
-import com.example.tongue.merchants.models.Modifier;
-import com.example.tongue.merchants.models.Product;
+import com.example.tongue.merchants.models.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,7 +20,7 @@ public class LineItem {
     private int quantity=1;
 
     @Embedded
-    private LineItemPrice price;
+    private LineItemPrice price=new LineItemPrice();
 
     private String instructions;
 
@@ -30,7 +28,7 @@ public class LineItem {
     private Discount discount;
 
     @ManyToMany
-    private List<Modifier> modifiers;
+    private List<Modifier> modifiers=new ArrayList<>();
 
     public List<Modifier> getModifiers() {
         return modifiers;
@@ -91,15 +89,39 @@ public class LineItem {
     @JsonIgnore
     public void ignoreDiscountAndUpdatePrice(){
         Double unitPrice = product.getPrice();
-        Double itemPrice = unitPrice * quantity;
+        Double totalPrice = unitPrice * quantity;
         price.setUnitPrice(unitPrice);
-        price.setTotalPrice(itemPrice);
-        price.setFinalPrice(itemPrice);
+        price.setTotalPrice(totalPrice);
+        price.setFinalPrice(totalPrice);
     }
 
     @JsonIgnore
     public void updatePrice(){ // Discounts not ignored
-
+        if (discount==null){
+            ignoreDiscountAndUpdatePrice();
+            return;
+        }
+        String type = discount.getValueType();
+        DiscountValueType discountValueType;
+        if (type.equalsIgnoreCase("fixed_amount")==true)
+            discountValueType = DiscountValueType.fixed_amount;
+        else
+            discountValueType = DiscountValueType.percentage;
+        Double totalPrice = quantity* product.getPrice();
+        price.setUnitPrice(product.getPrice());
+        price.setTotalPrice(totalPrice);
+        Double discountedUnitPrice;
+        if (discountValueType==DiscountValueType.fixed_amount){
+            discountedUnitPrice = discount.getValue();
+            price.setUnitDiscountedAmount(discountedUnitPrice);
+            price.setTotalDiscountedAmount(quantity*discountedUnitPrice);
+        }else {
+            discountedUnitPrice = discount.getValue()* product.getPrice();
+            discountedUnitPrice = discountedUnitPrice/100.0;
+            price.setUnitDiscountedAmount(discountedUnitPrice);
+            price.setTotalDiscountedAmount(quantity*discountedUnitPrice);
+        }
+        price.setFinalPrice(price.getTotalPrice()-price.getTotalDiscountedAmount());
     }
 
 }

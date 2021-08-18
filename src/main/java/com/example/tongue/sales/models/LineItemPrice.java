@@ -6,8 +6,8 @@ import javax.persistence.Embeddable;
 public class LineItemPrice {
     private Double unitPrice;
     private Double totalPrice;
-    private Double unitDiscountedAmount;
-    private Double totalDiscountedAmount;
+    private Double unitDiscountedAmount=0.0;
+    private Double totalDiscountedAmount=0.0;
     private Double finalPrice;
     private String currency_code="USD";
 
