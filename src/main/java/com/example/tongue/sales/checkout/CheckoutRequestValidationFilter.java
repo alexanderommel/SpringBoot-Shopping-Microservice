@@ -120,6 +120,7 @@ public class CheckoutRequestValidationFilter implements CheckoutFilter{
                                 if (!modifierRepository.existsById(modifier.getId()))
                                     throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                                             "No such modifier with id '"+modifier.getId()+"'");
+                                // External rules validation is done only with FULL type validation
                             }
                         }
 
@@ -127,7 +128,14 @@ public class CheckoutRequestValidationFilter implements CheckoutFilter{
                 }
             }
             if (checkoutAttribute.getName()==CheckoutAttributeName.DESTINATION){
-                // Not supported yet
+                Location destination = (Location) checkoutAttribute.getAttribute();
+                if (destination==null)
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Origin location object is mandatory");
+                Boolean validLocationFormat = destination.validate(); // Not implemented yet
+                if (validLocationFormat==false)
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Destination location object has no valid format");
             }
             if (checkoutAttribute.getName()==CheckoutAttributeName.ORIGIN){
                 Location origin = (Location) checkoutAttribute.getAttribute();

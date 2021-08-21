@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,15 +89,18 @@ public class LineItem {
 
     @JsonIgnore
     public void ignoreDiscountAndUpdatePrice(){
-        Double unitPrice = product.getPrice();
-        Double totalPrice = unitPrice * quantity;
+        BigDecimal modifiersTotal = getModifiersTotal();
+        Double unitPrice = product.getPrice()+modifiersTotal.doubleValue();
+        Double totalPrice = unitPrice* quantity;
         price.setUnitPrice(unitPrice);
         price.setTotalPrice(totalPrice);
         price.setFinalPrice(totalPrice);
     }
 
+
+    // Discounts not ignored
     @JsonIgnore
-    public void updatePrice(){ // Discounts not ignored
+    public void updatePrice(){
         if (discount==null){
             ignoreDiscountAndUpdatePrice();
             return;
@@ -107,8 +111,10 @@ public class LineItem {
             discountValueType = DiscountValueType.fixed_amount;
         else
             discountValueType = DiscountValueType.percentage;
-        Double totalPrice = quantity* product.getPrice();
-        price.setUnitPrice(product.getPrice());
+        BigDecimal modifiersTotal = getModifiersTotal();
+        Double unitPrice = product.getPrice()+modifiersTotal.doubleValue();
+        Double totalPrice = quantity*unitPrice;
+        price.setUnitPrice(unitPrice);
         price.setTotalPrice(totalPrice);
         Double discountedUnitPrice;
         if (discountValueType==DiscountValueType.fixed_amount){
@@ -122,6 +128,14 @@ public class LineItem {
             price.setTotalDiscountedAmount(quantity*discountedUnitPrice);
         }
         price.setFinalPrice(price.getTotalPrice()-price.getTotalDiscountedAmount());
+    }
+
+    private BigDecimal getModifiersTotal(){
+        BigDecimal total = BigDecimal.valueOf(0.0);
+        if (this.modifiers!=null){
+            total =modifiers.stream().map(x -> x.getPrice()).reduce(BigDecimal.ZERO,BigDecimal::add);
+        }
+        return total;
     }
 
 }

@@ -40,6 +40,7 @@ public class CheckoutPersistenceFilter implements CheckoutFilter{
         BigDecimal shippingRate = BigDecimal.valueOf(2.25); // temp
         checkout.getPrice().setShippingTotal(shippingRate);
         checkout.getPrice().setShippingSubtotal(shippingRate);
+        checkout.getCart().updatePrice();
         // Cart price update is done by internal cart pricing update
         return checkout;
     }
