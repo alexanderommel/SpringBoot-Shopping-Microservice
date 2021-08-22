@@ -4,6 +4,7 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,11 +13,11 @@ import java.util.Objects;
 public class LineItemPriceCondition {
     //FIELDS
     @Column(name = "price_leq")
-    private Double leq;
+    private BigDecimal leq;
     @Column(name = "price_heq")
-    private Double heq;
+    private BigDecimal heq;
     @Column(name = "price_eq")
-    private Double eq;
+    private BigDecimal eq;
     //METHODS
     public Boolean isAccomplishedOn(List<Product> targets){ //Subtotal
         Boolean response=true;

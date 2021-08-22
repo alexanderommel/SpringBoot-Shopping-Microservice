@@ -1,35 +1,36 @@
 package com.example.tongue.sales.models;
 
 import javax.persistence.Embeddable;
+import java.math.BigDecimal;
 
 @Embeddable
 public class CartPrice {
-    private Double totalPrice;
-    private Double discountedAmount;
-    private Double finalPrice;
+    private BigDecimal totalPrice;
+    private BigDecimal discountedAmount=BigDecimal.ZERO;
+    private BigDecimal finalPrice;
     private String currency_code="USD";
 
-    public Double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public Double getDiscountedAmount() {
+    public BigDecimal getDiscountedAmount() {
         return discountedAmount;
     }
 
-    public void setDiscountedAmount(Double discountedAmount) {
+    public void setDiscountedAmount(BigDecimal discountedAmount) {
         this.discountedAmount = discountedAmount;
     }
 
-    public Double getFinalPrice() {
+    public BigDecimal getFinalPrice() {
         return finalPrice;
     }
 
-    public void setFinalPrice(Double finalPrice) {
+    public void setFinalPrice(BigDecimal finalPrice) {
         this.finalPrice = finalPrice;
     }
 

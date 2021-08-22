@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -78,7 +79,7 @@ public class Discount {
 
     @NotNull(message = "Value field must not be empty")
     @Range(min = 0,max = 100,message = "Value should be between 0 and 100")
-    private Double value; //{0-100 for percentage and R for fixed amounts}
+    private BigDecimal value; //{0-100 for percentage and R for fixed amounts}
 
 
     @NotNull(message = "Discount type field must not be empty")
@@ -221,11 +222,11 @@ public class Discount {
         this.discountType = discountType;
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 

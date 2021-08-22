@@ -3,6 +3,7 @@ package com.example.tongue.merchants.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.math.BigDecimal;
 
 @Entity
 public class Product {
@@ -59,7 +60,7 @@ public class Product {
     @NotNull(message = "Null value not admitted for Price")
     @Min(value = 0, message = "Price should be higher than zero")
     @Max(value = 1000, message = "Price must not be higher than 1000$")
-    private Double price;
+    private BigDecimal price;
 
 
     @NotEmpty(message = "Currency code must not be empty")
@@ -69,7 +70,7 @@ public class Product {
 
 
     @Column(name = "original_price")
-    private Double originalPrice; //Price before adjustment or scaling
+    private BigDecimal originalPrice; //Price before adjustment or scaling
 
 
     private String adjustments; // {price:25.50,date:25-06-2021}
@@ -151,11 +152,11 @@ public class Product {
         this.inventorId = inventorId;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -167,11 +168,11 @@ public class Product {
         this.currency_code = currency_code;
     }
 
-    public Double getOriginalPrice() {
+    public BigDecimal getOriginalPrice() {
         return originalPrice;
     }
 
-    public void setOriginalPrice(Double originalPrice) {
+    public void setOriginalPrice(BigDecimal originalPrice) {
         this.originalPrice = originalPrice;
     }
 

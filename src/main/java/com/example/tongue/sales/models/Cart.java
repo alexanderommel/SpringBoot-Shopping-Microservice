@@ -4,6 +4,7 @@ import com.example.tongue.merchants.models.Discount;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +32,12 @@ public class Cart {
     @JsonIgnore
     public void updatePrice(){
         if (discount!=null){
-            Double itemsFinalPriceWithDiscountsIgnored = 0.0;
+            BigDecimal itemsFinalPriceWithDiscountsIgnored = BigDecimal.ZERO;
             for (LineItem item: items){
                 item.ignoreDiscountAndUpdatePrice();
-                Double itemFinalPrice = item.getPrice().getFinalPrice();
+                BigDecimal itemFinalPrice = item.getPrice().getFinalPrice();
                 itemsFinalPriceWithDiscountsIgnored =
-                        itemsFinalPriceWithDiscountsIgnored + itemFinalPrice;
+                        itemsFinalPriceWithDiscountsIgnored.add(itemFinalPrice);
             }
             price.setTotalPrice(itemsFinalPriceWithDiscountsIgnored);
             String discountType = discount.getValueType();
@@ -44,26 +45,26 @@ public class Cart {
             if (discountType.equalsIgnoreCase("fixed_amount")){
                 price.setDiscountedAmount(discount.getValue());
             }else {
-                Double percentage = discount.getValue();
-                Double amountDiscounted = percentage*price.getTotalPrice();
+                BigDecimal percentage = discount.getValue();
+                BigDecimal amountDiscounted = percentage.multiply(price.getTotalPrice());
                 price.setDiscountedAmount(amountDiscounted);
             }
-            price.setFinalPrice(price.getTotalPrice()-price.getDiscountedAmount());
+            price.setFinalPrice(price.getTotalPrice().subtract(price.getDiscountedAmount()));
         }else {
-            Double itemsCumulatedTotalPrice = 0.0;
-            Double itemsCumulatedDiscountedPrice = 0.0;
+            BigDecimal itemsCumulatedTotalPrice = BigDecimal.ZERO;
+            BigDecimal itemsCumulatedDiscountedPrice = BigDecimal.ZERO;
             for (LineItem item:items){
                 item.updatePrice();
-                Double itemTotalPrice = item.getPrice().getTotalPrice();
-                Double itemDiscountedPrice = item.getPrice().getTotalDiscountedAmount();
+                BigDecimal itemTotalPrice = item.getPrice().getTotalPrice();
+                BigDecimal itemDiscountedPrice = item.getPrice().getTotalDiscountedAmount();
                 itemsCumulatedTotalPrice =
-                        itemsCumulatedTotalPrice + itemTotalPrice;
+                        itemsCumulatedTotalPrice.add(itemTotalPrice);
                 itemsCumulatedDiscountedPrice =
-                        itemsCumulatedDiscountedPrice + itemDiscountedPrice;
+                        itemsCumulatedDiscountedPrice.add(itemDiscountedPrice);
             }
             price.setTotalPrice(itemsCumulatedTotalPrice);
             price.setDiscountedAmount(itemsCumulatedDiscountedPrice);
-            price.setFinalPrice(price.getTotalPrice()-price.getDiscountedAmount());
+            price.setFinalPrice(price.getTotalPrice().subtract(price.getDiscountedAmount()));
         }
     }
 

@@ -90,8 +90,8 @@ public class LineItem {
     @JsonIgnore
     public void ignoreDiscountAndUpdatePrice(){
         BigDecimal modifiersTotal = getModifiersTotal();
-        Double unitPrice = product.getPrice()+modifiersTotal.doubleValue();
-        Double totalPrice = unitPrice* quantity;
+        BigDecimal unitPrice = product.getPrice().add(modifiersTotal);
+        BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
         price.setUnitPrice(unitPrice);
         price.setTotalPrice(totalPrice);
         price.setFinalPrice(totalPrice);
@@ -112,22 +112,22 @@ public class LineItem {
         else
             discountValueType = DiscountValueType.percentage;
         BigDecimal modifiersTotal = getModifiersTotal();
-        Double unitPrice = product.getPrice()+modifiersTotal.doubleValue();
-        Double totalPrice = quantity*unitPrice;
+        BigDecimal unitPrice = product.getPrice().add(modifiersTotal);
+        BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
         price.setUnitPrice(unitPrice);
         price.setTotalPrice(totalPrice);
-        Double discountedUnitPrice;
+        BigDecimal discountedUnitPrice;
         if (discountValueType==DiscountValueType.fixed_amount){
             discountedUnitPrice = discount.getValue();
             price.setUnitDiscountedAmount(discountedUnitPrice);
-            price.setTotalDiscountedAmount(quantity*discountedUnitPrice);
+            price.setTotalDiscountedAmount(discountedUnitPrice.multiply(BigDecimal.valueOf(quantity)));
         }else {
-            discountedUnitPrice = discount.getValue()* product.getPrice();
-            discountedUnitPrice = discountedUnitPrice/100.0;
+            discountedUnitPrice = discount.getValue().multiply(product.getPrice());
+            discountedUnitPrice = discountedUnitPrice.multiply(BigDecimal.valueOf(0.01));
             price.setUnitDiscountedAmount(discountedUnitPrice);
-            price.setTotalDiscountedAmount(quantity*discountedUnitPrice);
+            price.setTotalDiscountedAmount((discountedUnitPrice.multiply(BigDecimal.valueOf(quantity))));
         }
-        price.setFinalPrice(price.getTotalPrice()-price.getTotalDiscountedAmount());
+        price.setFinalPrice(price.getTotalPrice().subtract(price.getTotalDiscountedAmount()));
     }
 
     private BigDecimal getModifiersTotal(){

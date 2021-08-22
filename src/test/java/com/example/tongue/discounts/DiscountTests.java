@@ -5,6 +5,7 @@ import com.example.tongue.merchants.models.LineItemPriceCondition;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.models.ValueSubtotalCondition;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class DiscountTests {
         discount.setId(1L);
         discount.setDescription("El descuento es valido para todos los productos en la tienda\n excepto para aquellos que cuestan mas de 20 dolares" +
                 " y se descuenta un dolar a cada producto.\n El producto 3 no aplica para descuento");
-        discount.setValue(1.0);
+        discount.setValue(BigDecimal.valueOf(1.0));
         discount.setProductsScope("all");
         discount.setDiscountScope("line_item");
         //PRICE CONDITION
@@ -46,7 +47,7 @@ public class DiscountTests {
         discount.setId(2L);
         discount.setDescription("Este descuento le reduce 5 dolares a sus compras en los productos 1,2,4\n siempre y cuando usted" +
                 "haya gastado al menos 25 dolares");
-        discount.setValue(5.0);
+        discount.setValue(BigDecimal.valueOf(5.0));
         discount.setProductsScope("all");
         discount.setDiscountScope("subtotal");
         //ENTITLED
@@ -78,11 +79,11 @@ public class DiscountTests {
         product3.setId(3L);
         product4.setId(4L);
         product5.setId(5L);
-        product1.setPrice(10.5);
-        product2.setPrice(15.5);
-        product3.setPrice(5.5);
-        product4.setPrice(25.5);
-        product5.setPrice(30.5);
+        product1.setPrice(BigDecimal.valueOf(10.5));
+        product2.setPrice(BigDecimal.valueOf(15.5));
+        product3.setPrice(BigDecimal.valueOf(5.5));
+        product4.setPrice(BigDecimal.valueOf(25.5));
+        product5.setPrice(BigDecimal.valueOf(30.5));
         product1.setTitle("Product1");
         product2.setTitle("Product2");
         product3.setTitle("Product3");

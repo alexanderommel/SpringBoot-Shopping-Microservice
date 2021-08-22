@@ -2,6 +2,7 @@ package com.example.tongue.merchants.models;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,11 +10,11 @@ import java.util.Objects;
 public class ValueSubtotalCondition {
     //FIELDS
     @Column(name = "value_leq")
-    private Double leq;
+    private BigDecimal leq;
     @Column(name = "value_heq")
-    private Double heq;
+    private BigDecimal heq;
     @Column(name = "value_eq")
-    private Double eq;
+    private BigDecimal eq;
     //METHODS
     public Boolean isAccomplishedOn(List<Product> cart){
         Double subtotal = getCartSubtotal(cart);

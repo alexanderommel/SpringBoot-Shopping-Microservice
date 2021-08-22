@@ -6,6 +6,7 @@ import com.example.tongue.merchants.models.StoreVariant;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity(name = "orders")
@@ -30,11 +31,11 @@ public class Order {
 
     private String currency_code="USD";
 
-    private Double totalPrice;
+    private BigDecimal totalPrice;
 
-    private Double subtotalPrice;
+    private BigDecimal subtotalPrice;
 
-    private Double discountedAmount;
+    private BigDecimal discountedAmount;
 
     private OrderStatus orderStatus;
 
@@ -127,27 +128,27 @@ public class Order {
         this.currency_code = currency_code;
     }
 
-    public Double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public Double getSubtotalPrice() {
+    public BigDecimal getSubtotalPrice() {
         return subtotalPrice;
     }
 
-    public void setSubtotalPrice(Double subtotalPrice) {
+    public void setSubtotalPrice(BigDecimal subtotalPrice) {
         this.subtotalPrice = subtotalPrice;
     }
 
-    public Double getDiscountedAmount() {
+    public BigDecimal getDiscountedAmount() {
         return discountedAmount;
     }
 
-    public void setDiscountedAmount(Double discountedAmount) {
+    public void setDiscountedAmount(BigDecimal discountedAmount) {
         this.discountedAmount = discountedAmount;
     }
 

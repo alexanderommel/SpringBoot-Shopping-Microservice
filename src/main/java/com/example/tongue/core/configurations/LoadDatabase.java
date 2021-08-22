@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +93,8 @@ public class LoadDatabase {
         String[] descriptions = {"Description1","Description2","Description3"
                 ,"Description4","Description5","Description6", "Description7"};
 
-        Double[] prices = {25.5,5.35,10.50,9.00,3.50,12.25,10.0};
+        BigDecimal[] prices = {BigDecimal.valueOf(25.5),BigDecimal.valueOf(5.35),BigDecimal.valueOf(10.50),BigDecimal.valueOf(9.00)
+                ,BigDecimal.valueOf(3.50),BigDecimal.valueOf(12.25),BigDecimal.valueOf(10.0)};
 
         String[] status = {"active","active","active","active","active","active","draft"}; //active|draft|archived
 

@@ -1,49 +1,50 @@
 package com.example.tongue.sales.models;
 
 import javax.persistence.Embeddable;
+import java.math.BigDecimal;
 
 @Embeddable
 public class LineItemPrice {
-    private Double unitPrice;
-    private Double totalPrice;
-    private Double unitDiscountedAmount=0.0;
-    private Double totalDiscountedAmount=0.0;
-    private Double finalPrice;
+    private BigDecimal unitPrice;
+    private BigDecimal totalPrice;
+    private BigDecimal unitDiscountedAmount=BigDecimal.ZERO;
+    private BigDecimal totalDiscountedAmount=BigDecimal.ZERO;
+    private BigDecimal finalPrice;
     private String currency_code="USD";
 
-    public Double getUnitPrice() {
+    public BigDecimal getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(Double unitPrice) {
+    public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
 
-    public Double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public Double getUnitDiscountedAmount() {
+    public BigDecimal getUnitDiscountedAmount() {
         return unitDiscountedAmount;
     }
 
-    public void setUnitDiscountedAmount(Double unitDiscountedAmount) {
+    public void setUnitDiscountedAmount(BigDecimal unitDiscountedAmount) {
         this.unitDiscountedAmount = unitDiscountedAmount;
     }
 
-    public Double getTotalDiscountedAmount() {
+    public BigDecimal getTotalDiscountedAmount() {
         return totalDiscountedAmount;
     }
 
-    public void setTotalDiscountedAmount(Double totalDiscountedAmount) {
+    public void setTotalDiscountedAmount(BigDecimal totalDiscountedAmount) {
         this.totalDiscountedAmount = totalDiscountedAmount;
     }
 
-    public Double getFinalPrice() {
+    public BigDecimal getFinalPrice() {
         return finalPrice;
     }
 
@@ -51,7 +52,7 @@ public class LineItemPrice {
 
     }
 
-    public void setFinalPrice(Double finalPrice) {
+    public void setFinalPrice(BigDecimal finalPrice) {
         this.finalPrice = finalPrice;
     }
 }

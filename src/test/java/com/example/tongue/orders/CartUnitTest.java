@@ -7,21 +7,23 @@ import com.example.tongue.sales.models.LineItem;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.parameters.P;
 
+import java.math.BigDecimal;
+
 public class CartUnitTest {
     @Test
     public void testUpdatePriceWithGlobalDiscount(){
         Cart cart = new Cart();
         Discount discount = new Discount();
         discount.setValueType("fixed_amount");
-        discount.setValue(15.0);
+        discount.setValue(BigDecimal.valueOf(15.0));
         cart.setDiscount(discount);
         // Products
         Product product1 = new Product();
-        product1.setPrice(10.0);
+        product1.setPrice(BigDecimal.valueOf(10.0));
         Product product2 = new Product();
-        product2.setPrice(20.0);
+        product2.setPrice(BigDecimal.valueOf(20.0));
         Product product3 = new Product();
-        product3.setPrice(30.0);
+        product3.setPrice(BigDecimal.valueOf(30.0));
         // Line items
         LineItem item1 = new LineItem();
         item1.setQuantity(2);
@@ -48,11 +50,11 @@ public class CartUnitTest {
         Cart cart = new Cart();
         // Products
         Product product1 = new Product();
-        product1.setPrice(10.0);
+        product1.setPrice(BigDecimal.valueOf(10.0));
         Product product2 = new Product();
-        product2.setPrice(20.0);
+        product2.setPrice(BigDecimal.valueOf(20.0));
         Product product3 = new Product();
-        product3.setPrice(30.0);
+        product3.setPrice(BigDecimal.valueOf(30.0));
         // Line items
         LineItem item1 = new LineItem();
         item1.setQuantity(2);
@@ -65,10 +67,10 @@ public class CartUnitTest {
         item3.setProduct(product3);
         Discount discount1 = new Discount();
         discount1.setValueType("fixed_amount");
-        discount1.setValue(10.0);
+        discount1.setValue(BigDecimal.valueOf(10.0));
         Discount discount3 = new Discount();
         discount3.setValueType("percentage");
-        discount3.setValue(10.0);
+        discount3.setValue(BigDecimal.valueOf(10.0));
         item3.setDiscount(discount3);
         item1.setDiscount(discount1);
         // Items
