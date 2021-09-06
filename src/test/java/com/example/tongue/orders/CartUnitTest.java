@@ -42,7 +42,7 @@ public class CartUnitTest {
         System.out.println("Testing Cart updatePrice() method when discount is provided at cart level");
         cart.updatePrice();
         System.out.println("Cart final price is: "+cart.getPrice().getFinalPrice());
-        assert 105.0 == cart.getPrice().getFinalPrice(): "Test failure";
+        assert 105.0 == cart.getPrice().getFinalPrice().doubleValue(): "Test failure";
 
     }
     @Test
@@ -81,6 +81,6 @@ public class CartUnitTest {
         System.out.println("Testing Cart updatePrice() method when discount is not provided at cart level");
         cart.updatePrice();
         System.out.println("Cart final price is: "+cart.getPrice().getFinalPrice());
-        assert 94.0 == cart.getPrice().getFinalPrice(): "Test failure";
+        assert 94.0 == cart.getPrice().getFinalPrice().doubleValue(): "Test failure";
     }
 }

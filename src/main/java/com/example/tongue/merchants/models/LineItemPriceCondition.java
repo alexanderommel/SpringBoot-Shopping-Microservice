@@ -31,17 +31,20 @@ public class LineItemPriceCondition {
     }
     public Boolean accomplishedBy(Product product){
         if (leq!=null){
-            if(product.getPrice()>leq){
+            int conditional_answer = product.getPrice().compareTo(leq);
+            if(conditional_answer==1){
                 return false;
             }
         }
         if (heq!=null){
-            if(product.getPrice()<heq){
+            int conditional_answer = product.getPrice().compareTo(heq);
+            if(conditional_answer==-1){
                 return false;
             }
         }
         if (eq!=null){
-            if(product.getPrice()!=eq){
+            int conditional_answer = product.getPrice().compareTo(eq);
+            if(conditional_answer!=0){
                 return false;
             }
         }
@@ -52,17 +55,20 @@ public class LineItemPriceCondition {
         for (Product product:
                 targets) {
             if (leq!=null){
-                if(product.getPrice()>leq){
+                int conditional_answer = product.getPrice().compareTo(leq);
+                if(conditional_answer==1){
                     continue;
                 }
             }
             if (heq!=null){
-                if(product.getPrice()<heq){
+                int conditional_answer = product.getPrice().compareTo(heq);
+                if(conditional_answer==-1){
                     continue;
                 }
             }
             if (eq!=null){
-                if(product.getPrice()!=eq){
+                int conditional_answer = product.getPrice().compareTo(eq);
+                if(conditional_answer!=0){
                     continue;
                 }
             }
@@ -71,27 +77,27 @@ public class LineItemPriceCondition {
         return validEntities;
     }
 
-    public Double getLeq() {
+    public BigDecimal getLeq() {
         return leq;
     }
 
-    public void setLeq(Double leq) {
+    public void setLeq(BigDecimal leq) {
         this.leq = leq;
     }
 
-    public Double getHeq() {
+    public BigDecimal getHeq() {
         return heq;
     }
 
-    public void setHeq(Double heq) {
+    public void setHeq(BigDecimal heq) {
         this.heq = heq;
     }
 
-    public Double getEq() {
+    public BigDecimal getEq() {
         return eq;
     }
 
-    public void setEq(Double eq) {
+    public void setEq(BigDecimal eq) {
         this.eq = eq;
     }
 

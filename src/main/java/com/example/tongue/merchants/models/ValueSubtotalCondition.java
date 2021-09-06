@@ -17,54 +17,57 @@ public class ValueSubtotalCondition {
     private BigDecimal eq;
     //METHODS
     public Boolean isAccomplishedOn(List<Product> cart){
-        Double subtotal = getCartSubtotal(cart);
+        BigDecimal subtotal = getCartSubtotal(cart);
         if(leq !=null){
-            if(subtotal> leq){
+            int conditional_answer = subtotal.compareTo(leq);
+            if(conditional_answer==1){
                 return false;
             }
         }
         if(heq !=null){
-            if(subtotal< heq){
+            int conditional_answer = subtotal.compareTo(heq);
+            if(conditional_answer==-1){
                 return false;
             }
         }
         if(eq !=null){
-            if (subtotal!= eq){
+            int conditional_answer = subtotal.compareTo(eq);
+            if (conditional_answer!=0){
                 return false;
             }
         }
         return true;
     }
-    private Double getCartSubtotal(List<Product> cart){
-        Double subtotal=0.0;
+    private BigDecimal getCartSubtotal(List<Product> cart){
+        BigDecimal subtotal = BigDecimal.ZERO;
         for (Product product:
              cart) {
-            subtotal = subtotal + product.getPrice();
+            subtotal = subtotal.add(product.getPrice());
         }
         return subtotal;
     }
 
-    public Double getLeq() {
+    public BigDecimal getLeq() {
         return leq;
     }
 
-    public void setLeq(Double valueLeq) {
+    public void setLeq(BigDecimal valueLeq) {
         this.leq = valueLeq;
     }
 
-    public Double getHeq() {
+    public BigDecimal getHeq() {
         return heq;
     }
 
-    public void setHeq(Double valueHeq) {
+    public void setHeq(BigDecimal valueHeq) {
         this.heq = valueHeq;
     }
 
-    public Double getEq() {
+    public BigDecimal getEq() {
         return eq;
     }
 
-    public void setEq(Double valueEq) {
+    public void setEq(BigDecimal valueEq) {
         this.eq = valueEq;
     }
 

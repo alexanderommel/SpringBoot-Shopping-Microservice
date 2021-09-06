@@ -26,7 +26,7 @@ public class DiscountTests {
         discount.setDiscountScope("line_item");
         //PRICE CONDITION
         LineItemPriceCondition condition = new LineItemPriceCondition();
-        condition.setLeq(20.0);
+        condition.setLeq(BigDecimal.valueOf(20.0));
         discount.setLineItemPriceCondition(condition);
         //EXCEPCIONES
         List<Product> exceptions = new ArrayList<>();
@@ -57,7 +57,7 @@ public class DiscountTests {
         entitled.add(cart.get(3));
         discount.setEntitledProducts(entitled);
         ValueSubtotalCondition condition = new ValueSubtotalCondition();
-        condition.setHeq(25.0);
+        condition.setHeq(BigDecimal.valueOf(25.0));
         //PRINTING
         System.out.println(discount.toString());
         System.out.println("Valid for cart: "+discount.validForCart(discount,cart));
