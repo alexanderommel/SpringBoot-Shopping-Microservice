@@ -5,6 +5,7 @@ import com.example.tongue.locations.models.Location;
 import com.example.tongue.merchants.models.StoreVariant;
 import com.example.tongue.payments.models.Payment;
 import com.example.tongue.sales.models.Cart;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -166,5 +167,11 @@ public class Checkout {
 
     public void setOrigin(Location origin) {
         this.origin = origin;
+    }
+
+    @JsonIgnore
+    public void updateCheckout(){
+        price.setCartTotal(cart.getPrice().getTotalPrice());
+        price.setCartSubtotal(cart.getPrice().getFinalPrice());
     }
 }

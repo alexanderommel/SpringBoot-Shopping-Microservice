@@ -45,7 +45,7 @@ public class CheckoutWebService {
      * @return
      */
 
-    @GetMapping("/checkouts/create")
+    @GetMapping("/checkout/create")
     public ResponseEntity<Map<String,Object>> create(HttpSession session, Checkout checkout){
         Map<String,Object> response = new HashMap<>();
 
@@ -68,7 +68,7 @@ public class CheckoutWebService {
     }
 
 
-    @PostMapping(value = "/checkouts/update")
+    @PostMapping(value = "/checkout/update")
     public ResponseEntity<Map<String,Object>>
     update(HttpSession session, @RequestBody  String attribute){
 

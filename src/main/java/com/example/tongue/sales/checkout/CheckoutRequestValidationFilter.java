@@ -153,6 +153,7 @@ public class CheckoutRequestValidationFilter implements CheckoutFilter{
         }
     }
 
+    // SIMPLE VALIDATION
     // Here we validate if customer has provided a properly populated minimum checkout
     // Minimum is: Origin, Store Variant and Cart with one Line Item (Only product is considered)
     private void validateSenderCheckout(Checkout checkout){

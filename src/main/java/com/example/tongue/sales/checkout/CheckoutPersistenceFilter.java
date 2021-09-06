@@ -30,6 +30,10 @@ public class CheckoutPersistenceFilter implements CheckoutFilter{
 
     @Override
     public Checkout doFilter(Checkout checkout) {
+        if (persistenceAction==CheckoutPersistenceAction.UPDATE){
+            return updateCheckoutInternal(checkout);
+        }
+
         return null;
     }
 
@@ -41,6 +45,7 @@ public class CheckoutPersistenceFilter implements CheckoutFilter{
         checkout.getPrice().setShippingTotal(shippingRate);
         checkout.getPrice().setShippingSubtotal(shippingRate);
         checkout.getCart().updatePrice();
+        checkout.updateCheckout();
         // Cart price update is done by internal cart pricing update
         return checkout;
     }
