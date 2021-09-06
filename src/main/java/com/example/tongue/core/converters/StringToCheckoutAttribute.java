@@ -1,27 +1,5 @@
 package com.example.tongue.core.converters;
 
-import com.example.tongue.core.annotations.CartConversion;
-import com.example.tongue.core.exceptions.EnumerationContainsException;
-import com.example.tongue.core.exceptions.JsonBadFormatException;
-import com.example.tongue.locations.models.Location;
-import com.example.tongue.merchants.models.Discount;
-import com.example.tongue.merchants.models.Product;
-import com.example.tongue.sales.checkout.CheckoutAttribute;
-import com.example.tongue.sales.checkout.CheckoutAttributeName;
-import com.example.tongue.sales.models.Cart;
-import com.example.tongue.sales.models.LineItem;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
-import javax.management.Descriptor;
-import java.lang.annotation.Annotation;
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class StringToCheckoutAttribute {
 
     /*

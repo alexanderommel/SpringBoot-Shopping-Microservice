@@ -1,7 +1,5 @@
 package com.example.tongue.core.exceptions;
 
-import com.example.tongue.sales.checkout.CheckoutAttributeName;
-
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collectors;

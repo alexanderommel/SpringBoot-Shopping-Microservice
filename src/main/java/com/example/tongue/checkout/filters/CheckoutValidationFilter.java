@@ -1,5 +1,8 @@
-package com.example.tongue.sales.checkout;
+package com.example.tongue.checkout.filters;
 
+import com.example.tongue.checkout.models.Checkout;
+import com.example.tongue.checkout.models.CheckoutAttribute;
+import com.example.tongue.checkout.models.CheckoutAttributeName;
 import com.example.tongue.locations.models.Location;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.Modifier;
@@ -15,13 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.Filter;
 import javax.servlet.http.HttpSession;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-public class CheckoutRequestValidationFilter implements CheckoutFilter{
+public class CheckoutValidationFilter implements CheckoutFilter {
 
     private CheckoutValidationType validationType;
     private CheckoutAttribute checkoutAttribute;
@@ -34,11 +35,11 @@ public class CheckoutRequestValidationFilter implements CheckoutFilter{
     private @Autowired
     ModifierRepository modifierRepository;
 
-    public CheckoutRequestValidationFilter(CheckoutValidationType validationType){
+    public CheckoutValidationFilter(CheckoutValidationType validationType){
         this.validationType=validationType;
     }
 
-    public CheckoutRequestValidationFilter(CheckoutAttribute checkoutAttribute){
+    public CheckoutValidationFilter(CheckoutAttribute checkoutAttribute){
         this.validationType = CheckoutValidationType.ATTRIBUTE;
         this.checkoutAttribute = checkoutAttribute;
     }
@@ -48,13 +49,13 @@ public class CheckoutRequestValidationFilter implements CheckoutFilter{
     }
 
     @Override
-    public Checkout doFilter(Checkout checkout) {
+    public Checkout doFilter(Checkout checkout, HttpSession session) {
         if (validationType==CheckoutValidationType.SIMPLE){
             validateSenderCheckout(checkout);
         }
         if (validationType==CheckoutValidationType.ATTRIBUTE){
             validateCheckoutAttribute(this.checkoutAttribute);
-            if (checkoutAttribute.getName()==CheckoutAttributeName.CART)
+            if (checkoutAttribute.getName()== CheckoutAttributeName.CART)
                 checkout.setCart((Cart) checkoutAttribute.getAttribute());
             else if (checkoutAttribute.getName()==CheckoutAttributeName.ORIGIN)
                 checkout.setOrigin((Location) checkoutAttribute.getAttribute());

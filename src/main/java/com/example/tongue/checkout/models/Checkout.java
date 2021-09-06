@@ -1,4 +1,4 @@
-package com.example.tongue.sales.checkout;
+package com.example.tongue.checkout.models;
 
 import com.example.tongue.customers.models.Customer;
 import com.example.tongue.locations.models.Location;

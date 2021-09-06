@@ -4,7 +4,7 @@ import com.example.tongue.locations.models.Location;
 import com.example.tongue.locations.repositories.LocationRepository;
 import com.example.tongue.merchants.models.*;
 import com.example.tongue.merchants.repositories.*;
-import com.example.tongue.sales.checkout.CheckoutRepository;
+import com.example.tongue.checkout.repositories.CheckoutRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;

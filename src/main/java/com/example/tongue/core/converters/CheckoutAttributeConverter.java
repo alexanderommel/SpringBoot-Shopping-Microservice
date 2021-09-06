@@ -1,21 +1,16 @@
 package com.example.tongue.core.converters;
 
-import com.example.tongue.core.annotations.CartConversion;
-import com.example.tongue.core.annotations.CheckoutAttributeConversion;
 import com.example.tongue.core.exceptions.JsonBadFormatException;
-import com.example.tongue.core.exceptions.OrderNotFoundException;
 import com.example.tongue.locations.models.Location;
-import com.example.tongue.sales.checkout.CheckoutAttribute;
-import com.example.tongue.sales.checkout.CheckoutAttributeName;
+import com.example.tongue.checkout.models.CheckoutAttribute;
+import com.example.tongue.checkout.models.CheckoutAttributeName;
 import com.example.tongue.sales.models.Cart;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalGenericConverter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;

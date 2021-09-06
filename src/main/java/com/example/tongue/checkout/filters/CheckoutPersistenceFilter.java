@@ -1,5 +1,6 @@
-package com.example.tongue.sales.checkout;
+package com.example.tongue.checkout.filters;
 
+import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.locations.repositories.LocationRepository;
 import com.example.tongue.merchants.repositories.DiscountRepository;
 import com.example.tongue.merchants.repositories.ModifierRepository;
@@ -7,9 +8,10 @@ import com.example.tongue.merchants.repositories.ProductRepository;
 import com.example.tongue.merchants.repositories.StoreVariantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 
-public class CheckoutPersistenceFilter implements CheckoutFilter{
+public class CheckoutPersistenceFilter implements CheckoutFilter {
 
     // Fields
     private CheckoutPersistenceAction persistenceAction;
@@ -29,7 +31,7 @@ public class CheckoutPersistenceFilter implements CheckoutFilter{
     }
 
     @Override
-    public Checkout doFilter(Checkout checkout) {
+    public Checkout doFilter(Checkout checkout, HttpSession session) {
         if (persistenceAction==CheckoutPersistenceAction.UPDATE){
             return updateCheckoutInternal(checkout);
         }

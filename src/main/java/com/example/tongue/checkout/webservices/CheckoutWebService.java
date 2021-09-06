@@ -1,7 +1,10 @@
-package com.example.tongue.sales.checkout;
+package com.example.tongue.checkout.webservices;
 
+import com.example.tongue.checkout.filters.*;
+import com.example.tongue.checkout.models.Checkout;
+import com.example.tongue.checkout.models.CheckoutAttribute;
+import com.example.tongue.checkout.repositories.CheckoutRepository;
 import com.example.tongue.core.converters.CheckoutAttributeConverter;
-import com.example.tongue.merchants.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +23,13 @@ import java.util.Map;
 public class CheckoutWebService {
 
     private CheckoutRepository checkoutRepository;
+    private CheckoutRequestChain requestChain;
+    private CheckoutUpdateChain updateChain;
 
     public CheckoutWebService(@Autowired CheckoutRepository checkoutRepository){
         this.checkoutRepository = checkoutRepository;
+        this.requestChain = new CheckoutRequestChain();
+        this.updateChain = new CheckoutUpdateChain();
     }
 
 
@@ -48,20 +54,7 @@ public class CheckoutWebService {
     @GetMapping("/checkout/create")
     public ResponseEntity<Map<String,Object>> create(HttpSession session, Checkout checkout){
         Map<String,Object> response = new HashMap<>();
-
-        CheckoutRequestValidationFilter validationFilter
-                = new CheckoutRequestValidationFilter(CheckoutValidationType.SIMPLE);
-        CheckoutDiscountsLoadingFilter discountsLoadingFilter
-                = new CheckoutDiscountsLoadingFilter();
-        CheckoutSessionFilter sessionFilter
-                = new CheckoutSessionFilter(session);
-        List<CheckoutFilter> filters = new ArrayList<>();
-        filters.add(validationFilter);
-        filters.add(discountsLoadingFilter);
-        filters.add(sessionFilter);
-        CheckoutFluxDefinition fluxDefinition = new CheckoutFluxDefinition(filters);
-        Checkout checkout1 = fluxDefinition.filter(checkout);
-
+        Checkout checkout1 = this.requestChain.doFilter(checkout,session);
         response.put("response",checkout1);
         return new ResponseEntity<>(response,
                 HttpStatus.OK);
@@ -72,14 +65,13 @@ public class CheckoutWebService {
     public ResponseEntity<Map<String,Object>>
     update(HttpSession session, @RequestBody  String attribute){
 
-            Checkout checkout = (Checkout) session.getAttribute("CHECKOUT");
             CheckoutAttributeConverter converter = new CheckoutAttributeConverter();
-            CheckoutAttribute conversion =
+            CheckoutAttribute checkoutAttribute =
                     (CheckoutAttribute) converter.convert(attribute,null,null);
+            Checkout checkout = this.updateChain.doFilter(checkoutAttribute,session);
             Map<String,Object> response = new HashMap<>();
-            response.put("response",conversion);
+            response.put("response",checkout);
             return new ResponseEntity<>(response,HttpStatus.OK);
-
     }
 
     //----------------------------------- PRIVATE METHODS ------------------------------------------------
