@@ -2,6 +2,7 @@ package com.example.tongue.merchants.webservices;
 
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.models.ProductImage;
+import com.example.tongue.merchants.models.ProductStatus;
 import com.example.tongue.merchants.models.StoreVariant;
 import com.example.tongue.merchants.repositories.ProductImageRepository;
 import com.example.tongue.merchants.repositories.ProductRepository;
@@ -149,13 +150,7 @@ public class ProductsRestController {
                 original.setType(product.getType());
             }
             if(product.getStatus()!=null){
-                String regex = "(active|draft|archived)";
-                Boolean matches = Pattern.matches(regex,product.getStatus());
-                if(matches){
-                    original.setStatus(product.getStatus());
-                }else {
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
+                original.setStatus(product.getStatus());
             }
             if(product.getTitle()!=null){
                 original.setTitle(product.getTitle());
@@ -226,7 +221,7 @@ public class ProductsRestController {
     }
 
     @GetMapping(value = "/products", params = {"status","page","size"})
-    public ResponseEntity<Map<String,Object>> findAllByStatus(@RequestParam String status,
+    public ResponseEntity<Map<String,Object>> findAllByStatus(@RequestParam ProductStatus status,
                                                                    @RequestParam(defaultValue = "0",required = false) int page,
                                                                    @RequestParam(defaultValue = "50",required = false) int size){
 

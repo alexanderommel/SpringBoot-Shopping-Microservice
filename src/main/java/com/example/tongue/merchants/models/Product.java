@@ -1,6 +1,8 @@
 package com.example.tongue.merchants.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
@@ -33,10 +35,7 @@ public class Product {
             message = "Type must be between 1 a 50 characters")
     private String type;
 
-
-    @Pattern(regexp = "(active|draft|archived)",
-            message = "Status must be active, draft or archived")
-    private String status="active"; //active|draft|archived
+    private ProductStatus status=ProductStatus.ACTIVE; //active|draft|archived
 
 
     @Pattern(regexp = "([a-zA-Z0-9]{1,20},){0,10}[a-zA-Z0-9]{1,20}",
@@ -78,8 +77,7 @@ public class Product {
 
 
     //METHODS
-
-
+    @JsonIgnore
     public StoreVariant getStoreVariant() {
         return storeVariant;
     }
@@ -128,11 +126,11 @@ public class Product {
         this.type = type;
     }
 
-    public String getStatus() {
+    public ProductStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ProductStatus status) {
         this.status = status;
     }
 

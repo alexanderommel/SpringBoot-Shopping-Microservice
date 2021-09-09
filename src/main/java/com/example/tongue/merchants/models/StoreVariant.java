@@ -54,6 +54,7 @@ public class StoreVariant {
         this.name = name;
     }
 
+    @JsonIgnore
     public Store getStore() {
         return store;
     }
