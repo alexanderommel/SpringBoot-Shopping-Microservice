@@ -1,7 +1,7 @@
 package com.example.tongue.merchants.repositories;
 
 import com.example.tongue.merchants.models.Product;
-import com.example.tongue.merchants.models.ProductStatus;
+import com.example.tongue.merchants.enumerations.ProductStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

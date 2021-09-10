@@ -1,5 +1,6 @@
 package com.example.tongue.merchants.models;
 
+import com.example.tongue.merchants.enumerations.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.Range;
@@ -51,19 +52,19 @@ public class Discount {
     @NotNull(message = "Discount scope field must not be empty")
     @Pattern(regexp = "(line_items|subtotal)",
             message = "Discount scope should be one of these values (line_items|subtotal)")
-    private String discountScope;
+    private DiscountScope discountScope;
 
 
     @NotNull(message = "Product scope field must not be empty")
     @Pattern(regexp = "(all|entitled_only)",
             message = "Product scope should be one of these values (all|entitled_only)")
-    private String productsScope; //{all,entitled_only}
+    private ProductsScope productsScope; //{all,entitled_only}
 
 
     @NotNull(message = "Customer scope field must not be empty")
     @Pattern(regexp = "(all|entitled_only)",
             message = "Customer scope should be one of these values (all|entitled_only)")
-    private String customersScope; //{all,entitled_only}
+    private CustomerScope customersScope; //{all,entitled_only}
 
 
     @ManyToMany
@@ -74,7 +75,7 @@ public class Discount {
     @NotNull(message = "Value type field must not be empty")
     @Pattern(regexp = "(fixed_amount|percentage)",
             message = "Value type should be one of these values (fixed_amount|percentage)")
-    private String valueType; //{fixed_amount,percentage} //VALUE TYPE
+    private ValueType valueType; //{fixed_amount,percentage} //VALUE TYPE
 
 
     @NotNull(message = "Value field must not be empty")
@@ -85,7 +86,7 @@ public class Discount {
     @NotNull(message = "Discount type field must not be empty")
     @Pattern(regexp = "(shipping|product)",
             message = "Value type should be one of these values (shipping|product)")
-    private String discountType;
+    private DiscountType discountType;
 
 
     @Positive(message = "Maximum amount must be higher than zero")
@@ -117,12 +118,21 @@ public class Discount {
 
     //METHODS
 
-    public String getValueType() {
+
+    public ValueType getValueType() {
         return valueType;
     }
 
-    public void setValueType(String valueType) {
+    public void setValueType(ValueType valueType) {
         this.valueType = valueType;
+    }
+
+    public DiscountType getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(DiscountType discountType) {
+        this.discountType = discountType;
     }
 
     public Long getId() {
@@ -181,27 +191,27 @@ public class Discount {
         this.usageLimit = usageLimit;
     }
 
-    public String getDiscountScope() {
+    public DiscountScope getDiscountScope() {
         return discountScope;
     }
 
-    public void setDiscountScope(String discountScope) {
+    public void setDiscountScope(DiscountScope discountScope) {
         this.discountScope = discountScope;
     }
 
-    public String getProductsScope() {
+    public ProductsScope getProductsScope() {
         return productsScope;
     }
 
-    public void setProductsScope(String productsScope) {
+    public void setProductsScope(ProductsScope productsScope) {
         this.productsScope = productsScope;
     }
 
-    public String getCustomersScope() {
+    public CustomerScope getCustomersScope() {
         return customersScope;
     }
 
-    public void setCustomersScope(String customersScope) {
+    public void setCustomersScope(CustomerScope customersScope) {
         this.customersScope = customersScope;
     }
 
@@ -214,13 +224,6 @@ public class Discount {
         this.excludedProducts = excludedProducts;
     }
 
-    public String getDiscountType() {
-        return discountType;
-    }
-
-    public void setDiscountType(String discountType) {
-        this.discountType = discountType;
-    }
 
     public BigDecimal getValue() {
         return value;
@@ -319,7 +322,7 @@ public class Discount {
         /*
         Entitled validation for every product
          */
-        if (discount.getDiscountScope().equalsIgnoreCase("subtotal")){
+        if (discount.getDiscountScope()==DiscountScope.SUBTOTAL){
             for (Product product:
                     cart) {
                 if (!validForProduct(discount,product)){
@@ -332,13 +335,13 @@ public class Discount {
 
     @JsonIgnore
     public Boolean validForProduct(Discount discount,Product product){
-        if (discount.getProductsScope().equalsIgnoreCase("entitled_only")){
+        if (discount.getProductsScope()==ProductsScope.ENTITLED_ONLY){
             List<Product> entitled = discount.getEntitledProducts();
             if (!entitled.contains(product)){
                 return false;
             }
         }
-        if (discount.getProductsScope().equalsIgnoreCase("all")){
+        if (discount.getProductsScope()==ProductsScope.ALL){
             List<Product> excluded = discount.getExcludedProducts();
             if (excluded!=null){
                 if (excluded.contains(product)){

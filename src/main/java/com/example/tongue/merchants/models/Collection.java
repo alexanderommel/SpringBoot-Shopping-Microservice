@@ -1,5 +1,7 @@
 package com.example.tongue.merchants.models;
 
+import com.example.tongue.merchants.enumerations.CollectionStatus;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

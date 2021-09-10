@@ -1,6 +1,7 @@
 package com.example.tongue.merchants.models;
 
 
+import com.example.tongue.merchants.enumerations.ProductStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;

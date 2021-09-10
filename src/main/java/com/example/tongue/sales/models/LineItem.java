@@ -1,7 +1,10 @@
 package com.example.tongue.sales.models;
 
+import com.example.tongue.merchants.enumerations.DiscountValueType;
+import com.example.tongue.merchants.enumerations.ValueType;
 import com.example.tongue.merchants.models.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,6 +18,9 @@ public class LineItem {
 
     @ManyToOne
     @NotNull
+    @JsonIgnoreProperties({"status","tags","inventorId",
+            "originalPrice","adjustments","currency_code",
+            "price","type","title","handle","description","type"})
     private Product product;
 
     @NotNull
@@ -105,9 +111,9 @@ public class LineItem {
             ignoreDiscountAndUpdatePrice();
             return;
         }
-        String type = discount.getValueType();
+        ValueType type = discount.getValueType();
         DiscountValueType discountValueType;
-        if (type.equalsIgnoreCase("fixed_amount")==true)
+        if (type==ValueType.FIXED_AMOUNT)
             discountValueType = DiscountValueType.fixed_amount;
         else
             discountValueType = DiscountValueType.percentage;

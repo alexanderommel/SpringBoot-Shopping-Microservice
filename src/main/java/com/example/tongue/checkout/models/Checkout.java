@@ -6,6 +6,7 @@ import com.example.tongue.merchants.models.StoreVariant;
 import com.example.tongue.payments.models.Payment;
 import com.example.tongue.sales.models.Cart;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -16,18 +17,25 @@ public class Checkout {
     private Long id;
 
     @OneToOne
+    @JsonIgnoreProperties("id")
     private Cart cart;
 
     @ManyToOne
     private Customer customer;
 
     @ManyToOne
+    @JsonIgnoreProperties("id")
     private Location origin;
 
     @ManyToOne
+    @JsonIgnoreProperties("id")
     private Location destination;
 
     @ManyToOne
+    @JsonIgnoreProperties({"name","location","representative",
+    "representativePhone","plan","postalCode","currency_code",
+    "allowCashPayments","enabledCurrencies","hasActiveDiscounts",
+    "country_code","storeImageURL"})
     private StoreVariant storeVariant;
 
     @OneToOne

@@ -2,6 +2,10 @@ package com.example.tongue.checkout.filters;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.CheckoutAttribute;
+import com.example.tongue.merchants.repositories.DiscountRepository;
+import com.example.tongue.merchants.repositories.ModifierRepository;
+import com.example.tongue.merchants.repositories.ProductRepository;
+import com.example.tongue.merchants.repositories.StoreVariantRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,8 +19,15 @@ public class CheckoutUpdateChain {
     CheckoutPersistenceFilter persistenceFilter;
 
 
-    public CheckoutUpdateChain(){
-        validationFilter = new CheckoutValidationFilter(CheckoutValidationType.ATTRIBUTE);
+    public CheckoutUpdateChain(StoreVariantRepository storeVariantRepository,
+                               ProductRepository productRepository,
+                               DiscountRepository discountRepository,
+                               ModifierRepository modifierRepository){
+        validationFilter = new CheckoutValidationFilter(storeVariantRepository,
+                productRepository,
+                discountRepository,
+                modifierRepository,
+                CheckoutValidationType.ATTRIBUTE);
         persistenceFilter = new CheckoutPersistenceFilter(CheckoutPersistenceAction.UPDATE);
     }
 

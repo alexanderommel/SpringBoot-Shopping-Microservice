@@ -2,8 +2,7 @@ package com.example.tongue.merchants.webservices;
 
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.models.ProductImage;
-import com.example.tongue.merchants.models.ProductStatus;
-import com.example.tongue.merchants.models.StoreVariant;
+import com.example.tongue.merchants.enumerations.ProductStatus;
 import com.example.tongue.merchants.repositories.ProductImageRepository;
 import com.example.tongue.merchants.repositories.ProductRepository;
 import com.example.tongue.merchants.repositories.StoreVariantRepository;

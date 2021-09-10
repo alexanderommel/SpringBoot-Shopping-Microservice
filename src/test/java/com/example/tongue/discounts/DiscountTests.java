@@ -1,5 +1,7 @@
 package com.example.tongue.discounts;
 
+import com.example.tongue.merchants.enumerations.DiscountScope;
+import com.example.tongue.merchants.enumerations.ProductsScope;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.LineItemPriceCondition;
 import com.example.tongue.merchants.models.Product;
@@ -22,8 +24,8 @@ public class DiscountTests {
         discount.setDescription("El descuento es valido para todos los productos en la tienda\n excepto para aquellos que cuestan mas de 20 dolares" +
                 " y se descuenta un dolar a cada producto.\n El producto 3 no aplica para descuento");
         discount.setValue(BigDecimal.valueOf(1.0));
-        discount.setProductsScope("all");
-        discount.setDiscountScope("line_item");
+        discount.setProductsScope(ProductsScope.ALL);
+        discount.setDiscountScope(DiscountScope.LINE_ITEMS);
         //PRICE CONDITION
         LineItemPriceCondition condition = new LineItemPriceCondition();
         condition.setLeq(BigDecimal.valueOf(20.0));
@@ -48,8 +50,8 @@ public class DiscountTests {
         discount.setDescription("Este descuento le reduce 5 dolares a sus compras en los productos 1,2,4\n siempre y cuando usted" +
                 "haya gastado al menos 25 dolares");
         discount.setValue(BigDecimal.valueOf(5.0));
-        discount.setProductsScope("all");
-        discount.setDiscountScope("subtotal");
+        discount.setProductsScope(ProductsScope.ALL);
+        discount.setDiscountScope(DiscountScope.SUBTOTAL);
         //ENTITLED
         ArrayList<Product> entitled = new ArrayList<>();
         entitled.add(cart.get(0));

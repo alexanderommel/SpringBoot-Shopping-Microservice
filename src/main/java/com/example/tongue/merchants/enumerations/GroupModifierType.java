@@ -1,4 +1,4 @@
-package com.example.tongue.merchants.models;
+package com.example.tongue.merchants.enumerations;
 
 public enum GroupModifierType {
     MANDATORY,OPTIONAL

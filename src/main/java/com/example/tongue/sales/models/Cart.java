@@ -1,5 +1,7 @@
 package com.example.tongue.sales.models;
 
+import com.example.tongue.merchants.enumerations.DiscountType;
+import com.example.tongue.merchants.enumerations.ValueType;
 import com.example.tongue.merchants.models.Discount;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -40,9 +42,9 @@ public class Cart {
                         itemsFinalPriceWithDiscountsIgnored.add(itemFinalPrice);
             }
             price.setTotalPrice(itemsFinalPriceWithDiscountsIgnored);
-            String discountType = discount.getValueType();
+            ValueType discountType = discount.getValueType();
             //fixed_amount,percentage
-            if (discountType.equalsIgnoreCase("fixed_amount")){
+            if (discountType==ValueType.FIXED_AMOUNT){
                 price.setDiscountedAmount(discount.getValue());
             }else {
                 BigDecimal percentage = discount.getValue();

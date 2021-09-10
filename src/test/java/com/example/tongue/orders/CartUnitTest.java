@@ -1,5 +1,6 @@
 package com.example.tongue.orders;
 
+import com.example.tongue.merchants.enumerations.ValueType;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.sales.models.Cart;
@@ -14,7 +15,7 @@ public class CartUnitTest {
     public void testUpdatePriceWithGlobalDiscount(){
         Cart cart = new Cart();
         Discount discount = new Discount();
-        discount.setValueType("fixed_amount");
+        discount.setValueType(ValueType.FIXED_AMOUNT);
         discount.setValue(BigDecimal.valueOf(15.0));
         cart.setDiscount(discount);
         // Products
@@ -66,10 +67,10 @@ public class CartUnitTest {
         item3.setQuantity(2);
         item3.setProduct(product3);
         Discount discount1 = new Discount();
-        discount1.setValueType("fixed_amount");
+        discount1.setValueType(ValueType.FIXED_AMOUNT);
         discount1.setValue(BigDecimal.valueOf(10.0));
         Discount discount3 = new Discount();
-        discount3.setValueType("percentage");
+        discount3.setValueType(ValueType.PERCENTAGE);
         discount3.setValue(BigDecimal.valueOf(10.0));
         item3.setDiscount(discount3);
         item1.setDiscount(discount1);

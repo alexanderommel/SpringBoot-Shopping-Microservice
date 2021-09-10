@@ -2,6 +2,7 @@ package com.example.tongue.core.genericdata;
 
 import com.example.tongue.locations.models.Location;
 import com.example.tongue.locations.repositories.LocationRepository;
+import com.example.tongue.merchants.enumerations.ProductStatus;
 import com.example.tongue.merchants.models.*;
 import com.example.tongue.merchants.repositories.*;
 
@@ -55,6 +56,7 @@ public class Store1DataGenerator {
             storeVariant.setRepresentative("Nobody");
             storeVariant.setStoreImageURL("findOneBeforePassingToAndroid");
             storeVariant = storeVariantRepository.save(storeVariant);
+            System.out.println("StoreVariant Generic id: "+storeVariant.getId());
 
 
             String[] titles = {"Product1","Product2","Product3","Product4","Product5","Product6",

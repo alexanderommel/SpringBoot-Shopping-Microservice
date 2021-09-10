@@ -16,6 +16,7 @@ import com.example.tongue.sales.models.Cart;
 import com.example.tongue.sales.models.LineItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
@@ -26,16 +27,25 @@ public class CheckoutValidationFilter implements CheckoutFilter {
 
     private CheckoutValidationType validationType;
     private CheckoutAttribute checkoutAttribute;
-    private @Autowired
+    private
     StoreVariantRepository storeVariantRepository;
-    private @Autowired
+    private
     ProductRepository productRepository;
-    private @Autowired
+    private
     DiscountRepository discountRepository;
-    private @Autowired
+    private
     ModifierRepository modifierRepository;
 
-    public CheckoutValidationFilter(CheckoutValidationType validationType){
+    public CheckoutValidationFilter(StoreVariantRepository storeVariantRepository,
+            ProductRepository productRepository,
+            DiscountRepository discountRepository,
+            ModifierRepository modifierRepository
+            ,CheckoutValidationType validationType){
+
+        this.storeVariantRepository=storeVariantRepository;
+        this.productRepository=productRepository;
+        this.discountRepository=discountRepository;
+        this.modifierRepository=modifierRepository;
         this.validationType=validationType;
     }
 

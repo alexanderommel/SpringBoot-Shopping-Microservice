@@ -5,6 +5,10 @@ import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.CheckoutAttribute;
 import com.example.tongue.checkout.repositories.CheckoutRepository;
 import com.example.tongue.core.converters.CheckoutAttributeConverter;
+import com.example.tongue.merchants.repositories.DiscountRepository;
+import com.example.tongue.merchants.repositories.ModifierRepository;
+import com.example.tongue.merchants.repositories.ProductRepository;
+import com.example.tongue.merchants.repositories.StoreVariantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,11 +29,29 @@ public class CheckoutWebService {
     private CheckoutRepository checkoutRepository;
     private CheckoutRequestChain requestChain;
     private CheckoutUpdateChain updateChain;
+    private StoreVariantRepository storeVariantRepository;
+    private ProductRepository productRepository;
+    private DiscountRepository discountRepository;
+    private ModifierRepository modifierRepository;
 
-    public CheckoutWebService(@Autowired CheckoutRepository checkoutRepository){
+    public CheckoutWebService(@Autowired CheckoutRepository checkoutRepository,
+                              @Autowired StoreVariantRepository storeVariantRepository,
+                              @Autowired ProductRepository productRepository,
+                              @Autowired DiscountRepository discountRepository,
+                              @Autowired ModifierRepository modifierRepository){
         this.checkoutRepository = checkoutRepository;
-        this.requestChain = new CheckoutRequestChain();
-        this.updateChain = new CheckoutUpdateChain();
+        this.storeVariantRepository = storeVariantRepository;
+        this.productRepository=productRepository;
+        this.discountRepository=discountRepository;
+        this.modifierRepository=modifierRepository;
+        this.requestChain = new CheckoutRequestChain(storeVariantRepository,
+                productRepository,
+                modifierRepository,
+                discountRepository);
+        this.updateChain = new CheckoutUpdateChain(storeVariantRepository,
+                productRepository,
+                discountRepository,
+                modifierRepository);
     }
 
 
@@ -52,7 +74,7 @@ public class CheckoutWebService {
      */
 
     @GetMapping("/checkout/create")
-    public ResponseEntity<Map<String,Object>> create(HttpSession session, Checkout checkout){
+    public ResponseEntity<Map<String,Object>> create(HttpSession session, @RequestBody  Checkout checkout){
         Map<String,Object> response = new HashMap<>();
         Checkout checkout1 = this.requestChain.doFilter(checkout,session);
         response.put("response",checkout1);
