@@ -45,7 +45,7 @@ public class Checkout {
 
     private Instant created_at = Instant.now(); //ISO 8601;
 
-    private CheckoutPrice price;
+    private CheckoutPrice price=new CheckoutPrice();
 
     private Instant FinishedAt;
 
@@ -181,5 +181,7 @@ public class Checkout {
     public void updateCheckout(){
         price.setCartTotal(cart.getPrice().getTotalPrice());
         price.setCartSubtotal(cart.getPrice().getFinalPrice());
+        price.setCheckoutTotal(price.getCartTotal().add(price.getShippingTotal()));
+        price.setCheckoutSubtotal(price.getCartSubtotal().add(price.getShippingSubtotal()));
     }
 }

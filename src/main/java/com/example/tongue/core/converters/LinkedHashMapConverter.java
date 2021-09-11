@@ -134,16 +134,13 @@ public class LinkedHashMapConverter {
 
         // Discount population
         Object discount = hashMap.get("discount");
-        if (discount==null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Nested object 'discount' is mandatory");
+        if (discount!=null){
+            if (discount instanceof LinkedHashMap){
+                item.setDiscount(toDiscount((LinkedHashMap) discount));
+            }else
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Nested object 'discount' must be a valid Discount object");
         }
-        if (discount instanceof LinkedHashMap){
-            item.setDiscount(toDiscount((LinkedHashMap) discount));
-        }else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Nested object 'discount' must be a valid Discount object");
-
         // End discount population
 
         return item;

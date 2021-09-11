@@ -60,7 +60,7 @@ public class Product {
     @NotNull(message = "Null value not admitted for Price")
     @Min(value = 0, message = "Price should be higher than zero")
     @Max(value = 1000, message = "Price must not be higher than 1000$")
-    private BigDecimal price;
+    private BigDecimal price=BigDecimal.ZERO;
 
 
     @NotEmpty(message = "Currency code must not be empty")

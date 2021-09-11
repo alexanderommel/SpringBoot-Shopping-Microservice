@@ -5,6 +5,7 @@ import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.CheckoutAttribute;
 import com.example.tongue.checkout.repositories.CheckoutRepository;
 import com.example.tongue.core.converters.CheckoutAttributeConverter;
+import com.example.tongue.locations.repositories.LocationRepository;
 import com.example.tongue.merchants.repositories.DiscountRepository;
 import com.example.tongue.merchants.repositories.ModifierRepository;
 import com.example.tongue.merchants.repositories.ProductRepository;
@@ -33,17 +34,20 @@ public class CheckoutWebService {
     private ProductRepository productRepository;
     private DiscountRepository discountRepository;
     private ModifierRepository modifierRepository;
+    private LocationRepository locationRepository;
 
     public CheckoutWebService(@Autowired CheckoutRepository checkoutRepository,
                               @Autowired StoreVariantRepository storeVariantRepository,
                               @Autowired ProductRepository productRepository,
                               @Autowired DiscountRepository discountRepository,
-                              @Autowired ModifierRepository modifierRepository){
+                              @Autowired ModifierRepository modifierRepository,
+                              @Autowired LocationRepository locationRepository){
         this.checkoutRepository = checkoutRepository;
         this.storeVariantRepository = storeVariantRepository;
         this.productRepository=productRepository;
         this.discountRepository=discountRepository;
         this.modifierRepository=modifierRepository;
+        this.locationRepository=locationRepository;
         this.requestChain = new CheckoutRequestChain(storeVariantRepository,
                 productRepository,
                 modifierRepository,
@@ -51,7 +55,9 @@ public class CheckoutWebService {
         this.updateChain = new CheckoutUpdateChain(storeVariantRepository,
                 productRepository,
                 discountRepository,
-                modifierRepository);
+                modifierRepository,
+                locationRepository,
+                checkoutRepository);
     }
 
 
@@ -86,14 +92,14 @@ public class CheckoutWebService {
     @PostMapping(value = "/checkout/update")
     public ResponseEntity<Map<String,Object>>
     update(HttpSession session, @RequestBody  String attribute){
-
-            CheckoutAttributeConverter converter = new CheckoutAttributeConverter();
-            CheckoutAttribute checkoutAttribute =
+        CheckoutAttributeConverter converter = new CheckoutAttributeConverter();
+        CheckoutAttribute checkoutAttribute =
                     (CheckoutAttribute) converter.convert(attribute,null,null);
-            Checkout checkout = this.updateChain.doFilter(checkoutAttribute,session);
-            Map<String,Object> response = new HashMap<>();
-            response.put("response",checkout);
-            return new ResponseEntity<>(response,HttpStatus.OK);
+        Checkout checkout = this.updateChain.doFilter(checkoutAttribute,session);
+        System.out.println("Test 2DD");
+        Map<String,Object> response = new HashMap<>();
+        response.put("response",checkout);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     //----------------------------------- PRIVATE METHODS ------------------------------------------------

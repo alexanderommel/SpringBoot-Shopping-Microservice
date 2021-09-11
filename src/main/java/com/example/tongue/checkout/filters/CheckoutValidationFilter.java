@@ -81,7 +81,7 @@ public class CheckoutValidationFilter implements CheckoutFilter {
     // Validate CheckoutAttribute
     // Validate Existence and Internal Rules
     private void validateCheckoutAttribute(CheckoutAttribute checkoutAttribute){
-        if (!hasCheckoutAttributeNested())
+        if (hasCheckoutAttributeNested())
             throw new NullPointerException("Checkout Attribute shouldn't be null for checkout attribute validation");
         if (!(checkoutAttribute ==null)){
             if (checkoutAttribute.getName()==CheckoutAttributeName.CART){
@@ -104,7 +104,7 @@ public class CheckoutValidationFilter implements CheckoutFilter {
                 if (items!=null){
                     for (LineItem item:items) {
                         // Product validation
-                        if (productRepository.existsById(item.getProduct().getId()))
+                        if (!productRepository.existsById(item.getProduct().getId()))
                             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                                     "No such product with id '"+item.getProduct().getId()+"'");
                         // Discount validation
@@ -124,6 +124,7 @@ public class CheckoutValidationFilter implements CheckoutFilter {
                         }
                         // Modifiers Validation
                         List<Modifier> modifiers = item.getModifiers();
+
                         if (modifiers!=null){
                             for (Modifier modifier: modifiers
                                  ) {

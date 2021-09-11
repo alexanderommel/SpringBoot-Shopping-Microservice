@@ -2,6 +2,8 @@ package com.example.tongue.checkout.filters;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.CheckoutAttribute;
+import com.example.tongue.checkout.repositories.CheckoutRepository;
+import com.example.tongue.locations.repositories.LocationRepository;
 import com.example.tongue.merchants.repositories.DiscountRepository;
 import com.example.tongue.merchants.repositories.ModifierRepository;
 import com.example.tongue.merchants.repositories.ProductRepository;
@@ -22,13 +24,22 @@ public class CheckoutUpdateChain {
     public CheckoutUpdateChain(StoreVariantRepository storeVariantRepository,
                                ProductRepository productRepository,
                                DiscountRepository discountRepository,
-                               ModifierRepository modifierRepository){
+                               ModifierRepository modifierRepository,
+                               LocationRepository locationRepository,
+                               CheckoutRepository checkoutRepository) {
+
         validationFilter = new CheckoutValidationFilter(storeVariantRepository,
                 productRepository,
                 discountRepository,
                 modifierRepository,
                 CheckoutValidationType.ATTRIBUTE);
-        persistenceFilter = new CheckoutPersistenceFilter(CheckoutPersistenceAction.UPDATE);
+        persistenceFilter = new CheckoutPersistenceFilter(CheckoutPersistenceAction.UPDATE,
+                storeVariantRepository,
+                locationRepository,
+                productRepository,
+                discountRepository,
+                modifierRepository,
+                checkoutRepository);
     }
 
     public Checkout doFilter(CheckoutAttribute attribute, HttpSession session){
