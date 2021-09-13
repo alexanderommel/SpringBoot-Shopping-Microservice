@@ -2,6 +2,7 @@ package com.example.tongue.core.genericdata;
 
 import com.example.tongue.locations.models.Location;
 import com.example.tongue.locations.repositories.LocationRepository;
+import com.example.tongue.merchants.enumerations.GroupModifierType;
 import com.example.tongue.merchants.enumerations.ProductStatus;
 import com.example.tongue.merchants.models.*;
 import com.example.tongue.merchants.repositories.*;
@@ -23,7 +24,9 @@ public class Store1DataGenerator {
                                                   StoreVariantRepository storeVariantRepository,
                                                   DiscountRepository discountRepository,
                                                   ProductImageRepository imageRepository,
-                                                  LocationRepository locationRepository){
+                                                  LocationRepository locationRepository,
+                                                  GroupModifierRepository groupModifierRepository,
+                                                  ModifierRepository modifierRepository){
 
         if(instance==null){
             instance = new Store1DataGenerator();
@@ -75,6 +78,21 @@ public class Store1DataGenerator {
 
             List<Product> productList = ProductsGenerator.createProducts(storeVariant,productRepository,
                     titles,descriptions,prices,statusList);
+
+            List<GroupModifierType> groupModifierTypes = new ArrayList<>();
+            groupModifierTypes.add(GroupModifierType.MANDATORY);
+            groupModifierTypes.add(GroupModifierType.OPTIONAL);
+            groupModifierTypes.add(GroupModifierType.OPTIONAL);
+            groupModifierTypes.add(GroupModifierType.OPTIONAL);
+            groupModifierTypes.add(GroupModifierType.OPTIONAL);
+            groupModifierTypes.add(GroupModifierType.OPTIONAL);
+            groupModifierTypes.add(GroupModifierType.OPTIONAL);
+
+            for (int i = 0; i < productList.size(); i++) {
+                ModifiersGenerator.generateGroupModifiers(productList.get(i),groupModifierTypes,
+                        groupModifierRepository,modifierRepository,i%4+1,storeVariant);
+            }
+
 
             String[] sources = {"source1.http","source2.http","source3.http","source4.http","source5.http",
                     "source6.http","source7.http"};

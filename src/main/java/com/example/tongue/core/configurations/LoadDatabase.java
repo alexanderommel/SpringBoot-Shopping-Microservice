@@ -31,7 +31,9 @@ public class LoadDatabase {
                                    StoreVariantRepository variantRepository,
                                    DiscountRepository discountRepository,
                                    StoreRepository storeRepository,
-                                   CheckoutRepository checkoutRepository) {
+                                   CheckoutRepository checkoutRepository,
+                                   GroupModifierRepository groupModifierRepository,
+                                   ModifierRepository modifierRepository) {
 
         return args -> {
             Store1DataGenerator.getInstance(repository1,
@@ -40,7 +42,9 @@ public class LoadDatabase {
                     variantRepository,
                     discountRepository,
                     repository2,
-                    locationRepository);
+                    locationRepository,
+                    groupModifierRepository,
+                    modifierRepository);
 
         };
     }

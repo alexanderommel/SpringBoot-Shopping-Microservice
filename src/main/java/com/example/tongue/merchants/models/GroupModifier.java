@@ -1,6 +1,8 @@
 package com.example.tongue.merchants.models;
 
 import com.example.tongue.merchants.enumerations.GroupModifierType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,9 +17,14 @@ public class GroupModifier {
     private Long id;
 
     @ManyToOne
+    @NotNull
+    @JsonIgnoreProperties({"status","tags","inventorId",
+            "originalPrice","adjustments","currency_code",
+            "price","type","title","handle","description","type"})
     private Product product;
 
     @ManyToOne
+    @JsonIgnore
     private StoreVariant storeVariant;
 
     @NotNull

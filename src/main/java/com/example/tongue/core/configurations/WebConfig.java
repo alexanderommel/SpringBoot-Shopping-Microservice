@@ -21,7 +21,6 @@ public class WebConfig implements WebMvcConfigurer {
     //}
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        System.out.println("ADDING CONVERTER");
         registry.addConverter(new CheckoutAttributeConverter());
     }
 
