@@ -25,5 +25,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     Page<Product> findAllByPrice(Double price, Pageable pageable);
     Page<Product> findAllByOriginalPrice(Pageable pageable, Double originalPrice);
     List<Product> findByIdIn(List<Long> ids);
+    Page<Product> findAllByStoreVariantId(Long id, Pageable pageable);
 
 }

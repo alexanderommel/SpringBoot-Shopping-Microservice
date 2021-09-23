@@ -1,6 +1,7 @@
 package com.example.tongue.merchants.models;
 
 import com.example.tongue.locations.models.Location;
+import com.example.tongue.merchants.enumerations.StoreVariantType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -38,6 +39,10 @@ public class StoreVariant {
 
     private String storeImageURL;
 
+    // Tongue Machine Learning server must provide the most probable
+    // classification on creation time
+    private StoreVariantType storeFoodType=StoreVariantType.CHICKEN;
+
     public Long getId() {
         return id;
     }
@@ -52,6 +57,14 @@ public class StoreVariant {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public StoreVariantType getStoreFoodType() {
+        return storeFoodType;
+    }
+
+    public void setStoreFoodType(StoreVariantType storeFoodType) {
+        this.storeFoodType = storeFoodType;
     }
 
     @JsonIgnore

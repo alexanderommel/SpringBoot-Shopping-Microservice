@@ -1,5 +1,6 @@
 package com.example.tongue.merchants.webservices;
 
+import com.example.tongue.core.utilities.RestControllerRoutines;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.models.ProductImage;
 import com.example.tongue.merchants.enumerations.ProductStatus;
@@ -178,6 +179,18 @@ public class ProductsRestController {
     /*
     Filtering by product fields ------------------------------------------------------------------------------------------ START
      */
+
+    @GetMapping(value = "/products", params = {"store_variant_id","page","size"})
+    public ResponseEntity<Map<String,Object>> findAllByStoreVariant(
+            @RequestParam Long store_variant_id,
+            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = "50", required = false) int size){
+
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Product> productPage = repository.findAllByStoreVariantId(store_variant_id,pageable);
+        return RestControllerRoutines.getResponseEntityByPageable(productPage,"products");
+
+    }
 
     @GetMapping(value = "/products", params = {"description","page","size"})
     public ResponseEntity<Map<String,Object>> findAllByDescription(@RequestParam String description,
