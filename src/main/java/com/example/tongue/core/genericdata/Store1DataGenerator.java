@@ -2,6 +2,7 @@ package com.example.tongue.core.genericdata;
 
 import com.example.tongue.locations.models.Location;
 import com.example.tongue.locations.repositories.LocationRepository;
+import com.example.tongue.merchants.enumerations.CollectionStatus;
 import com.example.tongue.merchants.enumerations.GroupModifierType;
 import com.example.tongue.merchants.enumerations.ProductStatus;
 import com.example.tongue.merchants.models.*;
@@ -26,7 +27,10 @@ public class Store1DataGenerator {
                                                   ProductImageRepository imageRepository,
                                                   LocationRepository locationRepository,
                                                   GroupModifierRepository groupModifierRepository,
-                                                  ModifierRepository modifierRepository){
+                                                  ModifierRepository modifierRepository,
+                                                  CollectionRepository collectionRepository,
+                                                  CollectionProductAllocationRepository
+                                                  collectionProductAllocationRepository){
 
         if(instance==null){
             instance = new Store1DataGenerator();
@@ -76,28 +80,56 @@ public class Store1DataGenerator {
                 statusList.add(ProductStatus.ACTIVE);
             }
 
-            List<Product> productList = ProductsGenerator.createProducts(storeVariant,productRepository,
-                    titles,descriptions,prices,statusList);
+            //COLLECTIONS
+            Collection collection1 = new Collection();
+            Collection collection2 = new Collection();
+            Collection collection3 = new Collection();
+            collection1.setStatus(CollectionStatus.ACTIVE);
+            collection1.setStoreVariant(storeVariant);
+            collection1.setTitle("Hamburgers");
+            collection2.setStatus(CollectionStatus.ACTIVE);
+            collection2.setStoreVariant(storeVariant);
+            collection3.setStatus(CollectionStatus.ACTIVE);
+            collection2.setTitle("Pizzas");
+            collection3.setTitle("Sushi");
+            collection3.setStoreVariant(storeVariant);
+            collection1 = collectionRepository.save(collection1);
+            collection2 = collectionRepository.save(collection2);
+            collection3 = collectionRepository.save(collection3);
+            List<Collection> collectionList = new ArrayList<>();
+            collectionList.add(collection1);
+            collectionList.add(collection2);
+            collectionList.add(collection3);
 
-            List<GroupModifierType> groupModifierTypes = new ArrayList<>();
-            groupModifierTypes.add(GroupModifierType.MANDATORY);
-            groupModifierTypes.add(GroupModifierType.OPTIONAL);
-            groupModifierTypes.add(GroupModifierType.OPTIONAL);
-            groupModifierTypes.add(GroupModifierType.OPTIONAL);
-            groupModifierTypes.add(GroupModifierType.OPTIONAL);
-            groupModifierTypes.add(GroupModifierType.OPTIONAL);
-            groupModifierTypes.add(GroupModifierType.OPTIONAL);
+            for (int j =0; j<3;j++){
 
-            for (int i = 0; i < productList.size(); i++) {
-                ModifiersGenerator.generateGroupModifiers(productList.get(i),groupModifierTypes,
-                        groupModifierRepository,modifierRepository,i%4+1,storeVariant);
+
+                List<Product> productList = ProductsGenerator.createProducts(storeVariant,productRepository,
+                        titles,descriptions,prices,statusList,collectionList.get(j),
+                        collectionProductAllocationRepository);
+
+                List<GroupModifierType> groupModifierTypes = new ArrayList<>();
+                groupModifierTypes.add(GroupModifierType.MANDATORY);
+                groupModifierTypes.add(GroupModifierType.OPTIONAL);
+                groupModifierTypes.add(GroupModifierType.OPTIONAL);
+                groupModifierTypes.add(GroupModifierType.OPTIONAL);
+                groupModifierTypes.add(GroupModifierType.OPTIONAL);
+                groupModifierTypes.add(GroupModifierType.OPTIONAL);
+                groupModifierTypes.add(GroupModifierType.OPTIONAL);
+
+                for (int i = 0; i < productList.size(); i++) {
+                    ModifiersGenerator.generateGroupModifiers(productList.get(i),groupModifierTypes,
+                            groupModifierRepository,modifierRepository,i%4+1,storeVariant);
+                }
+
+
+                String[] sources = {"source1.http","source2.http","source3.http","source4.http","source5.http",
+                        "source6.http","source7.http"};
+                List<ProductImage> productImages = ProductImagesGenerator.createImages(imageRepository,productList,sources);
+
+
+
             }
-
-
-            String[] sources = {"source1.http","source2.http","source3.http","source4.http","source5.http",
-                    "source6.http","source7.http"};
-            List<ProductImage> productImages = ProductImagesGenerator.createImages(imageRepository,productList,sources);
-
 
         }
 

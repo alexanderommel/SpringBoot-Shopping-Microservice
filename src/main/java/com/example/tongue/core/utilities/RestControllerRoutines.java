@@ -2,6 +2,7 @@ package com.example.tongue.core.utilities;
 
 import com.example.tongue.merchants.models.Product;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -27,4 +28,6 @@ public class RestControllerRoutines {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }

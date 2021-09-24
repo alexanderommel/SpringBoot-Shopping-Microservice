@@ -1,6 +1,7 @@
 package com.example.tongue.merchants.models;
 
 import com.example.tongue.merchants.enumerations.CollectionStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,11 @@ public class Collection {
     private Long id;
 
     @ManyToOne
+    @JsonIgnoreProperties({"location","representative","plan",
+    "representativePhone","postalCode","currency_code",
+    "allowCashPayments","enabledCurrencies","country_code",
+    "hasActiveDiscounts","name","store",
+    "storeFoodType","storeImageURL"})
     private StoreVariant storeVariant;
 
     @NotNull

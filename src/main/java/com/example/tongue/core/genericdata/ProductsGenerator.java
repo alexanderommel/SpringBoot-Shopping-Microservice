@@ -1,8 +1,11 @@
 package com.example.tongue.core.genericdata;
 
+import com.example.tongue.merchants.models.Collection;
+import com.example.tongue.merchants.models.CollectionProductAllocation;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.enumerations.ProductStatus;
 import com.example.tongue.merchants.models.StoreVariant;
+import com.example.tongue.merchants.repositories.CollectionProductAllocationRepository;
 import com.example.tongue.merchants.repositories.ProductRepository;
 
 import java.math.BigDecimal;
@@ -15,7 +18,9 @@ public class ProductsGenerator {
                                                     String[] titles,
                                                     String[] descriptions,
                                                     BigDecimal[] prices,
-                                                    List<ProductStatus> statusList){
+                                                    List<ProductStatus> statusList,
+                                                    Collection collection,
+                                                    CollectionProductAllocationRepository repository){
 
 
         ArrayList<Product> products = new ArrayList<>();
@@ -29,6 +34,10 @@ public class ProductsGenerator {
             product.setOriginalPrice(prices[i]);
             product.setStoreVariant(storeVariant);
             product = productRepository.save(product);
+            CollectionProductAllocation allocation = new CollectionProductAllocation();
+            allocation.setProduct(product);
+            allocation.setCollection(collection);
+            repository.save(allocation);
             products.add(product);
         }
         return products;

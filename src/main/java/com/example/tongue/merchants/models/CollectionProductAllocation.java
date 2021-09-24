@@ -1,6 +1,7 @@
 package com.example.tongue.merchants.models;
 
 import com.example.tongue.customers.models.Customer;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,10 +18,13 @@ public class CollectionProductAllocation {
 
     @NotNull
     @ManyToOne
+    @JsonIgnoreProperties({"storeVariant","title","tag",
+    "imageUrl","status"})
     private Collection collection;
 
     @NotNull
     @ManyToOne
+    @JsonIgnoreProperties({"adjustments","originalPrice","inventorId"})
     private Product product;
 
     // New products are allocated on the top

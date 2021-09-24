@@ -33,7 +33,10 @@ public class LoadDatabase {
                                    StoreRepository storeRepository,
                                    CheckoutRepository checkoutRepository,
                                    GroupModifierRepository groupModifierRepository,
-                                   ModifierRepository modifierRepository) {
+                                   ModifierRepository modifierRepository,
+                                   CollectionRepository collectionRepository,
+                                   CollectionProductAllocationRepository
+                                   collectionProductAllocationRepository) {
 
         return args -> {
             Store1DataGenerator.getInstance(repository1,
@@ -44,7 +47,9 @@ public class LoadDatabase {
                     repository2,
                     locationRepository,
                     groupModifierRepository,
-                    modifierRepository);
+                    modifierRepository,
+                    collectionRepository,
+                    collectionProductAllocationRepository);
 
         };
     }
