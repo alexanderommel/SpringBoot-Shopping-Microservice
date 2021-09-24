@@ -1,6 +1,7 @@
 package com.example.tongue.merchants.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.URL;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +56,10 @@ public class ProductImage {
     }
 
     @NotNull
-    @JsonIgnore
+    //@JsonIgnore
+    @JsonIgnoreProperties({"status","tags","inventorId",
+            "originalPrice","adjustments","currency_code",
+            "price","type","title","handle","description","type"})
     public Product getProduct() {
         return product;
     }

@@ -9,12 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController()
 public class ProductImagesRestController {
@@ -27,21 +25,28 @@ public class ProductImagesRestController {
         this.productRepository=productRepository;
     }
 
-    @GetMapping("/productimages")
-    public ResponseEntity<Map<String,Object>> all(){
+    @RequestMapping(value = "/product_images", method = RequestMethod.GET)
+    public ResponseEntity<Map<String,Object>> getImagesSet(
+            @RequestParam("productIds") Long[] productIds){
+
         try {
-
-            List<ProductImage> imageList = repository.findAll();
-            if (imageList.isEmpty()){
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
             Map<String,Object> response = new HashMap<>();
-            response.put("images",imageList);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            List<List<ProductImage>> set = new ArrayList<>();
+            for (int i = 0; i < productIds.length; i++){
+                List<ProductImage> images = repository.findAllByProduct_Id(productIds[i]);
+                if(images.isEmpty()){
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "No associated images with product id "+productIds[i]);
+                }
+                set.add(images);
+            }
+            response.put("images",set);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Service is down");
         }
+
     }
 
     @GetMapping(value = "/productimages/{id}")

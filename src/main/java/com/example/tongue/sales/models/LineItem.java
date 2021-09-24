@@ -94,6 +94,11 @@ public class LineItem {
     }
 
     @JsonIgnore
+    public void addModifier(Modifier modifier){
+        modifiers.add(modifier);
+    }
+
+    @JsonIgnore
     public void ignoreDiscountAndUpdatePrice(){
         BigDecimal modifiersTotal = getModifiersTotal();
         BigDecimal unitPrice = product.getPrice().add(modifiersTotal);

@@ -15,6 +15,10 @@ public class ProductImagesGenerator {
 
         ArrayList<ProductImage> images = new ArrayList<>();
         for (int i=0;i< productList.size();i++){
+            //if (i>=2){
+              //  continue;
+            //}
+            System.out.println("Creating image "+i);
             ProductImage image = new ProductImage();
             image.setSource(sources[i]);
             image.setPriority(1);

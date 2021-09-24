@@ -1,6 +1,7 @@
 package com.example.tongue.merchants.webservices;
 
 import com.example.tongue.merchants.models.GroupModifier;
+import com.example.tongue.merchants.models.Modifier;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.repositories.GroupModifierRepository;
 import com.example.tongue.merchants.repositories.ModifierRepository;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,10 +26,13 @@ public class GroupModifierRestController {
 
     // Fields
     private GroupModifierRepository groupModifierRepository;
+    private ModifierRepository modifierRepository;
 
     // Constructor
-    public GroupModifierRestController(@Autowired GroupModifierRepository groupModifierRepository) {
+    public GroupModifierRestController(@Autowired GroupModifierRepository groupModifierRepository,
+                                       @Autowired ModifierRepository modifierRepository) {
         this.groupModifierRepository = groupModifierRepository;
+        this.modifierRepository = modifierRepository;
     }
 
     // Methods
@@ -54,6 +59,22 @@ public class GroupModifierRestController {
             return new ResponseEntity<>(response,HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/group_modifiers/{id}/modifiers")
+    public ResponseEntity<Map<String,Object>> getModifiersByGroup(@PathVariable Long id){
+        try {
+            List<Modifier> modifiers = modifierRepository.findAllByGroupModifier_Id(id);
+            if (modifiers.isEmpty() || modifiers==null){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "No modifiers associated with group_modifier id: "+id);
+            }
+            Map<String,Object> response = new HashMap<>();
+            response.put("modifiers",modifiers);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
