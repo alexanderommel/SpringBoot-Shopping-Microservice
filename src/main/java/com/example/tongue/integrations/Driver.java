@@ -1,12 +1,11 @@
-package com.example.tongue.payments.models;
+package com.example.tongue.integrations;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Transaction {
-    @Id
-    @GeneratedValue
+public class Driver {
+    @Id @GeneratedValue
     private Long id;
 }

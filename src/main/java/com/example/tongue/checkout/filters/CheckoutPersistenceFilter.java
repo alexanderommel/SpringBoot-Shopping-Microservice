@@ -8,8 +8,7 @@ import com.example.tongue.merchants.repositories.DiscountRepository;
 import com.example.tongue.merchants.repositories.ModifierRepository;
 import com.example.tongue.merchants.repositories.ProductRepository;
 import com.example.tongue.merchants.repositories.StoreVariantRepository;
-import com.example.tongue.sales.models.LineItem;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.tongue.shopping.models.LineItem;
 
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;

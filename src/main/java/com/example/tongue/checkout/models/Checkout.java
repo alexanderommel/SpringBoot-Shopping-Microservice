@@ -3,8 +3,8 @@ package com.example.tongue.checkout.models;
 import com.example.tongue.customers.models.Customer;
 import com.example.tongue.locations.models.Location;
 import com.example.tongue.merchants.models.StoreVariant;
-import com.example.tongue.payments.models.Payment;
-import com.example.tongue.sales.models.Cart;
+import com.example.tongue.integrations.Payment;
+import com.example.tongue.shopping.models.Cart;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

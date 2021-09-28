@@ -3,10 +3,9 @@ package com.example.tongue.orders;
 import com.example.tongue.merchants.enumerations.ValueType;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.Product;
-import com.example.tongue.sales.models.Cart;
-import com.example.tongue.sales.models.LineItem;
+import com.example.tongue.shopping.models.Cart;
+import com.example.tongue.shopping.models.LineItem;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.core.parameters.P;
 
 import java.math.BigDecimal;
 

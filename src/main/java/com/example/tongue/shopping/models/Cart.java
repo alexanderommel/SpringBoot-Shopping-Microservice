@@ -1,6 +1,5 @@
-package com.example.tongue.sales.models;
+package com.example.tongue.shopping.models;
 
-import com.example.tongue.merchants.enumerations.DiscountType;
 import com.example.tongue.merchants.enumerations.ValueType;
 import com.example.tongue.merchants.models.Discount;
 import com.fasterxml.jackson.annotation.JsonIgnore;

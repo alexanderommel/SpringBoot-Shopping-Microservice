@@ -1,11 +1,12 @@
-package com.example.tongue.drivers;
+package com.example.tongue.integrations;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Driver {
-    @Id @GeneratedValue
+public class Payment {
+    @Id
+    @GeneratedValue
     private Long id;
 }

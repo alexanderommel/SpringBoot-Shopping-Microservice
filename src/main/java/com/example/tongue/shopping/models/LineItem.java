@@ -1,4 +1,4 @@
-package com.example.tongue.sales.models;
+package com.example.tongue.shopping.models;
 
 import com.example.tongue.merchants.enumerations.DiscountValueType;
 import com.example.tongue.merchants.enumerations.ValueType;

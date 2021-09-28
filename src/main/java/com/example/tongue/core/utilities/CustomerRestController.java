@@ -1,4 +1,4 @@
-package com.example.tongue.controllers;
+package com.example.tongue.core.utilities;
 
 import com.example.tongue.core.authentication.Role;
 import com.example.tongue.core.authentication.User;

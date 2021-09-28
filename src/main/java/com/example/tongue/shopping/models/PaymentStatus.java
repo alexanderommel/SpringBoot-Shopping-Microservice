@@ -1,4 +1,4 @@
-package com.example.tongue.sales.models;
+package com.example.tongue.shopping.models;
 
 public enum PaymentStatus {
 

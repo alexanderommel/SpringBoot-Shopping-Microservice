@@ -4,8 +4,8 @@ import com.example.tongue.locations.models.Location;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.Modifier;
 import com.example.tongue.merchants.models.Product;
-import com.example.tongue.sales.models.Cart;
-import com.example.tongue.sales.models.LineItem;
+import com.example.tongue.shopping.models.Cart;
+import com.example.tongue.shopping.models.LineItem;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 

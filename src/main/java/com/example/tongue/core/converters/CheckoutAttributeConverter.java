@@ -4,7 +4,7 @@ import com.example.tongue.core.exceptions.JsonBadFormatException;
 import com.example.tongue.locations.models.Location;
 import com.example.tongue.checkout.models.CheckoutAttribute;
 import com.example.tongue.checkout.models.CheckoutAttributeName;
-import com.example.tongue.sales.models.Cart;
+import com.example.tongue.shopping.models.Cart;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.convert.TypeDescriptor;

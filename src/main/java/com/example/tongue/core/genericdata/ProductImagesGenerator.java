@@ -18,7 +18,6 @@ public class ProductImagesGenerator {
             //if (i>=2){
               //  continue;
             //}
-            System.out.println("Creating image "+i);
             ProductImage image = new ProductImage();
             image.setSource(sources[i]);
             image.setPriority(1);

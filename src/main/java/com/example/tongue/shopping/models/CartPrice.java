@@ -1,4 +1,4 @@
-package com.example.tongue.sales.models;
+package com.example.tongue.shopping.models;
 
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
