@@ -7,18 +7,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    //@Bean
-    //public CheckoutAttributeConverter converter(){
-      //  return new CheckoutAttributeConverter();
-    //}
-
-    //@Autowired
-    //private CheckoutAttributeConverter converter;
-
-    //@Bean
-    //public LocalValidatorFactoryBean factoryBean(){
-     //   return new LocalValidatorFactoryBean();
-    //}
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new CheckoutAttributeConverter());

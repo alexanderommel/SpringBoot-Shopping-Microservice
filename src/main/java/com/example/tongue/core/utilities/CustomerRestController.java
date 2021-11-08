@@ -19,6 +19,12 @@ public class CustomerRestController {
     private UserRepository repository;
     private RoleRepository roleRepository;
 
+    /**
+     * ---------------------------- CONTROLLER JUST FOR TESTING PURPOSES ---------------------
+     * @param repository
+     * @param roleRepository
+     */
+
     public CustomerRestController(@Autowired UserRepository repository,@Autowired RoleRepository roleRepository){
         this.repository=repository;
         this.roleRepository=roleRepository;

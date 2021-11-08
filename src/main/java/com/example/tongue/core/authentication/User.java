@@ -7,17 +7,17 @@ import java.util.Set;
 @Entity
 @Table(name="users")
 public class User {
-    private @Id @GeneratedValue Long id;
+    private @Id String id;
     private String username;
     private String password;
     private boolean active;
     private @ManyToMany(fetch = FetchType.EAGER) Set<Role> roles = new HashSet<>();
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
