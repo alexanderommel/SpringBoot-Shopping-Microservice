@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RestController
-public class CustomerRestController {
+public class CustomerTestRestController {
 
     private UserRepository repository;
     private RoleRepository roleRepository;
@@ -25,7 +25,7 @@ public class CustomerRestController {
      * @param roleRepository
      */
 
-    public CustomerRestController(@Autowired UserRepository repository,@Autowired RoleRepository roleRepository){
+    public CustomerTestRestController(@Autowired UserRepository repository, @Autowired RoleRepository roleRepository){
         this.repository=repository;
         this.roleRepository=roleRepository;
     }

@@ -88,6 +88,12 @@ public class CheckoutWebService {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/checkout/complete")
+    public ResponseEntity<Map<String,Object>> complete(HttpSession session){
+        Map<String,Object> response = new HashMap<>();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @PostMapping(value = "/checkout/update")
     public ResponseEntity<Map<String,Object>>

@@ -32,9 +32,11 @@ public class CustomerConfigSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/customer/**")
-                .authorizeRequests()
-                .antMatchers("/customer/register").permitAll()
+        http.antMatcher("/customers/**")
+                .authorizeRequests().antMatchers("(customers/register")
+                .permitAll();
+                /*.authorizeRequests()
+                .antMatchers("/customers/register").permitAll()
                 .anyRequest().hasAnyAuthority("USER","ADMIN")
                 //.anyRequest().authenticated()
                 .and()
@@ -44,6 +46,8 @@ public class CustomerConfigSecurity extends WebSecurityConfigurerAdapter {
                 .logout()
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
+
+                 */
     }
 
 

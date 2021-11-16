@@ -27,6 +27,11 @@ public class CustomerRestController {
         this.customerRepository=customerRepository;
     }
 
+    @GetMapping("customers/register")
+    public String hello(){
+        return "Hello";
+    }
+
     @GetMapping("/customers/login")
     public ResponseEntity<Map<String,Object>> login(Principal principal){
         Map<String,Object> response = new HashMap<>();
