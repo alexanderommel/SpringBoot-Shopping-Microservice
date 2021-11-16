@@ -35,6 +35,26 @@ This service provides a set of endpoints to be accessed from a web page or mobil
 
 For Merchants a web page built in React is going to be used to contact Shopping Service and publish their products.
 
+## Installation (Docker)
+
+Clone the repository:
+
+```bash
+gh repo clone alexanderommel/ShoppingService-Tongue
+```
+
+Move to the root directory of the project, and run the following line:
+
+```bash
+docker-compose up 
+```
+
+If you modify the source code, use the following command to rebuild the .jar:
+
+```bash
+maven clean package
+```
+
 ## Contributing
 Personal project,but open to any help 💤
 
