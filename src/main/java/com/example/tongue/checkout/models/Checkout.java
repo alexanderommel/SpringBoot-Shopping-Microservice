@@ -57,6 +57,16 @@ public class Checkout {
 
     private String currency_code="USD";
 
+    private Double estimatedDeliveryTime=0.0;
+
+    public Double getEstimatedDeliveryTime() {
+        return estimatedDeliveryTime;
+    }
+
+    public void setEstimatedDeliveryTime(Double estimatedDeliveryTime) {
+        this.estimatedDeliveryTime = estimatedDeliveryTime;
+    }
+
     public Long getId() {
         return id;
     }

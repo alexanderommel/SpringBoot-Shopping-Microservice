@@ -2,6 +2,9 @@ package com.example.tongue.checkout.filters;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.repositories.CheckoutRepository;
+import com.example.tongue.integrations.shipping.ShippingBroker;
+import com.example.tongue.integrations.shipping.ShippingServiceBroker;
+import com.example.tongue.integrations.shipping.ShippingSummary;
 import com.example.tongue.locations.repositories.LocationRepository;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.repositories.DiscountRepository;
@@ -9,6 +12,9 @@ import com.example.tongue.merchants.repositories.ModifierRepository;
 import com.example.tongue.merchants.repositories.ProductRepository;
 import com.example.tongue.merchants.repositories.StoreVariantRepository;
 import com.example.tongue.shopping.models.LineItem;
+import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
@@ -52,19 +58,21 @@ public class CheckoutPersistenceFilter implements CheckoutFilter {
     @Override
     public Checkout doFilter(Checkout checkout, HttpSession session) {
         if (persistenceAction==CheckoutPersistenceAction.UPDATE){
-            return updateCheckoutInternal(checkout);
+            return updateCheckoutOnSession(checkout);
         }
 
         return null;
     }
 
-    private Checkout updateCheckoutInternal(Checkout checkout){
+
+    private Checkout updateCheckoutOnSession(Checkout checkout){
         // Update Shipping costs  by using Destination location and Store Variant location
-        // This uses Shipping API to compute the total amount
         // First implementation doesn't support shipping discounts
-        BigDecimal shippingRate = BigDecimal.valueOf(2.25); // temp
-        checkout.getPrice().setShippingTotal(shippingRate);
-        checkout.getPrice().setShippingSubtotal(shippingRate);
+        ShippingSummary summary = getShippingSummary(checkout);
+        checkout.getPrice().setShippingTotal(summary.getFee());
+        // Since discounts are ignored, the final shipping price is the same
+        checkout.getPrice().setShippingSubtotal(summary.getFee());
+        checkout.setEstimatedDeliveryTime(summary.getDeliveryTime());
 
         List<Product> productList = new ArrayList<>();
         for (int i = 0; i<checkout.getCart().getItems().size(); i++){
@@ -79,4 +87,14 @@ public class CheckoutPersistenceFilter implements CheckoutFilter {
         // Cart price update is done by internal cart pricing update
         return checkout;
     }
+
+    private ShippingSummary getShippingSummary(Checkout checkout){
+        ShippingBroker broker = new ShippingServiceBroker();
+        if (broker==null){
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                    "Existing problems on Shipping Service");
+        }
+        return broker.getDeliverySummary(checkout.getOrigin(), checkout.getDestination());
+    }
+
 }
