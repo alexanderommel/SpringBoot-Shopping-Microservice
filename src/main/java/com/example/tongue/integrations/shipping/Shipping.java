@@ -16,6 +16,7 @@ public class Shipping {
     private String clientDomain;
     private Long artifactId;
     private String securityCode;
+    // Quantity that the driver must pay for the food
     private BigDecimal totalAmount;
     private String authorizationToken;
     private String customerGeolocationToken;
