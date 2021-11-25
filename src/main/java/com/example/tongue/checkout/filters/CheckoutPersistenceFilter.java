@@ -94,7 +94,7 @@ public class CheckoutPersistenceFilter implements CheckoutFilter {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "Existing problems on Shipping Service");
         }
-        return broker.getDeliverySummary(checkout.getOrigin(), checkout.getDestination());
+        return broker.requestShippingSummary(checkout.getOrigin(), checkout.getDestination());
     }
 
 }

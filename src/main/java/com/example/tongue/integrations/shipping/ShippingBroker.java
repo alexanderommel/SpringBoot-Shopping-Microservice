@@ -7,7 +7,7 @@ public interface ShippingBroker {
 
     // If something fails, a null object must be returned
     public Driver requestDriver(Order order);
-    public ShippingSummary getDeliverySummary(Location origin,Location destination);
+    public ShippingSummary requestShippingSummary(Location origin,Location destination);
     public ShippingServiceError getErrors();
 
 }

@@ -3,6 +3,7 @@ package com.example.tongue.checkout.webservices;
 import com.example.tongue.checkout.filters.*;
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.CheckoutAttribute;
+import com.example.tongue.checkout.models.CompletionResponse;
 import com.example.tongue.checkout.repositories.CheckoutRepository;
 import com.example.tongue.core.converters.CheckoutAttributeConverter;
 import com.example.tongue.locations.repositories.LocationRepository;
@@ -35,18 +36,22 @@ public class CheckoutWebService {
     private DiscountRepository discountRepository;
     private ModifierRepository modifierRepository;
     private LocationRepository locationRepository;
+    private CheckoutCompletionFlow completionFlow;
 
     public CheckoutWebService(@Autowired CheckoutRepository checkoutRepository,
                               @Autowired StoreVariantRepository storeVariantRepository,
                               @Autowired ProductRepository productRepository,
                               @Autowired DiscountRepository discountRepository,
                               @Autowired ModifierRepository modifierRepository,
-                              @Autowired LocationRepository locationRepository){
+                              @Autowired LocationRepository locationRepository,
+                              @Autowired CheckoutCompletionFlow completionFlow){
+
         this.checkoutRepository = checkoutRepository;
         this.storeVariantRepository = storeVariantRepository;
         this.productRepository=productRepository;
         this.discountRepository=discountRepository;
         this.modifierRepository=modifierRepository;
+        this.completionFlow=completionFlow;
         this.locationRepository=locationRepository;
         this.requestChain = new CheckoutRequestChain(storeVariantRepository,
                 productRepository,
@@ -91,6 +96,7 @@ public class CheckoutWebService {
     @GetMapping("/checkout/complete")
     public ResponseEntity<Map<String,Object>> complete(HttpSession session){
         Map<String,Object> response = new HashMap<>();
+        CompletionResponse completionResponse = completionFlow.complete(session);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

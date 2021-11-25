@@ -51,7 +51,7 @@ public class ShippingServiceBroker implements ShippingBroker{
     }
 
     @Override
-    public ShippingSummary getDeliverySummary(Location origin, Location destination) {
+    public ShippingSummary requestShippingSummary(Location origin, Location destination) {
         try{
             ShippingSummary summary = restTemplate.getForObject(
                     ShippingServiceInformer.shippingSummaryUrl,
