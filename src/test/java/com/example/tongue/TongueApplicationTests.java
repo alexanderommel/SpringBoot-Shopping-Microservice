@@ -17,12 +17,12 @@ class TongueApplicationTests {
     }
     @Test
     void contextLoads() {
-        DiscountTests tests = new DiscountTests();
+        //DiscountTests tests = new DiscountTests();
         //tests.testDiscount2();
-        DateTests dateTests = new DateTests(repository);
+        //DateTests dateTests = new DateTests(repository);
         //dateTests.DiscountDatesTest();
-        RegexTest regexTest = new RegexTest();
-        regexTest.testProductRegex();
+        //RegexTest regexTest = new RegexTest();
+        //regexTest.testProductRegex();
     }
 
 }

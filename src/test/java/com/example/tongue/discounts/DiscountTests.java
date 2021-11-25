@@ -17,6 +17,8 @@ public class DiscountTests {
         System.out.println(hola);
     }
 
+    /*
+
     public void testDiscount1(){
         ArrayList<Product> cart = (ArrayList<Product>) buildCart();
         Discount discount = new Discount();
@@ -99,5 +101,7 @@ public class DiscountTests {
         cart.add(product5);
         return cart;
     }
+
+     */
 
 }

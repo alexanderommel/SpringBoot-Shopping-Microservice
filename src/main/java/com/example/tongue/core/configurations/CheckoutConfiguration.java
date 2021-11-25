@@ -2,6 +2,7 @@ package com.example.tongue.core.configurations;
 
 import com.example.tongue.checkout.filters.CheckoutCompletionFlow;
 import com.example.tongue.checkout.filters.CheckoutSession;
+import com.example.tongue.checkout.filters.CheckoutUpgradeFlow;
 import com.example.tongue.checkout.filters.CheckoutValidation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,5 +24,8 @@ public class CheckoutConfiguration {
     public CheckoutCompletionFlow completionFlow(){
         return new CheckoutCompletionFlow();
     }
+
+    @Bean
+    public CheckoutUpgradeFlow upgradeFlow(){ return new CheckoutUpgradeFlow();}
 
 }
