@@ -1,6 +1,8 @@
 package com.example.tongue.merchants.models;
 
 import com.example.tongue.merchants.enumerations.*;
+import com.example.tongue.shopping.models.Cart;
+import com.example.tongue.shopping.models.LineItem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.Range;
@@ -309,11 +311,11 @@ public class Discount {
     //METHODS
 
     @JsonIgnore
-    public Boolean validForCart(Discount discount,List<Product> cart){
+    public Boolean validForCart(Cart cart){
         /*
         Value Subtotal Condition
         */
-        ValueSubtotalCondition subtotalCondition = discount.getValueSubtotalCondition();
+        ValueSubtotalCondition subtotalCondition = this.getValueSubtotalCondition();
         if (subtotalCondition!=null){
             if (!subtotalCondition.isAccomplishedOn(cart)){
                 return false;
@@ -322,10 +324,10 @@ public class Discount {
         /*
         Entitled validation for every product
          */
-        if (discount.getDiscountScope()==DiscountScope.SUBTOTAL){
-            for (Product product:
-                    cart) {
-                if (!validForProduct(discount,product)){
+        if (this.getDiscountScope()==DiscountScope.SUBTOTAL){
+            for (LineItem lineItem:
+                    cart.getItems()) {
+                if (!validForProduct(lineItem.getProduct())){
                     return false;
                 }
             }
@@ -334,22 +336,22 @@ public class Discount {
     }
 
     @JsonIgnore
-    public Boolean validForProduct(Discount discount,Product product){
-        if (discount.getProductsScope()==ProductsScope.ENTITLED_ONLY){
-            List<Product> entitled = discount.getEntitledProducts();
+    public Boolean validForProduct(Product product){
+        if (this.getProductsScope()==ProductsScope.ENTITLED_ONLY){
+            List<Product> entitled = this.getEntitledProducts();
             if (!entitled.contains(product)){
                 return false;
             }
         }
-        if (discount.getProductsScope()==ProductsScope.ALL){
-            List<Product> excluded = discount.getExcludedProducts();
+        if (this.getProductsScope()==ProductsScope.ALL){
+            List<Product> excluded = this.getExcludedProducts();
             if (excluded!=null){
                 if (excluded.contains(product)){
                     return false;
                 }
             }
         }
-        LineItemPriceCondition condition = discount.getLineItemPriceCondition();
+        LineItemPriceCondition condition = this.getLineItemPriceCondition();
         if (condition!=null){
             if (!condition.accomplishedBy(product)){
                 return false;
