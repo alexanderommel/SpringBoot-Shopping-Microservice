@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 public class CartUnitTest {
     @Test
-    public void testUpdatePriceWithGlobalDiscount(){
+    public void shouldUpdatePriceSuccessfullyWhenCartLevelDiscountIsProvided(){
         Cart cart = new Cart();
         Discount discount = new Discount();
         discount.setValueType(ValueType.FIXED_AMOUNT);
@@ -38,15 +38,14 @@ public class CartUnitTest {
         cart.addItem(item1);
         cart.addItem(item2);
         cart.addItem(item3);
-        // TEST
-        System.out.println("Testing Cart updatePrice() method when discount is provided at cart level");
+        // Method test
         cart.updatePrice();
         System.out.println("Cart final price is: "+cart.getPrice().getFinalPrice());
         assert 105.0 == cart.getPrice().getFinalPrice().doubleValue(): "Test failure";
 
     }
     @Test
-    public void testUpdatePriceWithLineDiscount(){
+    public void shouldUpdatePriceSuccessfullyWhenCartLevelDiscountIsNotProvided(){
         Cart cart = new Cart();
         // Products
         Product product1 = new Product();
@@ -78,7 +77,6 @@ public class CartUnitTest {
         cart.addItem(item2);
         cart.addItem(item3);
         // TEST
-        System.out.println("Testing Cart updatePrice() method when discount is not provided at cart level");
         cart.updatePrice();
         System.out.println("Cart final price is: "+cart.getPrice().getFinalPrice());
         assert 94.0 == cart.getPrice().getFinalPrice().doubleValue(): "Test failure";
