@@ -1,7 +1,7 @@
 package com.example.tongue.checkout.filters;
 
 import com.example.tongue.checkout.models.Checkout;
-import com.example.tongue.checkout.models.CompletionResponse;
+import com.example.tongue.checkout.models.FlowMessage;
 import com.example.tongue.checkout.models.ValidationResponse;
 import com.example.tongue.checkout.repositories.CheckoutRepository;
 import com.example.tongue.shopping.models.Order;
@@ -26,25 +26,31 @@ public class CheckoutCompletionFlow {
     private OrderRepository orderRepository;
 
 
-    public CompletionResponse complete(HttpSession httpSession){
-        CompletionResponse response = new CompletionResponse();
+    public FlowMessage run(HttpSession httpSession){
+        FlowMessage response = new FlowMessage();
+        response.setSolved(false);
         Checkout checkout = checkoutSession.get(httpSession);
+        if (checkout==null){
+            response.setErrorMessage("You must create a Checkout first");
+            return response;
+        }
         ValidationResponse validationResponse =checkoutValidation.hardValidation(checkout);
         if (!validationResponse.isSolved()){
-            response.setSolved(false);
             response.setErrorMessage(validationResponse.getErrorMessage());
             return response;
         }
         checkout = persistCheckout(checkout,httpSession);
-        response.setCheckout(checkout);
+        checkoutSession.delete(httpSession);
+        response.setAttribute(checkout,"checkout");
         Order order = createOrderFromCheckout(checkout);
-        response.setOrder(order);
+        response.setAttribute(order,"order");
         response.setSolved(true);
         return response;
     }
 
     private Checkout persistCheckout(Checkout checkout,HttpSession httpSession){
         checkout.setFinishedAt(Instant.now());
+        // Add principal to checkout
         Checkout checkout1 = checkoutRepository.save(checkout);
         checkoutSession.save(checkout,httpSession);
         return checkout1;

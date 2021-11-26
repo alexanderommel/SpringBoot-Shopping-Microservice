@@ -2,12 +2,26 @@ package com.example.tongue.checkout.models;
 
 import com.example.tongue.shopping.models.Order;
 
-public class CompletionResponse {
+import java.util.HashMap;
+import java.util.Map;
+
+public class FlowMessage {
 
     private String errorMessage;
-    private Order order;
-    private Checkout checkout;
     private Boolean solved;
+    private Map<String,Object> attributes;
+
+    public FlowMessage(){
+        attributes = new HashMap<>();
+    }
+
+    public void setAttribute(Object attribute,String key){
+        attributes.put(key,attribute);
+    }
+
+    public Object getAttribute(String key){
+        return attributes.get(key);
+    }
 
     public Boolean isSolved(){
         return solved;
@@ -25,19 +39,4 @@ public class CompletionResponse {
         this.errorMessage = errorMessage;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public Checkout getCheckout() {
-        return checkout;
-    }
-
-    public void setCheckout(Checkout checkout) {
-        this.checkout = checkout;
-    }
 }

@@ -5,6 +5,13 @@ public class CheckoutAttribute {
     private Object attribute;
     private CheckoutAttributeName name;
 
+    public CheckoutAttribute(){}
+
+    public CheckoutAttribute(Object attribute,CheckoutAttributeName name){
+        this.attribute=attribute;
+        this.name=name;
+    }
+
     public Object getAttribute() {
         return attribute;
     }
