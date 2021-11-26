@@ -31,7 +31,24 @@ public class CheckoutValidation {
     private ModifierRepository modifierRepository;
 
     public ValidationResponse hardValidation(Checkout checkout){
+        ValidationResponse response;
+        response = validateAttributes(checkout);
+        return response;
+    }
+
+    private ValidationResponse validateAttributes(Checkout checkout){
         ValidationResponse response = new ValidationResponse();
+        response.setSolved(false);
+        Cart cart = checkout.getCart();
+        Location destination = checkout.getDestination();
+        Location origin = checkout.getOrigin();
+        response = attributeValidation(new CheckoutAttribute(cart,CheckoutAttributeName.CART));
+        if (!response.isSolved())
+            return response;
+        response = attributeValidation(new CheckoutAttribute(destination,CheckoutAttributeName.DESTINATION));
+        if (!response.isSolved())
+            return response;
+        response = attributeValidation(new CheckoutAttribute(origin,CheckoutAttributeName.ORIGIN));
         return response;
     }
 
@@ -60,8 +77,16 @@ public class CheckoutValidation {
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
         Location origin = checkout.getOrigin();
+
         if (origin==null){
             response.setErrorMessage("Origin location object is mandatory");
+            return response;
+        }
+
+        Float latitude = origin.getLatitude();
+        Float longitude = origin.getLongitude();
+        if(latitude==null || longitude==null){
+            response.setErrorMessage("Origin location attributes must be populated");
             return response;
         }
 
@@ -152,6 +177,7 @@ public class CheckoutValidation {
                         response.setErrorMessage("Product level discount is not valid");
                         return response;
                     }
+
                 }
                 // Modifiers Validation
                 if (modifiers != null) {
