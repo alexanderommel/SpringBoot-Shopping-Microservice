@@ -30,6 +30,12 @@ public class LineItemPriceCondition {
         return true;
     }
     public Boolean accomplishedBy(Product product){
+
+        if (product.getPrice()==null)
+            return false;
+        if (BigDecimal.valueOf(1).compareTo(product.getPrice())!=-1)
+            return false;
+
         if (leq!=null){
             int conditional_answer = product.getPrice().compareTo(leq);
             if(conditional_answer==1){
