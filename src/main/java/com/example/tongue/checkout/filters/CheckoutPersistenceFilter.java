@@ -68,11 +68,6 @@ public class CheckoutPersistenceFilter implements CheckoutFilter {
     private Checkout updateCheckoutOnSession(Checkout checkout){
         // Update Shipping costs  by using Destination location and Store Variant location
         // First implementation doesn't support shipping discounts
-        ShippingSummary summary = getShippingSummary(checkout);
-        checkout.getPrice().setShippingTotal(summary.getFee());
-        // Since discounts are ignored, the final shipping price is the same
-        checkout.getPrice().setShippingSubtotal(summary.getFee());
-        checkout.setEstimatedDeliveryTime(summary.getDeliveryTime());
 
         List<Product> productList = new ArrayList<>();
         for (int i = 0; i<checkout.getCart().getItems().size(); i++){
@@ -88,6 +83,8 @@ public class CheckoutPersistenceFilter implements CheckoutFilter {
         return checkout;
     }
 
+
+    /*
     private ShippingSummary getShippingSummary(Checkout checkout){
         ShippingBroker broker = new ShippingServiceBroker();
         if (broker==null){
@@ -96,5 +93,7 @@ public class CheckoutPersistenceFilter implements CheckoutFilter {
         }
         return broker.requestShippingSummary(checkout.getOrigin(), checkout.getDestination());
     }
+
+     */
 
 }

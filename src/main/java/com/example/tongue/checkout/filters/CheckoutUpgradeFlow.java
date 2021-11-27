@@ -1,6 +1,8 @@
 package com.example.tongue.checkout.filters;
 
 import com.example.tongue.checkout.models.*;
+import com.example.tongue.integrations.shipping.ShippingBroker;
+import com.example.tongue.integrations.shipping.ShippingBrokerResponse;
 import com.example.tongue.integrations.shipping.ShippingServiceBroker;
 import com.example.tongue.integrations.shipping.ShippingSummary;
 import com.example.tongue.locations.models.Location;
@@ -17,6 +19,8 @@ public class CheckoutUpgradeFlow {
     private CheckoutValidation checkoutValidation;
     @Autowired
     private CheckoutSession checkoutSession;
+    @Autowired
+    private ShippingBroker shippingBroker;
 
 
     public FlowMessage run(CheckoutAttribute checkoutAttribute, HttpSession session){
@@ -34,8 +38,14 @@ public class CheckoutUpgradeFlow {
         }
         checkout = addAttributeToCheckout(checkoutAttribute,checkout);
 
-        ShippingServiceBroker broker = new ShippingServiceBroker();
-        ShippingSummary summary = broker.requestShippingSummary(checkout.getOrigin(), checkout.getDestination());
+        ShippingBrokerResponse brokerResponse =
+                shippingBroker.requestShippingSummary(checkout.getOrigin(), checkout.getDestination());
+
+        if (!brokerResponse.getSolved()){
+            response.setErrorMessage(brokerResponse.getErrorMessage());
+            return response;
+        }
+        ShippingSummary summary = (ShippingSummary) brokerResponse.getMessage("summary");
         checkout.getPrice().setShippingTotal(summary.getFee());
         checkout.getPrice().setShippingSubtotal(summary.getFee());
         checkout.setEstimatedDeliveryTime(summary.getDeliveryTime());

@@ -6,8 +6,7 @@ import com.example.tongue.shopping.models.Order;
 public interface ShippingBroker {
 
     // If something fails, a null object must be returned
-    public Driver requestDriver(Order order);
-    public ShippingSummary requestShippingSummary(Location origin,Location destination);
-    public ShippingServiceError getErrors();
+    ShippingBrokerResponse requestDriver(Order order);
+    ShippingBrokerResponse requestShippingSummary(Location origin,Location destination);
 
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -14,17 +15,19 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-
-public class ShippingServiceBroker implements ShippingBroker{
+@Component
+public class ShippingServiceBroker implements ShippingBroker {
 
     //Fields
-    @Autowired
     private RestTemplate restTemplate;
-    private ShippingServiceError error;
-
+    public ShippingServiceBroker(@Autowired RestTemplate restTemplate){
+        this.restTemplate=restTemplate;
+    }
 
     @Override
-    public Driver requestDriver(Order order) {
+    public ShippingBrokerResponse requestDriver(Order order) {
+        ShippingBrokerResponse response = new ShippingBrokerResponse();
+        response.setSolved(false);
         OrderStatus orderStatus = order.getOrderStatus();
         if (orderStatus==OrderStatus.CREATED){
             Shipping shippingRequest =
@@ -35,40 +38,37 @@ public class ShippingServiceBroker implements ShippingBroker{
                         Driver.class,
                         shippingRequest
                 );
-                return driver;
+                response.addMessage("driver",driver);
             }catch (RestClientResponseException e){
-                ShippingServiceError serviceError =  new ShippingServiceError();
-                serviceError.setCode(e.getRawStatusCode());
-                error = serviceError;
+                response.setErrorMessage(e.getMessage());
+                response.setStatusCode(e.getRawStatusCode());
             }
         }else {
-            ShippingServiceError serviceError =
-                    new ShippingServiceError();
-            serviceError.setMessage("OrderStatus must be CREATED");
-            this.error=serviceError;
+            response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            response.setErrorMessage("OrderStatus must be CREATED");
         }
-        return null;
+        response.setSolved(true);
+        response.setStatusCode(HttpStatus.OK.value());
+        return response;
     }
 
     @Override
-    public ShippingSummary requestShippingSummary(Location origin, Location destination) {
+    public ShippingBrokerResponse requestShippingSummary(Location origin, Location destination) {
+        ShippingBrokerResponse response = new ShippingBrokerResponse();
+        response.setSolved(false);
         try{
             ShippingSummary summary = restTemplate.getForObject(
                     ShippingServiceInformer.shippingSummaryUrl,
                     ShippingSummary.class
             );
-            return summary;
+            response.addMessage("summary",summary);
         }catch (RestClientResponseException e){
-            ShippingServiceError serviceError =  new ShippingServiceError();
-            serviceError.setCode(e.getRawStatusCode());
-            error = serviceError;
+            response.setErrorMessage(e.getMessage());
+            response.setStatusCode(e.getRawStatusCode());
         }
-        return null;
-    }
-
-    @Override
-    public ShippingServiceError getErrors() {
-        return this.error;
+        response.setSolved(true);
+        response.setStatusCode(HttpStatus.OK.value());
+        return response;
     }
 
     private Shipping createShippingRequestFromOrder(Order order){

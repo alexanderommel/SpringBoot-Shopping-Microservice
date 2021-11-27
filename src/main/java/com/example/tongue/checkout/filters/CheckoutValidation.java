@@ -157,6 +157,10 @@ public class CheckoutValidation {
 
         }
         if (items != null) {
+            if (items.isEmpty()){
+                response.setErrorMessage("Your Cart shouldn't be empty");
+                return response;
+            }
             for (LineItem item : items) {
                 Long productId = item.getProduct().getId();
                 List<Modifier> modifiers = item.getModifiers();
