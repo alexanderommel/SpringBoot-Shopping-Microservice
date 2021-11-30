@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 
 @DisplayName("Checkout Soft Validation Unit Testing")
 @RunWith(MockitoJUnitRunner.class)
-public class CheckoutSoftValidationTest {
+public class CheckoutSoftValidationUnitTest {
 
 
     @Mock
@@ -49,6 +49,7 @@ public class CheckoutSoftValidationTest {
     public void mockWhen(){
         Mockito.when(productRepository.existsById(100L)).thenReturn(true);
         Mockito.when(storeVariantRepository.existsById(1L)).thenReturn(true);
+
     }
 
     @Test
