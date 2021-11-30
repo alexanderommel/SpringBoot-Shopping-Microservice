@@ -31,8 +31,10 @@ public class Cart {
     }
 
     @JsonIgnore
-    public void updatePrice(){
+    public Boolean updatePrice(){
         if (discount!=null){
+            if (!discount.validForCart(this))
+                return false;
             BigDecimal itemsFinalPriceWithDiscountsIgnored = BigDecimal.ZERO;
             for (LineItem item: items){
                 item.ignoreDiscountAndUpdatePrice();
@@ -50,7 +52,6 @@ public class Cart {
                 BigDecimal amountDiscounted = percentage.multiply(price.getTotalPrice());
                 price.setDiscountedAmount(amountDiscounted);
             }
-            price.setFinalPrice(price.getTotalPrice().subtract(price.getDiscountedAmount()));
         }else {
             BigDecimal itemsCumulatedTotalPrice = BigDecimal.ZERO;
             BigDecimal itemsCumulatedDiscountedPrice = BigDecimal.ZERO;
@@ -65,8 +66,9 @@ public class Cart {
             }
             price.setTotalPrice(itemsCumulatedTotalPrice);
             price.setDiscountedAmount(itemsCumulatedDiscountedPrice);
-            price.setFinalPrice(price.getTotalPrice().subtract(price.getDiscountedAmount()));
         }
+        price.setFinalPrice(price.getTotalPrice().subtract(price.getDiscountedAmount()));
+        return true;
     }
 
     public Long getId() {

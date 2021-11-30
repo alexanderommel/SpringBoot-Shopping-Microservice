@@ -323,14 +323,12 @@ public class Discount {
             }
         }
         /*
-        Entitled validation for every product
+        Validation for every product
          */
-        if (this.getDiscountScope()==DiscountScope.SUBTOTAL){
-            for (LineItem lineItem:
-                    cart.getItems()) {
-                if (!validForProduct(lineItem.getProduct())){
-                    return false;
-                }
+        for (LineItem lineItem:
+                cart.getItems()) {
+            if (!validForProduct(lineItem.getProduct())){
+                return false;
             }
         }
         return true;

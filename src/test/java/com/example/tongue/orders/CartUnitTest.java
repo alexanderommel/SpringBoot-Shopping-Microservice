@@ -1,5 +1,6 @@
 package com.example.tongue.orders;
 
+import com.example.tongue.merchants.enumerations.ProductsScope;
 import com.example.tongue.merchants.enumerations.ValueType;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.Product;
@@ -9,7 +10,11 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class CartUnitTest {
+
     @Test
     public void shouldUpdatePriceSuccessfullyWhenCartLevelDiscountIsProvided(){
         Cart cart = new Cart();
@@ -80,5 +85,31 @@ public class CartUnitTest {
         cart.updatePrice();
         System.out.println("Cart final price is: "+cart.getPrice().getFinalPrice());
         assert 94.0 == cart.getPrice().getFinalPrice().doubleValue(): "Test failure";
+    }
+
+    @Test
+    public void shouldNotUpdatePriceWhenCartDiscountIsNotValidBecauseEntitlement(){
+        /** The discount is not valid because one of the products
+         * in the shopping cart is not entitled**/
+        Cart cart = new Cart();
+        LineItem item1 = new LineItem();
+        Product product1 = new Product(); product1.setId(1L);
+        product1.setPrice(BigDecimal.valueOf(10.0));
+        item1.setProduct(product1);
+        LineItem item2 = new LineItem();
+        Product product2 = new Product(); product2.setId(2L);
+        product2.setPrice(BigDecimal.valueOf(20.0));
+        item2.setProduct(product2);
+        cart.addItem(item1);
+        cart.addItem(item2);
+        //Discount instantiation
+        Product product3 = new Product(); product3.setId(2L);
+        Discount discount = new Discount();
+        discount.setProductsScope(ProductsScope.ENTITLED_ONLY);
+        discount.addEntitledProduct(product3);
+        cart.setDiscount(discount);
+        //Validation
+        Boolean updated = cart.updatePrice();
+        assertFalse(updated);
     }
 }
