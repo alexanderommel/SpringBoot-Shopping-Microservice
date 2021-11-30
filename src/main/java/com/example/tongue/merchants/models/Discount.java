@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -333,6 +334,13 @@ public class Discount {
             }
         }
         return true;
+    }
+
+    @JsonIgnore
+    public void addEntitledProduct(Product product){
+        if (this.entitledProducts==null)
+            this.entitledProducts = new ArrayList<>();
+        this.entitledProducts.add(product);
     }
 
     @JsonIgnore
