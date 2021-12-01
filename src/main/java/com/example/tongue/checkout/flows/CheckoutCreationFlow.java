@@ -1,10 +1,8 @@
-package com.example.tongue.checkout.filters;
+package com.example.tongue.checkout.flows;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.FlowMessage;
 import com.example.tongue.checkout.models.ValidationResponse;
-import com.example.tongue.checkout.repositories.CheckoutRepository;
-import com.example.tongue.shopping.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +17,22 @@ public class CheckoutCreationFlow {
     @Autowired
     private CheckoutSession checkoutSession;
 
+    public CheckoutCreationFlow(){}
+
+    public CheckoutCreationFlow(CheckoutValidation checkoutValidation,
+                                CheckoutSession checkoutSession){
+
+        this.checkoutValidation=checkoutValidation;
+        this.checkoutSession=checkoutSession;
+    }
+
     public FlowMessage run(Checkout checkout, HttpSession session){
         FlowMessage response = new FlowMessage();
         response.setSolved(false);
         ValidationResponse validationResponse = checkoutValidation.softValidation(checkout);
         if (!validationResponse.isSolved()){
             response.setErrorMessage(validationResponse.getErrorMessage());
+            response.setErrorStage("Validation error");
             return response;
         }
         checkout = populateDefaultValues(checkout);

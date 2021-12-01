@@ -1,14 +1,13 @@
-package com.example.tongue.checkout.filters;
+package com.example.tongue.checkout.flows;
 
 import com.example.tongue.checkout.models.Checkout;
-import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.http.HttpSession;
 
 public class CheckoutSession {
 
-    public void save(Checkout checkout, HttpSession session){
-        session.setAttribute("CHECKOUT",checkout);
+    public Checkout save(Checkout checkout, HttpSession session){
+        session.setAttribute("CHECKOUT",checkout); return checkout;
     }
 
     public Checkout get(HttpSession session){

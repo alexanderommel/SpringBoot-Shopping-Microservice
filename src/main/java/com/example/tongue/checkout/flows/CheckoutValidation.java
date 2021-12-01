@@ -1,4 +1,4 @@
-package com.example.tongue.checkout.filters;
+package com.example.tongue.checkout.flows;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.CheckoutAttribute;
@@ -52,11 +52,16 @@ public class CheckoutValidation {
         return response;
     }
 
+    /** Attribute Validation validates that everything that's in the shopping cart has a real id **/
     public ValidationResponse attributeValidation(CheckoutAttribute checkoutAttribute) {
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
         if (checkoutAttribute == null) {
             response.setErrorMessage("CheckoutAttribute instance is empty");
+        }
+        if (checkoutAttribute.getAttribute()==null){
+            response.setErrorMessage("CheckoutAttribute Attribute field is empty");
+            return response;
         }
 
         if (checkoutAttribute.getName() == CheckoutAttributeName.CART) {
@@ -129,7 +134,7 @@ public class CheckoutValidation {
             response.setErrorMessage("Origin location object is mandatory");
             return response;
         }
-        if (!destination.validate()){
+        if (!destination.isValid()){
             response.setErrorMessage("Destination location object has no valid format");
             return response;
         }
@@ -137,6 +142,7 @@ public class CheckoutValidation {
         return response;
     }
 
+    /** It verifies that everything in the cart has an existing associated id (Except store variant)**/
     private ValidationResponse validateCartAttribute(CheckoutAttribute attribute) {
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
@@ -148,12 +154,7 @@ public class CheckoutValidation {
             response = discountValidationWrapper(discount, response);
             if (!response.isSolved())
                 return response;
-
-            discount = discountRepository.findById(discount.getId()).get();
-            if (!discount.validForCart(cart)) {
-                response.setErrorMessage("Cart level discount is not valid");
-                return response;
-            }
+            response.setSolved(false);
 
         }
         if (items != null) {
@@ -175,12 +176,7 @@ public class CheckoutValidation {
                     response = discountValidationWrapper(discount, response);
                     if (!response.isSolved())
                         return response;
-
-                    discount = discountRepository.findById(discount.getId()).get();
-                    if (!discount.validForProduct(item.getProduct())) {
-                        response.setErrorMessage("Product level discount is not valid");
-                        return response;
-                    }
+                    response.setSolved(false);
 
                 }
                 // Modifiers Validation
@@ -202,12 +198,15 @@ public class CheckoutValidation {
 
     private ValidationResponse discountValidationWrapper(Discount discount,ValidationResponse response){
         Long discountId = discount.getId();
+        response.setSolved(true);
+        if (discountId==null){
+            response.setErrorMessage("Empty Id reference");
+            response.setSolved(false);
+            return response;
+        }
         if (!discountRepository.existsById(discountId)){
             response.setErrorMessage("No such discount with id '"+discountId+"'");
-        }
-        Discount discount1 = discountRepository.findById(discountId).get();
-        if (!discount1.isValid()){
-            response.setErrorMessage("Discount with id '"+discountId+"' has expired");
+            response.setSolved(false);
         }
         return response;
     }

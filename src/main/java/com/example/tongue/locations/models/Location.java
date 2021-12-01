@@ -20,10 +20,9 @@ public class Location {
         this.id = id;
     }
 
-    public Boolean validate(){
-        return true;
+    public Boolean isValid(){
+        return  !(latitude==null || longitude==null);
     }
-
     public String getGooglePlaceId() {
         return googlePlaceId;
     }

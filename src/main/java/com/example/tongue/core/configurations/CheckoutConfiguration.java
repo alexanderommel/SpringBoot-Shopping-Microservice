@@ -1,6 +1,6 @@
 package com.example.tongue.core.configurations;
 
-import com.example.tongue.checkout.filters.*;
+import com.example.tongue.checkout.flows.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

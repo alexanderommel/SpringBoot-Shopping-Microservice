@@ -1,4 +1,4 @@
-package com.example.tongue.checkout.filters;
+package com.example.tongue.checkout.flows;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.ValidationResponse;
@@ -10,19 +10,14 @@ import com.example.tongue.merchants.repositories.StoreVariantRepository;
 import com.example.tongue.shopping.models.Cart;
 import com.example.tongue.shopping.models.LineItem;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
 

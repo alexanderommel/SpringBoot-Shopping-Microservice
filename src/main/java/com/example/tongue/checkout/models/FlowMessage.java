@@ -8,6 +8,7 @@ import java.util.Map;
 public class FlowMessage {
 
     private String errorMessage;
+    private String errorStage;
     private Boolean solved;
     private Map<String,Object> attributes;
 
@@ -15,7 +16,15 @@ public class FlowMessage {
         attributes = new HashMap<>();
     }
 
-    public void setAttribute(Object attribute,String key){
+    public String getErrorStage() {
+        return errorStage;
+    }
+
+    public void setErrorStage(String errorStage) {
+        this.errorStage = errorStage;
+    }
+
+    public void setAttribute(Object attribute, String key){
         attributes.put(key,attribute);
     }
 

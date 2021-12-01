@@ -1,4 +1,4 @@
-package com.example.tongue.checkout.filters;
+package com.example.tongue.checkout.flows;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.CheckoutAttribute;
@@ -142,7 +142,7 @@ public class CheckoutValidationFilter implements CheckoutFilter {
                 if (destination==null)
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                             "Origin location object is mandatory");
-                Boolean validLocationFormat = destination.validate(); // Not implemented yet
+                Boolean validLocationFormat = destination.isValid(); // Not implemented yet
                 if (validLocationFormat==false)
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                             "Destination location object has no valid format");
@@ -152,7 +152,7 @@ public class CheckoutValidationFilter implements CheckoutFilter {
                 if (origin==null)
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                             "Origin location object is mandatory");
-                Boolean validLocationFormat = origin.validate(); // Not implemented yet
+                Boolean validLocationFormat = origin.isValid(); // Not implemented yet
                 if (validLocationFormat==false)
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                             "Origin location object has no valid format");
@@ -171,7 +171,7 @@ public class CheckoutValidationFilter implements CheckoutFilter {
         if (origin==null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Origin location object is mandatory");
-        Boolean validLocationFormat = origin.validate(); // Not implemented yet
+        Boolean validLocationFormat = origin.isValid(); // Not implemented yet
         if (validLocationFormat==false)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Origin location object has no valid format");
