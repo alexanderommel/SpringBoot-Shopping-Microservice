@@ -91,7 +91,7 @@ public class DiscountUnitTest {
     }
 
     @Test
-    public void shouldValidForCartReturnTrueWhenProductNotEntitled(){
+    public void shouldValidForCartReturnFalseWhenProductNotEntitled(){
         /** To validate**/
         Cart cart = new Cart();
         LineItem item = new LineItem();
@@ -106,7 +106,7 @@ public class DiscountUnitTest {
         discount.setProductsScope(ProductsScope.ENTITLED_ONLY);
         discount.setEntitledProducts(Arrays.asList(product1));
         Boolean current = discount.validForCart(cart);
-        assertTrue(current);
+        assertFalse(current);
     }
 
     @Test
