@@ -143,8 +143,10 @@ public class LineItem {
 
     private BigDecimal getModifiersTotal(){
         BigDecimal total = BigDecimal.valueOf(0.0);
-        if (this.modifiers!=null){
-            total =modifiers.stream().map(x -> x.getPrice()).reduce(BigDecimal.ZERO,BigDecimal::add);
+        if (modifiers!=null){
+            if (!this.modifiers.isEmpty()){
+                total =modifiers.stream().map(x -> x.getPrice()).reduce(BigDecimal.ZERO,BigDecimal::add);
+            }
         }
         return total;
     }
