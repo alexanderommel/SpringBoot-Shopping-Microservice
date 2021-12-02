@@ -40,6 +40,15 @@ public class CheckoutUpgradeFlow {
     public FlowMessage run(CheckoutAttribute checkoutAttribute, HttpSession session){
         FlowMessage response = new FlowMessage();
         response.setSolved(false);
+        if (checkoutAttribute==null){
+            response.setErrorMessage("Null CheckoutAttribute");
+            response.setErrorStage("Init");
+            return response;
+        }else if (checkoutAttribute.getName()==null || checkoutAttribute.getAttribute()==null){
+            response.setErrorMessage("Null CheckoutAttribute Field");
+            response.setErrorStage("Init");
+            return response;
+        }
         Checkout checkout = checkoutSession.get(session);
         if (checkout==null){
             response.setErrorMessage("You must create a Checkout first");
@@ -81,6 +90,8 @@ public class CheckoutUpgradeFlow {
     /** After a successful checkout attribute validation, this method queries the repositories
      * to get the full values of everything inside the CheckoutAttribute**/
     private Checkout addRealValuesToCheckout(CheckoutAttribute checkoutAttribute,Checkout checkout){
+        if (checkoutAttribute==null)
+            return checkout;
         if (checkoutAttribute.getName()==CheckoutAttributeName.CART){
             Cart cart = (Cart) checkoutAttribute.getAttribute();
             Discount discount = cart.getDiscount();
@@ -107,7 +118,7 @@ public class CheckoutUpgradeFlow {
                         newModifiers.add(modifier);
                     }
                 }
-                item.setModifiers(modifiers);
+                item.setModifiers(newModifiers);
                 newItems.add(item);
             }
             cart.setItems(newItems);
@@ -117,6 +128,8 @@ public class CheckoutUpgradeFlow {
     }
 
     private Checkout addAttributeToCheckout(CheckoutAttribute attribute,Checkout checkout){
+        if (attribute==null)
+            return checkout;
         if (attribute.getName()==CheckoutAttributeName.CART){
             Cart cart = (Cart) attribute.getAttribute();
             checkout.setCart(cart);
