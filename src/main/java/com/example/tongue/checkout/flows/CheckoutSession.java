@@ -15,8 +15,10 @@ public class CheckoutSession {
         return checkout;
     }
 
-    public void delete(HttpSession session){
+    public Checkout delete(HttpSession session){
+        Checkout checkout = (Checkout) session.getAttribute("CHECKOUT");
         session.removeAttribute("CHECKOUT");
+        return checkout;
     }
 
 }

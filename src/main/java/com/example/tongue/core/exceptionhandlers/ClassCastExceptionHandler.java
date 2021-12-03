@@ -22,7 +22,7 @@ public class ClassCastExceptionHandler {
 
     public ClassCastExceptionHandler.Error ClassCastException(ClassCastException ex) {
         ClassCastExceptionHandler.Error error = new ClassCastExceptionHandler.Error(BAD_REQUEST.value(), "validation error");
-        error.addFieldError("raton", ex.getMessage());
+        error.addFieldError("field_path", ex.getMessage());
         return error;
     }
 
@@ -55,7 +55,6 @@ public class ClassCastExceptionHandler {
         public void addFieldError(String path, String message) {
             FieldError error;
             error = new FieldError("ISO 8601 Date", path, message);
-            System.out.println("ASDASDASDASDASD");
             fieldErrors.add(error);
         }
 

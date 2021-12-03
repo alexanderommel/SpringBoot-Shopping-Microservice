@@ -43,6 +43,7 @@ public class CheckoutCompletionFlow {
         checkoutSession.delete(httpSession);
         response.setAttribute(checkout,"checkout");
         Order order = createOrderFromCheckout(checkout);
+        order = orderRepository.save(order);
         response.setAttribute(order,"order");
         response.setSolved(true);
         return response;
@@ -56,7 +57,7 @@ public class CheckoutCompletionFlow {
         return checkout1;
     }
 
-    private Order createOrderFromCheckout(Checkout checkout){
+    public Order createOrderFromCheckout(Checkout checkout){
         Order order = new Order();
         order.setOrderStatus(OrderStatus.CREATED);
         order.setCart(checkout.getCart());
@@ -68,7 +69,6 @@ public class CheckoutCompletionFlow {
         order.setTotalPrice(checkout.getPrice().getCheckoutTotal());
         order.setSubtotalPrice(checkout.getPrice().getCheckoutSubtotal());
         order.setStoreVariant(checkout.getStoreVariant());
-        order = orderRepository.save(order);
         return order;
     }
 

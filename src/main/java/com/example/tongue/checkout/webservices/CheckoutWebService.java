@@ -29,16 +29,19 @@ public class CheckoutWebService {
     private CheckoutCompletionFlow completionFlow;
     private CheckoutCreationFlow creationFlow;
     private CheckoutUpgradeFlow upgradeFlow;
+    private CheckoutAttributeConverter attributeConverter;
 
     public CheckoutWebService(@Autowired CheckoutRepository checkoutRepository,
                               @Autowired CheckoutCompletionFlow completionFlow,
                               @Autowired CheckoutCreationFlow creationFlow,
-                              @Autowired CheckoutUpgradeFlow upgradeFlow){
+                              @Autowired CheckoutUpgradeFlow upgradeFlow,
+                              @Autowired CheckoutAttributeConverter attributeConverter){
 
         this.checkoutRepository = checkoutRepository;
         this.completionFlow=completionFlow;
         this.upgradeFlow=upgradeFlow;
         this.creationFlow=creationFlow;
+        this.attributeConverter=attributeConverter;
     }
 
 
@@ -72,12 +75,10 @@ public class CheckoutWebService {
 
     @PostMapping(value = "/checkout/update")
     public ResponseEntity<Map<String,Object>> update(
-            HttpSession session, @RequestBody  String attribute){
+            HttpSession session, @RequestBody  String checkoutAttributeJSON){
 
         Map<String,Object> response = new HashMap<>();
-        CheckoutAttributeConverter converter = new CheckoutAttributeConverter();
-        CheckoutAttribute checkoutAttribute =
-                (CheckoutAttribute) converter.convert(attribute,null,null);
+        CheckoutAttribute checkoutAttribute = attributeConverter.convert(checkoutAttributeJSON);
         return getMapResponseEntity(response, upgradeFlow.run(checkoutAttribute, session));
     }
 

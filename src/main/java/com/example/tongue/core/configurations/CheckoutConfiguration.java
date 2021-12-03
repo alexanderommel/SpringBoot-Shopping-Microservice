@@ -1,6 +1,7 @@
 package com.example.tongue.core.configurations;
 
 import com.example.tongue.checkout.flows.*;
+import com.example.tongue.core.converters.CheckoutAttributeConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,5 +28,8 @@ public class CheckoutConfiguration {
 
     @Bean
     public CheckoutCreationFlow creationFlow(){ return new CheckoutCreationFlow();}
+
+    @Bean
+    public CheckoutAttributeConverter checkoutAttributeConverter(){return new CheckoutAttributeConverter();}
 
 }

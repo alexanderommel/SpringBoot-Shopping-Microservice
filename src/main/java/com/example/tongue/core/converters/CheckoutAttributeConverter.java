@@ -1,48 +1,34 @@
 package com.example.tongue.core.converters;
 
-import com.example.tongue.core.exceptions.JsonBadFormatException;
-import com.example.tongue.locations.models.Location;
 import com.example.tongue.checkout.models.CheckoutAttribute;
 import com.example.tongue.checkout.models.CheckoutAttributeName;
+import com.example.tongue.core.exceptions.JsonBadFormatException;
+import com.example.tongue.locations.models.Location;
 import com.example.tongue.shopping.models.Cart;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.core.convert.converter.ConditionalGenericConverter;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
-public class CheckoutAttributeConverter implements ConditionalGenericConverter {
+public class CheckoutAttributeConverter {
 
-    @Override
-    public boolean matches(TypeDescriptor typeDescriptor, TypeDescriptor typeDescriptor1) {
-        return true;
-    }
-
-    @Override
-    public Set<ConvertiblePair> getConvertibleTypes() {
-        return Collections.
-                singleton(
-                        new ConvertiblePair(String.class, CheckoutAttribute.class));
-    }
-
-    @Override
-    public Object convert(Object o, TypeDescriptor typeDescriptor, TypeDescriptor typeDescriptor1) {
+    public CheckoutAttribute convert(String o) {
         ObjectMapper objectMapper = new ObjectMapper();
         CheckoutAttribute checkoutAttribute = new CheckoutAttribute();
         try {
 
             // Map JSON attributes to map keys
-            Map<?,?> map = objectMapper.readValue((String)o,Map.class);
+            Map<?,?> map = objectMapper.readValue(o,Map.class);
             String name = (String) mapGetIgnoringCase(map,"name");
             if (name==null)
                 throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"Field 'name' is missing");
-            System.out.println("TEST6");
             // Get checkout attribute name enumeration constants
             Set<String> enums =
                     EnumSet.allOf(CheckoutAttributeName.class).
@@ -51,7 +37,6 @@ public class CheckoutAttributeConverter implements ConditionalGenericConverter {
 
             // Assignations
             if (enums.contains(name)){
-                System.out.println("TEST7");
                 // Populate checkout attribute with destination
                 if (name.equalsIgnoreCase(String.valueOf(CheckoutAttributeName.DESTINATION))){
                     checkoutAttribute.setName(CheckoutAttributeName.DESTINATION);
@@ -88,7 +73,6 @@ public class CheckoutAttributeConverter implements ConditionalGenericConverter {
 
                 // Populate checkout attribute with cart
                 if (name.equalsIgnoreCase(String.valueOf(CheckoutAttributeName.CART))){
-                    System.out.println("TEST8");
                     checkoutAttribute.setName(CheckoutAttributeName.CART);
                     Object linkedHashMap = mapGetIgnoringCase(map,"cart");
                     if (linkedHashMap==null)
@@ -98,9 +82,10 @@ public class CheckoutAttributeConverter implements ConditionalGenericConverter {
                         LinkedHashMap hashMap = (LinkedHashMap) linkedHashMap;
                         Cart cart = LinkedHashMapConverter.toCart(hashMap);
                         checkoutAttribute.setAttribute(cart);
-                    }else
+                    }else{
                         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                                 "Field 'cart' must be a json object");
+                    }
                     return checkoutAttribute;
                 }
 
@@ -124,7 +109,6 @@ public class CheckoutAttributeConverter implements ConditionalGenericConverter {
         } catch (JsonProcessingException exception) {
             throw new JsonBadFormatException();
         }
-        System.out.println("TEST8");
         return null;
     }
 
@@ -149,5 +133,4 @@ public class CheckoutAttributeConverter implements ConditionalGenericConverter {
         }
         return object;
     }
-
 }
