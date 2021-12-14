@@ -1,7 +1,5 @@
 package com.example.tongue.checkout.models;
 
-import com.example.tongue.shopping.models.Order;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,11 +8,7 @@ public class FlowMessage {
     private String errorMessage;
     private String errorStage;
     private Boolean solved;
-    private Map<String,Object> attributes;
-
-    public FlowMessage(){
-        attributes = new HashMap<>();
-    }
+    private Map<String,Object> attributes = new HashMap<>();;
 
     public String getErrorStage() {
         return errorStage;

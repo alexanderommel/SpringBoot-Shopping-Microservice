@@ -1,12 +1,11 @@
 package com.example.tongue.checkout.webservices;
 
-import com.example.tongue.checkout.flows.*;
+import com.example.tongue.checkout.services.*;
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.CheckoutAttribute;
 import com.example.tongue.checkout.models.FlowMessage;
 import com.example.tongue.checkout.repositories.CheckoutRepository;
 import com.example.tongue.core.converters.CheckoutAttributeConverter;
-import com.example.tongue.shopping.models.Order;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -68,8 +67,8 @@ public class CheckoutWebService {
             response.put("error",message.getErrorMessage());
             return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
         }
-        Order order = (Order) message.getAttribute("order");
-        response.put("response",order);
+        Checkout checkout = (Checkout) message.getAttribute("checkout");
+        response.put("response",checkout);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 

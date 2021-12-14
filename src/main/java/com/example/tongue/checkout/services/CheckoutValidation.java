@@ -1,10 +1,10 @@
-package com.example.tongue.checkout.flows;
+package com.example.tongue.checkout.services;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.CheckoutAttribute;
 import com.example.tongue.checkout.models.CheckoutAttributeName;
 import com.example.tongue.checkout.models.ValidationResponse;
-import com.example.tongue.locations.models.Location;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.Modifier;
 import com.example.tongue.merchants.models.Product;
@@ -40,8 +40,8 @@ public class CheckoutValidation {
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
         Cart cart = checkout.getCart();
-        Location destination = checkout.getDestination();
-        Location origin = checkout.getOrigin();
+        Position destination = checkout.getDestination();
+        Position origin = checkout.getOrigin();
         response = attributeValidation(new CheckoutAttribute(cart,CheckoutAttributeName.CART));
         if (!response.isSolved())
             return response;
@@ -81,17 +81,17 @@ public class CheckoutValidation {
     public ValidationResponse softValidation(Checkout checkout){
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
-        Location origin = checkout.getOrigin();
+        Position origin = checkout.getOrigin();
 
         if (origin==null){
-            response.setErrorMessage("Origin location object is mandatory");
+            response.setErrorMessage("Origin position object is mandatory");
             return response;
         }
 
         Float latitude = origin.getLatitude();
         Float longitude = origin.getLongitude();
         if(latitude==null || longitude==null){
-            response.setErrorMessage("Origin location attributes must be populated");
+            response.setErrorMessage("Origin position attributes must be populated");
             return response;
         }
 
@@ -129,13 +129,13 @@ public class CheckoutValidation {
     private ValidationResponse validateDestinationAttribute(CheckoutAttribute checkoutAttribute){
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
-        Location destination = (Location) checkoutAttribute.getAttribute();
+        Position destination = (Position) checkoutAttribute.getAttribute();
         if (destination == null){
-            response.setErrorMessage("Origin location object is mandatory");
+            response.setErrorMessage("Origin position object is mandatory");
             return response;
         }
         if (!destination.isValid()){
-            response.setErrorMessage("Destination location object has no valid format");
+            response.setErrorMessage("Destination position object has no valid format");
             return response;
         }
         response.setSolved(true);

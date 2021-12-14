@@ -1,10 +1,10 @@
-package com.example.tongue.checkout.flows;
+package com.example.tongue.checkout.services;
 
 import com.example.tongue.checkout.models.*;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.integrations.shipping.ShippingBroker;
 import com.example.tongue.integrations.shipping.ShippingBrokerResponse;
 import com.example.tongue.integrations.shipping.ShippingSummary;
-import com.example.tongue.locations.models.Location;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.Modifier;
 import com.example.tongue.merchants.models.Product;
@@ -73,7 +73,6 @@ public class CheckoutUpgradeFlow {
         ShippingSummary summary = (ShippingSummary) brokerResponse.getMessage("summary");
         checkout.getPrice().setShippingTotal(summary.getFee());
         checkout.getPrice().setShippingSubtotal(summary.getFee());
-        checkout.setEstimatedDeliveryTime(summary.getDeliveryTime());
         Boolean successfulUpdate = checkout.getCart().updatePrice();
         if (!successfulUpdate){
             response.setErrorMessage("Error updating the price of the shopping cart, bad discount");
@@ -135,11 +134,11 @@ public class CheckoutUpgradeFlow {
             checkout.setCart(cart);
         }
         if (attribute.getName()==CheckoutAttributeName.ORIGIN){
-            Location origin = (Location) attribute.getAttribute();
+            Position origin = (Position) attribute.getAttribute();
             checkout.setOrigin(origin);
         }
         if (attribute.getName()==CheckoutAttributeName.DESTINATION){
-            Location destination = (Location) attribute.getAttribute();
+            Position destination = (Position) attribute.getAttribute();
             checkout.setDestination(destination);
         }
         return checkout;
