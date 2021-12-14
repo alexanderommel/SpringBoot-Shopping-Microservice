@@ -1,17 +1,25 @@
 package com.example.tongue.checkout.models;
 
-import com.example.tongue.customers.models.Customer;
-import com.example.tongue.locations.models.Location;
+import com.example.tongue.integrations.customers.Customer;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.merchants.models.StoreVariant;
-import com.example.tongue.integrations.Payment;
+import com.example.tongue.integrations.payments.Payment;
 import com.example.tongue.shopping.models.Cart;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Checkout {
     @Id @GeneratedValue
     private Long id;
@@ -23,13 +31,21 @@ public class Checkout {
     @ManyToOne
     private Customer customer;
 
-    @ManyToOne
-    @JsonIgnoreProperties("id")
-    private Location origin;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name="longitude",column = @Column(name="origin_longitude")),
+            @AttributeOverride(name="latitude",column=@Column(name="origin_latitude")),
+            @AttributeOverride(name = "address",column = @Column(name = "origin_address"))
+    })
+    private Position origin;
 
-    @ManyToOne
-    @JsonIgnoreProperties("id")
-    private Location destination;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name="longitude",column = @Column(name="destination_longitude")),
+            @AttributeOverride(name="latitude",column=@Column(name="destination_latitude")),
+            @AttributeOverride(name = "address",column = @Column(name = "destination_address"))
+    })
+    private Position destination;
 
     @ManyToOne
     @JsonIgnoreProperties({"name","location","representative",
@@ -38,10 +54,8 @@ public class Checkout {
     "country_code","storeImageURL"})
     private StoreVariant storeVariant;
 
-    @OneToOne
+    @Embedded
     private Payment payment; //Cards have validation tokens
-
-    private String JSESSIONID;
 
     private Instant created_at = Instant.now(); //ISO 8601;
 
@@ -53,140 +67,6 @@ public class Checkout {
 
     private String sourceDevice;
 
-    private String sourceURL;
-
-    private String currency_code="USD";
-
-    private Double estimatedDeliveryTime=0.0;
-
-    public Double getEstimatedDeliveryTime() {
-        return estimatedDeliveryTime;
-    }
-
-    public void setEstimatedDeliveryTime(Double estimatedDeliveryTime) {
-        this.estimatedDeliveryTime = estimatedDeliveryTime;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Cart getCart() {
-        return cart;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public Location getDestination() {
-        return destination;
-    }
-
-    public void setDestination(Location destination) {
-        this.destination = destination;
-    }
-
-    public StoreVariant getStoreVariant() {
-        return storeVariant;
-    }
-
-    public void setStoreVariant(StoreVariant storeVariant) {
-        this.storeVariant = storeVariant;
-    }
-
-    public Payment getPayment() {
-        return payment;
-    }
-
-    public void setPayment(Payment payment) {
-        this.payment = payment;
-    }
-
-    public String getJSESSIONID() {
-        return JSESSIONID;
-    }
-
-    public void setJSESSIONID(String JSESSIONID) {
-        this.JSESSIONID = JSESSIONID;
-    }
-
-    public Instant getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Instant created_at) {
-        this.created_at = created_at;
-    }
-
-    public CheckoutPrice getPrice() {
-        return price;
-    }
-
-    public void setPrice(CheckoutPrice price) {
-        this.price = price;
-    }
-
-    public Instant getFinishedAt() {
-        return FinishedAt;
-    }
-
-    public void setFinishedAt(Instant finishedAt) {
-        FinishedAt = finishedAt;
-    }
-
-    public Instant getCancelledAt() {
-        return cancelledAt;
-    }
-
-    public void setCancelledAt(Instant cancelledAt) {
-        this.cancelledAt = cancelledAt;
-    }
-
-    public String getSourceDevice() {
-        return sourceDevice;
-    }
-
-    public void setSourceDevice(String sourceDevice) {
-        this.sourceDevice = sourceDevice;
-    }
-
-    public String getSourceURL() {
-        return sourceURL;
-    }
-
-    public void setSourceURL(String sourceURL) {
-        this.sourceURL = sourceURL;
-    }
-
-    public String getCurrency_code() {
-        return currency_code;
-    }
-
-    public void setCurrency_code(String currency_code) {
-        this.currency_code = currency_code;
-    }
-
-    public Location getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(Location origin) {
-        this.origin = origin;
-    }
-
     @JsonIgnore
     public void updateCheckout(){
         price.setCartTotal(cart.getPrice().getTotalPrice());
@@ -194,4 +74,9 @@ public class Checkout {
         price.setCheckoutTotal(price.getCartTotal().add(price.getShippingTotal()));
         price.setCheckoutSubtotal(price.getCartSubtotal().add(price.getShippingSubtotal()));
     }
+
+    public enum Status{
+
+    }
+
 }

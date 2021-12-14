@@ -3,6 +3,10 @@ package com.example.tongue.shopping.models;
 import com.example.tongue.merchants.enumerations.ValueType;
 import com.example.tongue.merchants.models.Discount;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -10,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Cart {
 
     private @Id @GeneratedValue Long id;
@@ -71,43 +79,4 @@ public class Cart {
         return true;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<LineItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<LineItem> items) {
-        this.items = items;
-    }
-
-    public String getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
-    }
-
-    public Discount getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Discount discount) {
-        this.discount = discount;
-    }
-
-    public CartPrice getPrice() {
-        return price;
-    }
-
-    public void setPrice(CartPrice price) {
-        this.price = price;
-    }
 }

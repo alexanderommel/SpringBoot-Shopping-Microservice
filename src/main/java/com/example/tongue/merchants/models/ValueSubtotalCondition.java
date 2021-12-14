@@ -11,14 +11,14 @@ import java.util.Objects;
 
 @Embeddable
 public class ValueSubtotalCondition {
-    //FIELDS
+
     @Column(name = "value_leq")
     private BigDecimal leq;
     @Column(name = "value_heq")
     private BigDecimal heq;
     @Column(name = "value_eq")
     private BigDecimal eq;
-    //METHODS
+
     public Boolean isAccomplishedOn(Cart cart){
         BigDecimal subtotal = getCartSubtotal(cart);
         if(leq !=null){

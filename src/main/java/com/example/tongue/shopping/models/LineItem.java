@@ -5,6 +5,10 @@ import com.example.tongue.merchants.enumerations.ValueType;
 import com.example.tongue.merchants.models.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class LineItem {
     private @Id @GeneratedValue Long id;
 
@@ -37,62 +45,6 @@ public class LineItem {
     @ManyToMany
     private List<Modifier> modifiers=new ArrayList<>();
 
-    public List<Modifier> getModifiers() {
-        return modifiers;
-    }
-
-    public void setModifiers(List<Modifier> modifiers) {
-        this.modifiers = modifiers;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public LineItemPrice getPrice() {
-        return price;
-    }
-
-    public void setPrice(LineItemPrice price) {
-        this.price = price;
-    }
-
-    public String getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
-    }
-
-    public Discount getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Discount discount) {
-        this.discount = discount;
-    }
-
     @JsonIgnore
     public void addModifier(Modifier modifier){
         modifiers.add(modifier);
@@ -107,7 +59,6 @@ public class LineItem {
         price.setTotalPrice(totalPrice);
         price.setFinalPrice(totalPrice);
     }
-
 
     // Discounts not ignored
     @JsonIgnore

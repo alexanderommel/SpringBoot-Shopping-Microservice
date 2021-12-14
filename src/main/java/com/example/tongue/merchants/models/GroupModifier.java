@@ -37,9 +37,6 @@ public class GroupModifier {
     private int maximumActiveModifiers=1;
     private int minimumActiveModifiers=1;
 
-    // Reserved for future implementations
-    private String tag;
-
     public Long getId() {
         return id;
     }
@@ -86,14 +83,6 @@ public class GroupModifier {
 
     public void setMaximumActiveModifiers(int maximumActiveModifiers) {
         this.maximumActiveModifiers = maximumActiveModifiers;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
     }
 
     public int getMinimumActiveModifiers() {
