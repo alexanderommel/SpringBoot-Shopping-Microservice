@@ -1,10 +1,10 @@
-package com.example.tongue.checkout.flows;
+package com.example.tongue.checkout.services;
 
 import com.example.tongue.checkout.models.*;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.integrations.shipping.ShippingBroker;
 import com.example.tongue.integrations.shipping.ShippingBrokerResponse;
 import com.example.tongue.integrations.shipping.ShippingSummary;
-import com.example.tongue.locations.models.Location;
 import com.example.tongue.merchants.models.Modifier;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.models.StoreVariant;
@@ -14,13 +14,11 @@ import com.example.tongue.merchants.repositories.ProductRepository;
 import com.example.tongue.shopping.models.Cart;
 import com.example.tongue.shopping.models.CartPrice;
 import com.example.tongue.shopping.models.LineItem;
-import org.hibernate.annotations.Check;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -49,9 +47,7 @@ public class CheckoutUpgradeFlowTest {
     public void setUp(){
         /** In Session Checkout Mocking**/
         Checkout checkout = new Checkout();
-        Location origin = new Location();
-        origin.setLatitude(1333.0F);
-        origin.setLongitude(552.2F);
+        Position origin = Position.builder().latitude(1333F).longitude(552.2F).build();
         checkout.setOrigin(null);
         checkout.setDestination(null);
         StoreVariant storeVariant = new StoreVariant();
@@ -76,7 +72,7 @@ public class CheckoutUpgradeFlowTest {
         product3.setPrice(BigDecimal.valueOf(4.5));
         Mockito.when(productRepository.findById(1L)).thenReturn(Optional.of(product1));
         Mockito.when(productRepository.findById(2L)).thenReturn(Optional.of(product2));
-        /** Shipping Broker Repository**/
+        /** Broker Repository**/
         ShippingSummary summary = new ShippingSummary();
         summary.setFee(BigDecimal.valueOf(2.50));
         summary.setDistance(33.4);
@@ -105,9 +101,7 @@ public class CheckoutUpgradeFlowTest {
 
     @Test
     public void givenDestinationAttributeWhenRunningThenReturnTrue(){
-        Location destination = new Location();
-        destination.setLongitude(10.0F);
-        destination.setLatitude(15.0F);
+        Position destination = Position.builder().latitude(15.0F).longitude(10.0F).build();
         CheckoutAttribute attribute = new CheckoutAttribute();
         attribute.setName(CheckoutAttributeName.DESTINATION);
         attribute.setAttribute(destination);
@@ -117,24 +111,20 @@ public class CheckoutUpgradeFlowTest {
 
     @Test
     public void givenDestinationAttributeWhenRunningThenCheckoutDestinationIsEqual(){
-        Location destination = new Location();
-        destination.setLongitude(10.0F);
-        destination.setLatitude(15.0F);
+        Position destination = Position.builder().latitude(15F).longitude(10.2F).build();
         CheckoutAttribute attribute = new CheckoutAttribute();
         attribute.setName(CheckoutAttributeName.DESTINATION);
         attribute.setAttribute(destination);
         FlowMessage flowMessage = upgradeFlow.run(attribute,null);
         Checkout checkout = (Checkout) flowMessage.getAttribute("checkout");
-        Location current = checkout.getDestination();
+        Position current = checkout.getDestination();
         assertTrue(destination.equals(current));
     }
 
     @Test
     public void givenDestinationAttributeWhenRunningThenCheckoutProductPriceShouldNotBeUpdated(){
         int expected = BigDecimal.valueOf(5).intValue();
-        Location destination = new Location();
-        destination.setLongitude(10.0F);
-        destination.setLatitude(15.0F);
+        Position destination = Position.builder().latitude(15F).longitude(10.2F).build();
         CheckoutAttribute attribute = new CheckoutAttribute();
         attribute.setName(CheckoutAttributeName.DESTINATION);
         attribute.setAttribute(destination);
@@ -181,7 +171,7 @@ public class CheckoutUpgradeFlowTest {
 
     @Test
     public void givenCartAttributeWhenRunningThenCheckoutFinalPriceMustBeEqualsToExpected(){
-        /** Shipping Fee is 2.50**/
+        /**  Fee is 2.50**/
         double expected = 27.5;
         Cart cart = new Cart();
         LineItem item1 = new LineItem();
@@ -203,7 +193,7 @@ public class CheckoutUpgradeFlowTest {
 
     @Test
     public void givenCartAttributeWithFinalPriceModifiedWhenRunningThenReturnedCheckoutFinalPriceNotEqual(){
-        /** Shipping Fee is 2.50**/
+        /**  Fee is 2.50**/
         double expected = 27.5;
         Cart cart = new Cart();
         LineItem item1 = new LineItem();
@@ -232,7 +222,7 @@ public class CheckoutUpgradeFlowTest {
         response.setSolved(false);
         Mockito.when(checkoutValidation.attributeValidation(ArgumentMatchers.any())).thenReturn(response);
         CheckoutAttribute checkoutAttribute = new CheckoutAttribute();
-        Location destination = new Location();
+        Position destination = new Position();
         checkoutAttribute.setAttribute(destination);
         checkoutAttribute.setName(CheckoutAttributeName.DESTINATION);
         FlowMessage flowMessage = upgradeFlow.run(checkoutAttribute,null);

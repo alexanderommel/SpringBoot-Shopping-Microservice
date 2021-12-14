@@ -1,9 +1,9 @@
-package com.example.tongue.checkout.flows;
+package com.example.tongue.checkout.services;
 
 import com.example.tongue.checkout.models.CheckoutAttribute;
 import com.example.tongue.checkout.models.CheckoutAttributeName;
 import com.example.tongue.checkout.models.ValidationResponse;
-import com.example.tongue.locations.models.Location;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.repositories.DiscountRepository;
@@ -55,7 +55,7 @@ public class CheckoutAttributeValidationUnitTest {
     public void givenEmptyLocationWhenValidatingLocationAttributeThenReturnFalse(){
         CheckoutAttribute locationAttribute =
                 new CheckoutAttribute();
-        Location location = new Location();
+        Position location = new Position();
         locationAttribute.setAttribute(location);
         locationAttribute.setName(CheckoutAttributeName.DESTINATION);
         ValidationResponse response =

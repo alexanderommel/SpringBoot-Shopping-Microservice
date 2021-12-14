@@ -2,7 +2,7 @@ package com.example.tongue.core.converters;
 
 import com.example.tongue.checkout.models.CheckoutAttribute;
 import com.example.tongue.core.exceptions.JsonBadFormatException;
-import com.example.tongue.locations.models.Location;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.shopping.models.Cart;
 import com.example.tongue.shopping.models.LineItem;
@@ -79,7 +79,7 @@ public class CheckoutAttributeConverterUnitTest {
         String expected = "Field 'cart' must be a json object";
         String checkoutEmptyItemsJson = "{\"name\":\"CART\",\"cart\":{\"items\":[]}}";
         CheckoutAttribute checkoutAttribute = converter.convert(checkoutEmptyItemsJson);
-        Location location = (Location) checkoutAttribute.getAttribute();
+        Position location = (Position) checkoutAttribute.getAttribute();
     }
 
     @Test

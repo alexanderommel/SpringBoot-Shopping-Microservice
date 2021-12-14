@@ -15,9 +15,9 @@ public class LineItemUnitTest {
 
     @Test
     public void shouldUpdateFinalPriceTo300SuccessfullyWhenProductPriceIs300(){
-        BigDecimal expected = BigDecimal.valueOf(300);
+        BigDecimal expected = BigDecimal.valueOf(300.0);
         Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(300));
+        product.setPrice(BigDecimal.valueOf(300.0));
         LineItem lineItem = new LineItem();
         lineItem.setProduct(product);
         lineItem.updatePrice();

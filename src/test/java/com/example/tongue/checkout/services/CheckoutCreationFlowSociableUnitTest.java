@@ -1,8 +1,8 @@
-package com.example.tongue.checkout.flows;
+package com.example.tongue.checkout.services;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.FlowMessage;
-import com.example.tongue.locations.models.Location;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.models.StoreVariant;
 import com.example.tongue.merchants.repositories.ProductRepository;
@@ -77,7 +77,7 @@ public class CheckoutCreationFlowSociableUnitTest {
     public void givenCheckoutWithNoExistingProductWhenRunningThenReturnErrorStage(){
         String expected = "Validation error";
         Checkout checkout = new Checkout();
-        Location origin = new Location(); origin.setLongitude(11.1f); origin.setLatitude(11.1f);
+        Position origin = Position.builder().longitude(11.f).latitude(11.2f).build();
         StoreVariant storeVariant = new StoreVariant(); storeVariant.setId(1L);
         Product product = new Product(); product.setId(2L);
         Cart cart = new Cart();
@@ -98,7 +98,7 @@ public class CheckoutCreationFlowSociableUnitTest {
     @Test
     public void givenValidCheckoutWhenRunningThenReturnTrue(){
         Checkout checkout = new Checkout();
-        Location origin = new Location(); origin.setLongitude(11.1f); origin.setLatitude(11.1f);
+        Position origin = Position.builder().longitude(11.f).latitude(11.2f).build();
         StoreVariant storeVariant = new StoreVariant(); storeVariant.setId(1L);
         Product product = new Product(); product.setId(3L);
         Cart cart = new Cart();

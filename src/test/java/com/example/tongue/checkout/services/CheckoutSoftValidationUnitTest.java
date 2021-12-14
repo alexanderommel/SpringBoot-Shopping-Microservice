@@ -1,8 +1,8 @@
-package com.example.tongue.checkout.flows;
+package com.example.tongue.checkout.services;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.ValidationResponse;
-import com.example.tongue.locations.models.Location;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.merchants.models.StoreVariant;
 import com.example.tongue.merchants.repositories.ProductRepository;
@@ -55,8 +55,8 @@ public class CheckoutSoftValidationUnitTest {
         Product product = new Product();
         item1.setProduct(product);
         cart.addItem(item1);
-        Location destination = new Location();
-        Location origin = new Location();
+        Position destination = new Position();
+        Position origin = new Position();
         checkout.setOrigin(origin);
         checkout.setDestination(destination);
         ValidationResponse response =
@@ -73,8 +73,8 @@ public class CheckoutSoftValidationUnitTest {
         product.setId(101L);
         item1.setProduct(product);
         cart.addItem(item1);
-        Location destination = new Location();
-        Location origin = new Location();
+        Position destination = new Position();
+        Position origin = new Position();
         origin.setLatitude(3.33F);
         origin.setLongitude(2F);
         StoreVariant storeVariant = new StoreVariant();
@@ -97,8 +97,8 @@ public class CheckoutSoftValidationUnitTest {
         product.setId(100L);
         item1.setProduct(product);
         cart.addItem(item1);
-        Location destination = new Location();
-        Location origin = new Location();
+        Position destination = new Position();
+        Position origin = new Position();
         origin.setLatitude(3.33F);
         origin.setLongitude(2F);
         StoreVariant storeVariant = new StoreVariant();
@@ -115,8 +115,8 @@ public class CheckoutSoftValidationUnitTest {
     @Test
     public void shouldRejectCheckoutWhenCartIsEmpty(){
         Checkout checkout = new Checkout();
-        Location destination = new Location();
-        Location origin = new Location();
+        Position destination = new Position();
+        Position origin = new Position();
         StoreVariant storeVariant = new StoreVariant();
         storeVariant.setId(1L);
         checkout.setStoreVariant(storeVariant);
@@ -129,7 +129,7 @@ public class CheckoutSoftValidationUnitTest {
 
     @Test
     public void shouldReturnMessageWhenOriginHasNoLatitude(){
-        String expected = "Origin location attributes must be populated";
+        String expected = "Origin position attributes must be populated";
         Checkout checkout = new Checkout();
         Cart cart = new Cart();
         LineItem item1 = new LineItem();
@@ -137,8 +137,8 @@ public class CheckoutSoftValidationUnitTest {
         product.setId(100L);
         item1.setProduct(product);
         cart.addItem(item1);
-        Location destination = new Location();
-        Location origin = new Location();
+        Position destination = new Position();
+        Position origin = new Position();
         origin.setLongitude(2.222F);
         StoreVariant storeVariant = new StoreVariant();
         storeVariant.setId(1L);
@@ -161,8 +161,8 @@ public class CheckoutSoftValidationUnitTest {
         product.setId(100L);
         item1.setProduct(product);
         cart.addItem(item1);
-        Location destination = new Location();
-        Location origin = new Location();
+        Position destination = new Position();
+        Position origin = new Position();
         origin.setLatitude(3.33F);
         origin.setLongitude(2F);
         StoreVariant storeVariant = new StoreVariant();

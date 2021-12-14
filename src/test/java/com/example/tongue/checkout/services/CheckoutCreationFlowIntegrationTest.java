@@ -1,10 +1,9 @@
-package com.example.tongue.checkout.flows;
+package com.example.tongue.checkout.services;
 
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.FlowMessage;
 import com.example.tongue.core.genericdata.Store1DataGenerator;
-import com.example.tongue.locations.models.Location;
-import com.example.tongue.locations.repositories.LocationRepository;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.merchants.models.*;
 import com.example.tongue.merchants.repositories.*;
 import com.example.tongue.shopping.models.Cart;
@@ -13,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -43,8 +41,6 @@ public class CheckoutCreationFlowIntegrationTest {
     @Autowired
     ProductImageRepository imageRepository;
     @Autowired
-    LocationRepository locationRepository;
-    @Autowired
     GroupModifierRepository groupModifierRepository;
     @Autowired
     ModifierRepository modifierRepository;
@@ -71,7 +67,6 @@ public class CheckoutCreationFlowIntegrationTest {
                  storeVariantRepository,
                  discountRepository,
                  imageRepository,
-                 locationRepository,
                  groupModifierRepository,
                  modifierRepository,
                  collectionRepository,
@@ -151,12 +146,10 @@ public class CheckoutCreationFlowIntegrationTest {
         item.setQuantity(2);
         Product product = new Product();
         product.setId(372L);
-        Location destination = new Location();
-        destination.setLatitude(22.2F); destination.setLongitude(44.0F);
-        Location origin = new Location();
-        origin.setLatitude(10.0F); origin.setLongitude(5.552222F);
+        Position destination = Position.builder().latitude(22.2F).longitude(44.0F).build();
+        Position origin = Position.builder().latitude(10.0F).longitude(5.552222F).build();
         StoreVariant storeVariant = new StoreVariant();
-        storeVariant.setId(4L);
+        storeVariant.setId(3L);
         item.setProduct(product);
         cart.addItem(item);
         checkout.setCart(cart);

@@ -1,11 +1,12 @@
 package com.example.tongue.checkout.webservices;
 
-import com.example.tongue.checkout.flows.CheckoutCompletionFlow;
-import com.example.tongue.checkout.flows.CheckoutCreationFlow;
-import com.example.tongue.checkout.flows.CheckoutUpgradeFlow;
+import com.example.tongue.checkout.services.CheckoutCompletionFlow;
+import com.example.tongue.checkout.services.CheckoutCreationFlow;
+import com.example.tongue.checkout.services.CheckoutUpgradeFlow;
 import com.example.tongue.checkout.models.Checkout;
 import com.example.tongue.checkout.models.FlowMessage;
 import com.example.tongue.checkout.repositories.CheckoutRepository;
+import com.example.tongue.core.converters.CheckoutAttributeConverter;
 import com.example.tongue.merchants.models.Product;
 import com.example.tongue.shopping.models.Cart;
 import com.example.tongue.shopping.models.LineItem;
@@ -36,6 +37,8 @@ public class CheckoutWebServiceUnitTest {
     @Mock
     private CheckoutCompletionFlow completionFlow;
     @Mock
+    private CheckoutAttributeConverter attributeConverter;
+    @Mock
     private HttpSession httpSession;
 
     private CheckoutWebService checkoutWebService;
@@ -46,7 +49,8 @@ public class CheckoutWebServiceUnitTest {
                 checkoutRepository,
                 completionFlow,
                 creationFlow,
-                upgradeFlow
+                upgradeFlow,
+                attributeConverter
                 );
 
     }
@@ -65,7 +69,7 @@ public class CheckoutWebServiceUnitTest {
     }
 
     @Test
-    public void shouldReturnHttpStatusBAD_REQUESTIfCheckoutIsValid(){
+    public void shouldReturnHttpStatusBAD_REQUESTWhenCreatingIfCheckoutIsValid(){
         Checkout checkout = new Checkout();
         FlowMessage flowMessage = new FlowMessage();
         flowMessage.setSolved(false);
@@ -78,7 +82,7 @@ public class CheckoutWebServiceUnitTest {
     }
 
     @Test
-    public void shouldReturnSameProductIdInRequestBodyIfCheckoutIsValid(){
+    public void shouldReturnSameProductIdInRequestBodyIfCheckoutIsValidWhenCreating(){
         Long expected = 1L;
         Checkout checkout = new Checkout();
         Product product = new Product(); product.setId(1L);
@@ -95,5 +99,7 @@ public class CheckoutWebServiceUnitTest {
                 .getCart().getItems().get(0).getProduct().getId();
         assertEquals(expected,current);
     }
+
+
 
 }
