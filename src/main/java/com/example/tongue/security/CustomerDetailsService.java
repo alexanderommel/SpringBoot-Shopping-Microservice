@@ -1,4 +1,4 @@
-package com.example.tongue.security.implementations;
+package com.example.tongue.security;
 
 import com.example.tongue.core.authentication.User;
 import com.example.tongue.core.authentication.UserRepository;
