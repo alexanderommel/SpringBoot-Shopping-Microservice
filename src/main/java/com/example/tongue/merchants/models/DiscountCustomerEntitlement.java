@@ -1,6 +1,6 @@
 package com.example.tongue.merchants.models;
 
-import com.example.tongue.customers.models.Customer;
+import com.example.tongue.integrations.customers.Customer;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

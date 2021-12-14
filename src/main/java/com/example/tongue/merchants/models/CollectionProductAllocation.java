@@ -1,6 +1,5 @@
 package com.example.tongue.merchants.models;
 
-import com.example.tongue.customers.models.Customer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Entity;
