@@ -1,6 +1,6 @@
 package com.example.tongue.core.converters;
 
-import com.example.tongue.locations.models.Location;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.merchants.models.Discount;
 import com.example.tongue.merchants.models.Modifier;
 import com.example.tongue.merchants.models.Product;
@@ -15,17 +15,8 @@ import java.util.List;
 
 public class LinkedHashMapConverter {
 
-    public static Location toLocation(LinkedHashMap hashMap){
-        Location location = new Location();
-        Object placeId = hashMap.get("googlePlaceId");
-        if (placeId==null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Field 'googlePlaceId' is mandatory");
-        if (placeId instanceof String){
-            location.setGooglePlaceId((String) placeId);
-        }else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Attribute 'googlePlaceId' must be a String");
+    public static Position toLocation(LinkedHashMap hashMap){
+        Position location = new Position();
         return location;
     }
 

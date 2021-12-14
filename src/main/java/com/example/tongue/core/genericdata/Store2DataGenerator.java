@@ -1,7 +1,6 @@
 package com.example.tongue.core.genericdata;
 
-import com.example.tongue.locations.models.Location;
-import com.example.tongue.locations.repositories.LocationRepository;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.merchants.enumerations.CollectionStatus;
 import com.example.tongue.merchants.enumerations.ProductStatus;
 import com.example.tongue.merchants.models.*;
@@ -25,7 +24,6 @@ public class Store2DataGenerator {
                                                   StoreVariantRepository storeVariantRepository,
                                                   DiscountRepository discountRepository,
                                                   ProductImageRepository imageRepository,
-                                                  LocationRepository locationRepository,
                                                   CollectionRepository collectionRepository,
                                                   CollectionProductAllocationRepository
                                                           collectionProductAllocationRepository){
@@ -48,9 +46,8 @@ public class Store2DataGenerator {
             store.setMerchant(merchant);
             store = storeRepository.save(store);
 
-            Location location = new Location();
-            location.setGooglePlaceId("colombia-ecuador");
-            location = locationRepository.save(location);
+            Position location =
+                    Position.builder().latitude(200F).longitude(200F).address("Quito").build();
 
             StoreVariant storeVariant = new StoreVariant();
             storeVariant.setStore(store);

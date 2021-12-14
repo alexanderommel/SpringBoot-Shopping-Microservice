@@ -3,11 +3,10 @@ package com.example.tongue.core.converters;
 import com.example.tongue.checkout.models.CheckoutAttribute;
 import com.example.tongue.checkout.models.CheckoutAttributeName;
 import com.example.tongue.core.exceptions.JsonBadFormatException;
-import com.example.tongue.locations.models.Location;
+import com.example.tongue.core.domain.Position;
 import com.example.tongue.shopping.models.Cart;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -46,7 +45,7 @@ public class CheckoutAttributeConverter {
                                 "Object 'destination' is missing");
                     if (linkedHashMap instanceof LinkedHashMap){
                         LinkedHashMap hashMap = (LinkedHashMap) linkedHashMap;
-                        Location location = LinkedHashMapConverter.toLocation(hashMap);
+                        Position location = LinkedHashMapConverter.toLocation(hashMap);
                         checkoutAttribute.setAttribute(location);
                     }else
                         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -63,7 +62,7 @@ public class CheckoutAttributeConverter {
                                 "Object 'origin' is missing");
                     if (linkedHashMap instanceof LinkedHashMap){
                         LinkedHashMap hashMap = (LinkedHashMap) linkedHashMap;
-                        Location location = LinkedHashMapConverter.toLocation(hashMap);
+                        Position location = LinkedHashMapConverter.toLocation(hashMap);
                         checkoutAttribute.setAttribute(location);
                     }else
                         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
