@@ -1,11 +1,13 @@
 package com.example.tongue.merchants.models;
 
-import com.example.tongue.merchants.enumerations.DiscountScope;
-import com.example.tongue.merchants.enumerations.DiscountType;
-import com.example.tongue.merchants.enumerations.ProductsScope;
-import com.example.tongue.shopping.models.Cart;
-import com.example.tongue.shopping.models.LineItem;
-import com.example.tongue.shopping.models.LineItemPrice;
+import com.example.tongue.domain.merchant.Discount;
+import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.merchant.enumerations.DiscountScope;
+import com.example.tongue.domain.merchant.enumerations.DiscountType;
+import com.example.tongue.domain.merchant.enumerations.ProductsScope;
+import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.LineItem;
+import com.example.tongue.domain.shopping.LineItemPriceCondition;
 import org.junit.Test;
 
 import java.math.BigDecimal;

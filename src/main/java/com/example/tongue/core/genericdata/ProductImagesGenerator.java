@@ -1,8 +1,8 @@
 package com.example.tongue.core.genericdata;
 
-import com.example.tongue.merchants.models.Product;
-import com.example.tongue.merchants.models.ProductImage;
-import com.example.tongue.merchants.repositories.ProductImageRepository;
+import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.merchant.ProductImage;
+import com.example.tongue.repositories.merchant.ProductImageRepository;
 
 import java.util.ArrayList;
 import java.util.List;

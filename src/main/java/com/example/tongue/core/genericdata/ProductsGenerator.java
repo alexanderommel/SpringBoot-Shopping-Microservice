@@ -1,12 +1,12 @@
 package com.example.tongue.core.genericdata;
 
-import com.example.tongue.merchants.models.Collection;
-import com.example.tongue.merchants.models.CollectionProductAllocation;
-import com.example.tongue.merchants.models.Product;
-import com.example.tongue.merchants.enumerations.ProductStatus;
-import com.example.tongue.merchants.models.StoreVariant;
-import com.example.tongue.merchants.repositories.CollectionProductAllocationRepository;
-import com.example.tongue.merchants.repositories.ProductRepository;
+import com.example.tongue.domain.merchant.Collection;
+import com.example.tongue.domain.merchant.CollectionProductAllocation;
+import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.merchant.enumerations.ProductStatus;
+import com.example.tongue.domain.merchant.StoreVariant;
+import com.example.tongue.repositories.merchant.CollectionProductAllocationRepository;
+import com.example.tongue.repositories.merchant.ProductRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

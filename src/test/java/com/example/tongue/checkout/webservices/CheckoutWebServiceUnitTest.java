@@ -1,15 +1,16 @@
 package com.example.tongue.checkout.webservices;
 
-import com.example.tongue.checkout.services.CheckoutCompletionFlow;
-import com.example.tongue.checkout.services.CheckoutCreationFlow;
-import com.example.tongue.checkout.services.CheckoutUpgradeFlow;
-import com.example.tongue.checkout.models.Checkout;
-import com.example.tongue.checkout.models.FlowMessage;
-import com.example.tongue.checkout.repositories.CheckoutRepository;
+import com.example.tongue.services.CheckoutCompletionFlow;
+import com.example.tongue.services.CheckoutCreationFlow;
+import com.example.tongue.services.CheckoutUpgradeFlow;
+import com.example.tongue.domain.checkout.Checkout;
+import com.example.tongue.domain.checkout.FlowMessage;
+import com.example.tongue.repositories.checkout.CheckoutRepository;
 import com.example.tongue.core.converters.CheckoutAttributeConverter;
-import com.example.tongue.merchants.models.Product;
-import com.example.tongue.shopping.models.Cart;
-import com.example.tongue.shopping.models.LineItem;
+import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.LineItem;
+import com.example.tongue.resources.checkout.CheckoutWebService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

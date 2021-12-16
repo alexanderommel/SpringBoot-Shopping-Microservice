@@ -1,11 +1,11 @@
 package com.example.tongue.orders;
 
-import com.example.tongue.merchants.enumerations.ProductsScope;
-import com.example.tongue.merchants.enumerations.ValueType;
-import com.example.tongue.merchants.models.Discount;
-import com.example.tongue.merchants.models.Product;
-import com.example.tongue.shopping.models.Cart;
-import com.example.tongue.shopping.models.LineItem;
+import com.example.tongue.domain.merchant.enumerations.ProductsScope;
+import com.example.tongue.domain.merchant.enumerations.ValueType;
+import com.example.tongue.domain.merchant.Discount;
+import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.LineItem;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

@@ -1,8 +1,7 @@
 package com.example.tongue.core.utilities;
 
-import com.example.tongue.merchants.models.Product;
+import com.example.tongue.domain.merchant.Product;
 import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

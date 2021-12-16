@@ -1,11 +1,11 @@
 package com.example.tongue.core.converters;
 
 import com.example.tongue.core.domain.Position;
-import com.example.tongue.merchants.models.Discount;
-import com.example.tongue.merchants.models.Modifier;
-import com.example.tongue.merchants.models.Product;
-import com.example.tongue.shopping.models.Cart;
-import com.example.tongue.shopping.models.LineItem;
+import com.example.tongue.domain.merchant.Discount;
+import com.example.tongue.domain.merchant.Modifier;
+import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.LineItem;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 

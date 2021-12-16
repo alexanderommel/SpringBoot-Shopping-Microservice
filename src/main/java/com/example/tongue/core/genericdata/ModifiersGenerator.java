@@ -1,12 +1,12 @@
 package com.example.tongue.core.genericdata;
 
-import com.example.tongue.merchants.enumerations.GroupModifierType;
-import com.example.tongue.merchants.models.GroupModifier;
-import com.example.tongue.merchants.models.Modifier;
-import com.example.tongue.merchants.models.Product;
-import com.example.tongue.merchants.models.StoreVariant;
-import com.example.tongue.merchants.repositories.GroupModifierRepository;
-import com.example.tongue.merchants.repositories.ModifierRepository;
+import com.example.tongue.domain.merchant.enumerations.GroupModifierType;
+import com.example.tongue.domain.merchant.GroupModifier;
+import com.example.tongue.domain.merchant.Modifier;
+import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.merchant.StoreVariant;
+import com.example.tongue.repositories.merchant.GroupModifierRepository;
+import com.example.tongue.repositories.merchant.ModifierRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

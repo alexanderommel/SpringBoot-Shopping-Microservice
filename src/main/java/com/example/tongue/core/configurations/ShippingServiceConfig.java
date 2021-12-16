@@ -1,7 +1,7 @@
 package com.example.tongue.core.configurations;
 
-import com.example.tongue.integrations.shipping.ShippingBroker;
-import com.example.tongue.integrations.shipping.ShippingServiceBroker;
+import com.example.tongue.integration.shipping.ShippingBroker;
+import com.example.tongue.integration.shipping.ShippingServiceBroker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;

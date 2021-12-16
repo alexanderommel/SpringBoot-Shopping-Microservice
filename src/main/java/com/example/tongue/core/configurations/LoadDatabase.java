@@ -1,8 +1,9 @@
 package com.example.tongue.core.configurations;
 
 import com.example.tongue.core.genericdata.Store1DataGenerator;
-import com.example.tongue.merchants.repositories.*;
-import com.example.tongue.checkout.repositories.CheckoutRepository;
+import com.example.tongue.repositories.checkout.CheckoutRepository;
+import com.example.tongue.repositories.merchant.StoreVariantRepository;
+import com.example.tongue.repositories.merchant.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;

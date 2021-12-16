@@ -1,13 +1,20 @@
 package com.example.tongue.checkout.services;
 
-import com.example.tongue.checkout.models.Checkout;
-import com.example.tongue.checkout.models.FlowMessage;
+import com.example.tongue.domain.checkout.Checkout;
+import com.example.tongue.domain.checkout.FlowMessage;
 import com.example.tongue.core.genericdata.Store1DataGenerator;
 import com.example.tongue.core.domain.Position;
-import com.example.tongue.merchants.models.*;
-import com.example.tongue.merchants.repositories.*;
-import com.example.tongue.shopping.models.Cart;
-import com.example.tongue.shopping.models.LineItem;
+import com.example.tongue.domain.merchant.Collection;
+import com.example.tongue.domain.merchant.CollectionProductAllocation;
+import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.merchant.StoreVariant;
+import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.LineItem;
+import com.example.tongue.repositories.merchant.StoreVariantRepository;
+import com.example.tongue.repositories.merchant.*;
+import com.example.tongue.services.CheckoutCreationFlow;
+import com.example.tongue.services.CheckoutSession;
+import com.example.tongue.services.CheckoutValidation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;

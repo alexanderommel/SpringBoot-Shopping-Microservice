@@ -1,8 +1,8 @@
 package com.example.tongue.core.genericdata;
 
-import com.example.tongue.merchants.enumerations.DiscountType;
-import com.example.tongue.merchants.models.Discount;
-import com.example.tongue.merchants.models.Product;
+import com.example.tongue.domain.merchant.enumerations.DiscountType;
+import com.example.tongue.domain.merchant.Discount;
+import com.example.tongue.domain.merchant.Product;
 
 import java.util.List;
 

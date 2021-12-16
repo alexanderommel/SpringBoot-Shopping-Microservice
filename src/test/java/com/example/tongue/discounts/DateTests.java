@@ -1,15 +1,6 @@
 package com.example.tongue.discounts;
 
-import com.example.tongue.merchants.models.Discount;
-import com.example.tongue.merchants.repositories.DiscountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-import java.util.Date;
-import java.util.List;
+import com.example.tongue.repositories.merchant.DiscountRepository;
 
 public class DateTests {
 

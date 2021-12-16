@@ -1,10 +1,10 @@
 package com.example.tongue.core.converters;
 
-import com.example.tongue.checkout.models.CheckoutAttribute;
-import com.example.tongue.checkout.models.CheckoutAttributeName;
+import com.example.tongue.domain.checkout.CheckoutAttribute;
+import com.example.tongue.domain.checkout.CheckoutAttributeName;
 import com.example.tongue.core.exceptions.JsonBadFormatException;
 import com.example.tongue.core.domain.Position;
-import com.example.tongue.shopping.models.Cart;
+import com.example.tongue.domain.shopping.Cart;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;

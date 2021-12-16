@@ -1,5 +1,7 @@
 package com.example.tongue.merchants.models;
 
+import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.shopping.LineItemPriceCondition;
 import org.junit.Test;
 
 import java.math.BigDecimal;

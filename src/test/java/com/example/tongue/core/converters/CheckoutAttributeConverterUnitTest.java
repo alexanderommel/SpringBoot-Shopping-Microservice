@@ -1,11 +1,11 @@
 package com.example.tongue.core.converters;
 
-import com.example.tongue.checkout.models.CheckoutAttribute;
+import com.example.tongue.domain.checkout.CheckoutAttribute;
 import com.example.tongue.core.exceptions.JsonBadFormatException;
 import com.example.tongue.core.domain.Position;
-import com.example.tongue.merchants.models.Product;
-import com.example.tongue.shopping.models.Cart;
-import com.example.tongue.shopping.models.LineItem;
+import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.LineItem;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.server.ResponseStatusException;
