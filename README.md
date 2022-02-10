@@ -55,8 +55,3 @@ If you modify the source code, use the following command to rebuild the .jar:
 maven clean package
 ```
 
-## Contributing
-Personal project,but open to any help 💤
-
-## License
-[Do What The F*ck You Want To Public License](http://www.wtfpl.net/)
