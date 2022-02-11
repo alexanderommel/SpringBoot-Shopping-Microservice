@@ -14,6 +14,7 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Long> {
     Page<Product> findAll(Pageable pageable);
+    List<Product> findAllByCollection_IdAndStatus(Long id, ProductStatus status);
     //Page<ProductCustomerDTO> findAllBy(Pageable pageable);
     Page<Product> findAllByDescription(String description, Pageable pageable);
     Page<Product> findAllByHandle(String handle, Pageable pageable);

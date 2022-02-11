@@ -88,6 +88,8 @@ public class Product {
     @ManyToOne
     private Collection collection;
 
+    @JsonIgnore
+    public Collection getCollection() { return collection; }
 
     //METHODS
     @JsonIgnore

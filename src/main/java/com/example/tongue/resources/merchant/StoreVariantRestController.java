@@ -78,6 +78,20 @@ public class StoreVariantRestController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
+    @GetMapping("/stores/{id}/menu")
+    public ResponseEntity<Map<String,Object>> getMenu(@PathVariable("id") Long id){
+        log.info("Searching menu for store id: "+id);
+        Map<String,Object> response = new HashMap<>();
+        List<Collection> collections = collectionRepository.findAllByStoreVariantId(id);
+        if (collections.isEmpty()){
+            log.info("No collections found");
+            response.put("error","No collections found for this store");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        response.put("response",collections);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     
 
     @GetMapping(value = "/storevariants",params = {"page","size"})
