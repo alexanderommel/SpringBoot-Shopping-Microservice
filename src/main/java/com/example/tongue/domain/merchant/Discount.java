@@ -1,7 +1,7 @@
 package com.example.tongue.domain.merchant;
 
 import com.example.tongue.domain.merchant.enumerations.*;
-import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.domain.shopping.LineItemPriceCondition;
 import com.example.tongue.domain.shopping.ValueSubtotalCondition;
@@ -118,6 +118,9 @@ public class Discount {
 
     private String requiredCompanions;
 
+    @ManyToOne
+    private StoreVariant storeVariant;
+
 
     //METHODS
 
@@ -227,6 +230,14 @@ public class Discount {
         this.excludedProducts = excludedProducts;
     }
 
+    @JsonIgnore
+    public StoreVariant getStoreVariant() {
+        return storeVariant;
+    }
+
+    public void setStoreVariant(StoreVariant storeVariant) {
+        this.storeVariant = storeVariant;
+    }
 
     public BigDecimal getValue() {
         return value;
@@ -312,13 +323,13 @@ public class Discount {
     //METHODS
 
     @JsonIgnore
-    public Boolean validForCart(Cart cart){
+    public Boolean validForCart(ShoppingCart shoppingCart){
         /*
         Value Subtotal Condition
         */
         ValueSubtotalCondition subtotalCondition = this.getValueSubtotalCondition();
         if (subtotalCondition!=null){
-            if (!subtotalCondition.isAccomplishedOn(cart)){
+            if (!subtotalCondition.isAccomplishedOn(shoppingCart)){
                 return false;
             }
         }
@@ -326,7 +337,7 @@ public class Discount {
         Validation for every product
          */
         for (LineItem lineItem:
-                cart.getItems()) {
+                shoppingCart.getItems()) {
             if (!validForProduct(lineItem.getProduct())){
                 return false;
             }

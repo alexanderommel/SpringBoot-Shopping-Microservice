@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface DiscountRepository extends JpaRepository<Discount,Long> {
     Page<Discount> findAll(Pageable pageable);
-    public List<Discount> findAllByCreatedAt(Instant instant);
+    List<Discount> findAllByStoreVariantId(Long id);
 }
