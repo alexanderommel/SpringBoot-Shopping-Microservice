@@ -2,6 +2,7 @@ package com.example.tongue.services;
 
 import com.example.tongue.core.domain.Position;
 import com.example.tongue.domain.checkout.*;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.integration.shipping.ShippingBroker;
 import com.example.tongue.integration.shipping.ShippingBrokerResponse;
 import com.example.tongue.integration.shipping.ShippingSummary;
@@ -11,7 +12,6 @@ import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.repositories.merchant.DiscountRepository;
 import com.example.tongue.repositories.merchant.ModifierRepository;
 import com.example.tongue.repositories.merchant.ProductRepository;
-import com.example.tongue.domain.shopping.Cart;
 import com.example.tongue.domain.shopping.LineItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -64,19 +64,17 @@ public class CheckoutUpgradeFlow {
         checkout = addRealValuesToCheckout(checkoutAttribute,checkout);
 
         ShippingBrokerResponse brokerResponse =
-                shippingBroker.requestShippingSummary(checkout.getOrigin(), checkout.getDestination());
+                shippingBroker.requestShippingSummary(checkout.getShippingInfo().getCustomerPosition(),
+                        checkout.getShippingInfo().getStorePosition());
 
         if (!brokerResponse.getSolved()){
             response.setErrorMessage(brokerResponse.getErrorMessage());
             return response;
         }
-        ShippingSummary summary = (ShippingSummary) brokerResponse.getMessage("summary");
-        checkout.getPrice().setShippingTotal(summary.getFee());
-        checkout.getPrice().setShippingSubtotal(summary.getFee());
-        Boolean successfulUpdate = checkout.getCart().updatePrice();
+        Boolean successfulUpdate = checkout.getShoppingCart().updatePrice();
         if (!successfulUpdate){
-            response.setErrorMessage("Error updating the price of the shopping cart, bad discount");
-            response.setErrorStage("Cart Updating");
+            response.setErrorMessage("Error updating the price of the shopping shoppingCart, bad discount");
+            response.setErrorStage("ShoppingCart Updating");
             return response;
         }
         checkout.updateCheckout();
@@ -92,12 +90,12 @@ public class CheckoutUpgradeFlow {
         if (checkoutAttribute==null)
             return checkout;
         if (checkoutAttribute.getName()== CheckoutAttributeName.CART){
-            Cart cart = (Cart) checkoutAttribute.getAttribute();
-            Discount discount = cart.getDiscount();
-            List<LineItem> itemList = cart.getItems();
+            ShoppingCart shoppingCart = (ShoppingCart) checkoutAttribute.getAttribute();
+            Discount discount = shoppingCart.getDiscount();
+            List<LineItem> itemList = shoppingCart.getItems();
             if (discount!=null){
                 discount = discountRepository.findById(discount.getId()).get();
-                cart.setDiscount(discount);
+                shoppingCart.setDiscount(discount);
             }
             List<LineItem> newItems = new ArrayList<>();
             for (LineItem item:itemList) {
@@ -120,8 +118,8 @@ public class CheckoutUpgradeFlow {
                 item.setModifiers(newModifiers);
                 newItems.add(item);
             }
-            cart.setItems(newItems);
-            checkout.setCart(cart);
+            shoppingCart.setItems(newItems);
+            checkout.setShoppingCart(shoppingCart);
         }
         return checkout;
     }
@@ -130,16 +128,16 @@ public class CheckoutUpgradeFlow {
         if (attribute==null)
             return checkout;
         if (attribute.getName()==CheckoutAttributeName.CART){
-            Cart cart = (Cart) attribute.getAttribute();
-            checkout.setCart(cart);
+            ShoppingCart shoppingCart = (ShoppingCart) attribute.getAttribute();
+            checkout.setShoppingCart(shoppingCart);
         }
         if (attribute.getName()==CheckoutAttributeName.ORIGIN){
             Position origin = (Position) attribute.getAttribute();
-            checkout.setOrigin(origin);
+            checkout.getShippingInfo().setCustomerPosition(origin);
         }
         if (attribute.getName()==CheckoutAttributeName.DESTINATION){
             Position destination = (Position) attribute.getAttribute();
-            checkout.setDestination(destination);
+            checkout.getShippingInfo().setStorePosition(destination);
         }
         return checkout;
     }

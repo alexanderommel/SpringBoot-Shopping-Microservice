@@ -9,16 +9,18 @@ import com.example.tongue.domain.merchant.Discount;
 import com.example.tongue.domain.merchant.Modifier;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.StoreVariant;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.repositories.merchant.DiscountRepository;
 import com.example.tongue.repositories.merchant.ModifierRepository;
 import com.example.tongue.repositories.merchant.ProductRepository;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
-import com.example.tongue.domain.shopping.Cart;
 import com.example.tongue.domain.shopping.LineItem;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+@Slf4j
 public class CheckoutValidation {
 
     @Autowired
@@ -39,10 +41,10 @@ public class CheckoutValidation {
     private ValidationResponse validateAttributes(Checkout checkout){
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
-        Cart cart = checkout.getCart();
-        Position destination = checkout.getDestination();
-        Position origin = checkout.getOrigin();
-        response = attributeValidation(new CheckoutAttribute(cart,CheckoutAttributeName.CART));
+        ShoppingCart shoppingCart = checkout.getShoppingCart();
+        Position destination = checkout.getShippingInfo().getStorePosition();
+        Position origin = checkout.getShippingInfo().getCustomerPosition();
+        response = attributeValidation(new CheckoutAttribute(shoppingCart,CheckoutAttributeName.CART));
         if (!response.isSolved())
             return response;
         response = attributeValidation(new CheckoutAttribute(destination,CheckoutAttributeName.DESTINATION));
@@ -52,7 +54,7 @@ public class CheckoutValidation {
         return response;
     }
 
-    /** Attribute Validation validates that everything that's in the shopping cart has a real id **/
+    /** Attribute Validation validates that everything that's in the shopping shoppingCart has a real id **/
     public ValidationResponse attributeValidation(CheckoutAttribute checkoutAttribute) {
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
@@ -81,9 +83,10 @@ public class CheckoutValidation {
     public ValidationResponse softValidation(Checkout checkout){
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
-        Position origin = checkout.getOrigin();
+        Position origin = checkout.getShippingInfo().getCustomerPosition();
 
         if (origin==null){
+            log.info("Customer position (origin) shouldn't be empty");
             response.setErrorMessage("Origin position object is mandatory");
             return response;
         }
@@ -110,8 +113,8 @@ public class CheckoutValidation {
             return response;
         }
         try{
-            Cart cart = checkout.getCart();
-            LineItem item = cart.getItems().get(0);
+            ShoppingCart shoppingCart = checkout.getShoppingCart();
+            LineItem item = shoppingCart.getItems().get(0);
             Product product = item.getProduct();
             if (!productRepository.existsById(product.getId())){
                 response.setErrorMessage("No such Product with id '"+product.getId()+"'");
@@ -142,13 +145,13 @@ public class CheckoutValidation {
         return response;
     }
 
-    /** It verifies that everything in the cart has an existing associated id (Except store variant)**/
+    /** It verifies that everything in the shoppingCart has an existing associated id (Except store variant)**/
     private ValidationResponse validateCartAttribute(CheckoutAttribute attribute) {
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
-        Cart cart = (Cart) attribute.getAttribute();
-        Discount discount = cart.getDiscount();
-        List<LineItem> items = cart.getItems();
+        ShoppingCart shoppingCart = (ShoppingCart) attribute.getAttribute();
+        Discount discount = shoppingCart.getDiscount();
+        List<LineItem> items = shoppingCart.getItems();
         if (discount != null) {
 
             response = discountValidationWrapper(discount, response);
@@ -159,7 +162,7 @@ public class CheckoutValidation {
         }
         if (items != null) {
             if (items.isEmpty()){
-                response.setErrorMessage("Your Cart shouldn't be empty");
+                response.setErrorMessage("Your ShoppingCart shouldn't be empty");
                 return response;
             }
             for (LineItem item : items) {

@@ -2,6 +2,7 @@ package com.example.tongue.checkout.services;
 
 import com.example.tongue.core.domain.Position;
 import com.example.tongue.domain.checkout.*;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.integration.shipping.ShippingBroker;
 import com.example.tongue.integration.shipping.ShippingBrokerResponse;
 import com.example.tongue.integration.shipping.ShippingSummary;
@@ -11,7 +12,6 @@ import com.example.tongue.domain.merchant.StoreVariant;
 import com.example.tongue.repositories.merchant.DiscountRepository;
 import com.example.tongue.repositories.merchant.ModifierRepository;
 import com.example.tongue.repositories.merchant.ProductRepository;
-import com.example.tongue.domain.shopping.Cart;
 import com.example.tongue.domain.shopping.CartPrice;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.services.CheckoutSession;
@@ -51,20 +51,20 @@ public class CheckoutUpgradeFlowTest {
         /** In Session Checkout Mocking**/
         Checkout checkout = new Checkout();
         Position origin = Position.builder().latitude(1333F).longitude(552.2F).build();
-        checkout.setOrigin(null);
-        checkout.setDestination(null);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(null).storePosition(null).build();
+        checkout.setShippingInfo(shippingInfo);
         StoreVariant storeVariant = new StoreVariant();
         storeVariant.setId(1L);
         checkout.setStoreVariant(storeVariant);
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         Product product = new Product();
         product.setId(2L);
         item1.setQuantity(2);
         item1.setProduct(product);
         item1.setInstructions("Test instruction");
-        cart.addItem(item1);
-        checkout.setCart(cart);
+        shoppingCart.addItem(item1);
+        checkout.setShoppingCart(shoppingCart);
         Mockito.when(checkoutSession.get(null)).thenReturn(checkout);
         /** Product Repository Mocking **/
         Product product1 = new Product(); product1.setId(1L);
@@ -120,7 +120,7 @@ public class CheckoutUpgradeFlowTest {
         attribute.setAttribute(destination);
         FlowMessage flowMessage = upgradeFlow.run(attribute,null);
         Checkout checkout = (Checkout) flowMessage.getAttribute("checkout");
-        Position current = checkout.getDestination();
+        Position current = checkout.getShippingInfo().getStorePosition();
         assertTrue(destination.equals(current));
     }
 
@@ -133,50 +133,50 @@ public class CheckoutUpgradeFlowTest {
         attribute.setAttribute(destination);
         FlowMessage flowMessage = upgradeFlow.run(attribute,null);
         Checkout checkout = (Checkout) flowMessage.getAttribute("checkout");
-        assertNotEquals(expected,checkout.getCart().getItems().get(0).getProduct().getPrice().intValue());
+        assertNotEquals(expected,checkout.getShoppingCart().getItems().get(0).getProduct().getPrice().intValue());
     }
 
     @Test
     public void givenSameSessionCartAttributeWhenRunningThenCheckoutProductPriceMustBe5(){
         int expected = BigDecimal.valueOf(5).intValue();
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         Product product = new Product();
         product.setId(2L);
         item1.setQuantity(2);
         item1.setProduct(product);
-        cart.addItem(item1);
+        shoppingCart.addItem(item1);
         CheckoutAttribute checkoutAttribute = new CheckoutAttribute();
         checkoutAttribute.setName(CheckoutAttributeName.CART);
-        checkoutAttribute.setAttribute(cart);
+        checkoutAttribute.setAttribute(shoppingCart);
         FlowMessage flowMessage = upgradeFlow.run(checkoutAttribute,null);
         Checkout checkout = (Checkout) flowMessage.getAttribute("checkout");
-        assertEquals(expected,checkout.getCart().getItems().get(0).getProduct().getPrice().intValue());
+        assertEquals(expected,checkout.getShoppingCart().getItems().get(0).getProduct().getPrice().intValue());
     }
 
     @Test
     public void givenSameSessionCartAttributeWhenRunningThenCheckoutCartFinalPriceMustBeEqualsTo10(){
         int expected = BigDecimal.valueOf(10).intValue();
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         Product product = new Product();
         product.setId(2L);
         item1.setQuantity(2);
         item1.setProduct(product);
-        cart.addItem(item1);
+        shoppingCart.addItem(item1);
         CheckoutAttribute checkoutAttribute = new CheckoutAttribute();
         checkoutAttribute.setName(CheckoutAttributeName.CART);
-        checkoutAttribute.setAttribute(cart);
+        checkoutAttribute.setAttribute(shoppingCart);
         FlowMessage flowMessage = upgradeFlow.run(checkoutAttribute,null);
         Checkout checkout = (Checkout) flowMessage.getAttribute("checkout");
-        assertEquals(expected,checkout.getCart().getPrice().getFinalPrice().intValue());
+        assertEquals(expected,checkout.getShoppingCart().getPrice().getFinalPrice().intValue());
     }
 
     @Test
     public void givenCartAttributeWhenRunningThenCheckoutFinalPriceMustBeEqualsToExpected(){
         /**  Fee is 2.50**/
         double expected = 27.5;
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         LineItem item2 = new LineItem();
         item1.setQuantity(2);
@@ -184,10 +184,10 @@ public class CheckoutUpgradeFlowTest {
         Product product2 = new Product(); product2.setId(2L);
         item1.setProduct(product1);
         item2.setProduct(product2);
-        cart.addItem(item1);
-        cart.addItem(item2);
+        shoppingCart.addItem(item1);
+        shoppingCart.addItem(item2);
         CheckoutAttribute checkoutAttribute =  new CheckoutAttribute();
-        checkoutAttribute.setAttribute(cart);
+        checkoutAttribute.setAttribute(shoppingCart);
         checkoutAttribute.setName(CheckoutAttributeName.CART);
         FlowMessage flowMessage = upgradeFlow.run(checkoutAttribute,null);
         Checkout checkout = (Checkout) flowMessage.getAttribute("checkout");
@@ -198,7 +198,7 @@ public class CheckoutUpgradeFlowTest {
     public void givenCartAttributeWithFinalPriceModifiedWhenRunningThenReturnedCheckoutFinalPriceNotEqual(){
         /**  Fee is 2.50**/
         double expected = 27.5;
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         LineItem item2 = new LineItem();
         item1.setQuantity(2);
@@ -206,13 +206,13 @@ public class CheckoutUpgradeFlowTest {
         Product product2 = new Product(); product2.setId(2L);
         item1.setProduct(product1);
         item2.setProduct(product2);
-        cart.addItem(item1);
-        cart.addItem(item2);
+        shoppingCart.addItem(item1);
+        shoppingCart.addItem(item2);
         CartPrice cartPrice = new CartPrice();
         cartPrice.setFinalPrice(BigDecimal.valueOf(1000.5));
-        cart.setPrice(cartPrice);
+        shoppingCart.setPrice(cartPrice);
         CheckoutAttribute checkoutAttribute =  new CheckoutAttribute();
-        checkoutAttribute.setAttribute(cart);
+        checkoutAttribute.setAttribute(shoppingCart);
         checkoutAttribute.setName(CheckoutAttributeName.CART);
         FlowMessage flowMessage = upgradeFlow.run(checkoutAttribute,null);
         Checkout checkout = (Checkout) flowMessage.getAttribute("checkout");
@@ -235,8 +235,8 @@ public class CheckoutUpgradeFlowTest {
     @Test
     public void givenCartAttributeWithModifiersWhenRunningThenCheckoutFinalPriceIsEqual(){
         double expected = 30.1; // 27.5 + 2.60
-        /** Valid cart with basic attributes**/
-        Cart cart = new Cart();
+        /** Valid shoppingCart with basic attributes**/
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         LineItem item2 = new LineItem();
         item1.setQuantity(2);
@@ -248,12 +248,12 @@ public class CheckoutUpgradeFlowTest {
         Modifier modifier = new Modifier();
         modifier.setId(555L); // On Database this modifier has a price of 1.30
         item1.addModifier(modifier);
-        /** Add items to cart and run**/
-        cart.addItem(item1);
-        cart.addItem(item2);
+        /** Add items to shoppingCart and run**/
+        shoppingCart.addItem(item1);
+        shoppingCart.addItem(item2);
         CheckoutAttribute checkoutAttribute =  new CheckoutAttribute();
         checkoutAttribute.setName(CheckoutAttributeName.CART);
-        checkoutAttribute.setAttribute(cart);
+        checkoutAttribute.setAttribute(shoppingCart);
         FlowMessage flowMessage = upgradeFlow.run(checkoutAttribute,null);
         Checkout checkout = (Checkout) flowMessage.getAttribute("checkout");
         assertTrue(checkout.getPrice().getCheckoutTotal().equals(BigDecimal.valueOf(expected)));

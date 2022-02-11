@@ -2,12 +2,13 @@ package com.example.tongue.checkout.services;
 
 import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.FlowMessage;
+import com.example.tongue.domain.checkout.ShippingInfo;
 import com.example.tongue.domain.checkout.ValidationResponse;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.repositories.checkout.CheckoutRepository;
 import com.example.tongue.core.domain.Position;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.StoreVariant;
-import com.example.tongue.domain.shopping.Cart;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.services.CheckoutCompletionFlow;
 import com.example.tongue.services.CheckoutSession;
@@ -46,12 +47,12 @@ public class CheckoutCompletionFlowUnitTest {
         /** In Session Checkout Mocking**/
         Checkout checkout = new Checkout();
         Position origin = Position.builder().latitude(1333F).longitude(552.2F).build();
-        checkout.setOrigin(null);
-        checkout.setDestination(null);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(null).storePosition(null).build();
+        checkout.setShippingInfo(shippingInfo);
         StoreVariant storeVariant = new StoreVariant();
         storeVariant.setId(1L);
         checkout.setStoreVariant(storeVariant);
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         Product product = new Product();
         product.setId(2L);
@@ -59,8 +60,8 @@ public class CheckoutCompletionFlowUnitTest {
         item1.setQuantity(2);
         item1.setProduct(product);
         item1.setInstructions("Test instruction");
-        cart.addItem(item1);
-        checkout.setCart(cart);
+        shoppingCart.addItem(item1);
+        checkout.setShoppingCart(shoppingCart);
         Mockito.when(checkoutSession.get(ArgumentMatchers.any())).thenReturn(checkout);
         Mockito.when(checkoutSession.save(ArgumentMatchers.any(),ArgumentMatchers.any())).thenReturn(checkout);
         Mockito.when(checkoutSession.delete(ArgumentMatchers.any())).thenReturn(null);

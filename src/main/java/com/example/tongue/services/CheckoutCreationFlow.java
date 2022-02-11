@@ -3,6 +3,7 @@ package com.example.tongue.services;
 import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.FlowMessage;
 import com.example.tongue.domain.checkout.ValidationResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import java.time.Instant;
 
 @Component
+@Slf4j
 public class CheckoutCreationFlow {
 
     @Autowired
@@ -27,10 +29,14 @@ public class CheckoutCreationFlow {
     }
 
     public FlowMessage run(Checkout checkout, HttpSession session){
+        log.info("Creating Checkout");
+        boolean isNull = checkout == null;
+        log.info("Checkout entry is null? -> "+isNull);
         FlowMessage response = new FlowMessage();
         response.setSolved(false);
         ValidationResponse validationResponse = checkoutValidation.softValidation(checkout);
         if (!validationResponse.isSolved()){
+            log.info("Checkout validation status is -> "+validationResponse.isSolved());
             response.setErrorMessage(validationResponse.getErrorMessage());
             response.setErrorStage("Validation error");
             return response;

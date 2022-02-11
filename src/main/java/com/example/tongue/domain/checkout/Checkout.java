@@ -1,10 +1,9 @@
 package com.example.tongue.domain.checkout;
 
 import com.example.tongue.integration.customers.Customer;
-import com.example.tongue.core.domain.Position;
 import com.example.tongue.domain.merchant.StoreVariant;
 import com.example.tongue.integration.payments.Payment;
-import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -14,6 +13,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.Instant;
+
+/** Checkout is a process that has several stages that a customer follows in order**/
 
 @Entity
 @Data
@@ -26,26 +27,13 @@ public class Checkout {
 
     @OneToOne
     @JsonIgnoreProperties("id")
-    private Cart cart;
+    private ShoppingCart shoppingCart;
 
     @ManyToOne
     private Customer customer;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name="longitude",column = @Column(name="origin_longitude")),
-            @AttributeOverride(name="latitude",column=@Column(name="origin_latitude")),
-            @AttributeOverride(name = "address",column = @Column(name = "origin_address"))
-    })
-    private Position origin;
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name="longitude",column = @Column(name="destination_longitude")),
-            @AttributeOverride(name="latitude",column=@Column(name="destination_latitude")),
-            @AttributeOverride(name = "address",column = @Column(name = "destination_address"))
-    })
-    private Position destination;
+    private ShippingInfo shippingInfo = new ShippingInfo();
 
     @ManyToOne
     @JsonIgnoreProperties({"name","location","representative",
@@ -55,11 +43,11 @@ public class Checkout {
     private StoreVariant storeVariant;
 
     @Embedded
-    private Payment payment; //Cards have validation tokens
-
-    private Instant created_at = Instant.now(); //ISO 8601;
+    private PaymentInfo paymentInfo;
 
     private CheckoutPrice price=new CheckoutPrice();
+
+    private Instant created_at = Instant.now(); //ISO 8601;
 
     private Instant FinishedAt;
 
@@ -67,16 +55,14 @@ public class Checkout {
 
     private String sourceDevice;
 
+    private String resource;
+
     @JsonIgnore
     public void updateCheckout(){
-        price.setCartTotal(cart.getPrice().getTotalPrice());
-        price.setCartSubtotal(cart.getPrice().getFinalPrice());
+        price.setCartTotal(shoppingCart.getPrice().getTotalPrice());
+        price.setCartSubtotal(shoppingCart.getPrice().getFinalPrice());
         price.setCheckoutTotal(price.getCartTotal().add(price.getShippingTotal()));
         price.setCheckoutSubtotal(price.getCartSubtotal().add(price.getShippingSubtotal()));
-    }
-
-    public enum Status{
-
     }
 
 }
