@@ -4,7 +4,7 @@ import com.example.tongue.core.domain.Position;
 import com.example.tongue.domain.merchant.Discount;
 import com.example.tongue.domain.merchant.Modifier;
 import com.example.tongue.domain.merchant.Product;
-import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.domain.shopping.LineItem;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -151,15 +151,15 @@ public class LinkedHashMapConverter {
         return modifier;
     }
 
-    public static Cart toCart(LinkedHashMap hashMap){
-        Cart cart = new Cart();
+    public static ShoppingCart toCart(LinkedHashMap hashMap){
+        ShoppingCart shoppingCart = new ShoppingCart();
         Boolean ignoreProductDiscount=Boolean.FALSE;
 
         // Instructions attribute population (optional)
         Object instructions = hashMap.get("instructions");
         if (instructions!=null){
             if (instructions instanceof String)
-                cart.setInstructions((String) instructions);
+                shoppingCart.setInstructions((String) instructions);
             else
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Attribute 'instructions' must be a string");
@@ -170,7 +170,7 @@ public class LinkedHashMapConverter {
         if (discount!=null){
             if (discount instanceof LinkedHashMap){
                 ignoreProductDiscount=Boolean.TRUE;
-                cart.setDiscount(toDiscount((LinkedHashMap) discount));
+                shoppingCart.setDiscount(toDiscount((LinkedHashMap) discount));
             }else
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Nested object 'discount' must be a valid Discount object");
@@ -180,7 +180,7 @@ public class LinkedHashMapConverter {
         Object hashMaps =  hashMap.get("items");
         if (hashMaps==null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Cart line items must not be empty");
+                    "ShoppingCart line items must not be empty");
         if (hashMaps instanceof List){
             List<LinkedHashMap> linkedHashMaps = (List<LinkedHashMap>) hashMaps;
             List<LineItem> items = new ArrayList<>();
@@ -191,10 +191,10 @@ public class LinkedHashMapConverter {
                             "Nested object 'item' must be a valid LineItem object");
                 items.add(item);
             }
-            cart.setItems(items);
+            shoppingCart.setItems(items);
         }else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Attribute 'items' must be a list of nested LineItem objects");
-        return cart;
+        return shoppingCart;
     }
 }

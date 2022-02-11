@@ -5,7 +5,7 @@ import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.enumerations.DiscountScope;
 import com.example.tongue.domain.merchant.enumerations.DiscountType;
 import com.example.tongue.domain.merchant.enumerations.ProductsScope;
-import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.domain.shopping.LineItemPriceCondition;
 import org.junit.Test;
@@ -95,11 +95,11 @@ public class DiscountUnitTest {
     @Test
     public void shouldValidForCartReturnFalseWhenProductNotEntitled(){
         /** To validate**/
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item = new LineItem();
         Product product = new Product(); product.setId(2L); product.setPrice(BigDecimal.ONE);
         item.setProduct(product); item.getPrice().setFinalPrice(product.getPrice());
-        cart.addItem(item);
+        shoppingCart.addItem(item);
         /** Discount instantiation**/
         Product product1 = new Product();
         product1.setId(1L);
@@ -107,20 +107,20 @@ public class DiscountUnitTest {
         Discount discount = new Discount();
         discount.setProductsScope(ProductsScope.ENTITLED_ONLY);
         discount.setEntitledProducts(Arrays.asList(product1));
-        Boolean current = discount.validForCart(cart);
+        Boolean current = discount.validForCart(shoppingCart);
         assertFalse(current);
     }
 
     @Test
     public void givenNoEntitledCartItemsWhenDiscountProductScopeIsGlobalAndNoEmptyEntitledThenOk(){
 
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
 
         LineItem item1 = new LineItem(); item1.setQuantity(2);
         Product product1 = new Product(); product1.setId(1L);
         item1.setProduct(product1);
 
-        cart.addItem(item1);
+        shoppingCart.addItem(item1);
 
         Product product2 = new Product(); product2.setId(2L);
         Product product3 = new Product(); product3.setId(3L);
@@ -132,7 +132,7 @@ public class DiscountUnitTest {
         discount.setDiscountScope(DiscountScope.LINE_ITEMS);
         discount.setDiscountType(DiscountType.PRODUCT);
 
-        assertTrue(discount.validForCart(cart));
+        assertTrue(discount.validForCart(shoppingCart));
 
 
     }

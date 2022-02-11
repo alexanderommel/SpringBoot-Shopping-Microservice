@@ -1,13 +1,14 @@
 package com.example.tongue.checkout.services;
 
 import com.example.tongue.domain.checkout.Checkout;
+import com.example.tongue.domain.checkout.ShippingInfo;
 import com.example.tongue.domain.checkout.ValidationResponse;
 import com.example.tongue.core.domain.Position;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.StoreVariant;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.repositories.merchant.ProductRepository;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
-import com.example.tongue.domain.shopping.Cart;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.services.CheckoutValidation;
 import org.junit.Before;
@@ -51,15 +52,15 @@ public class CheckoutSoftValidationUnitTest {
     @Test
     public void shouldRejectIncompleteCheckoutWhenValidationIsSoft(){
         Checkout checkout = new Checkout();
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         Product product = new Product();
         item1.setProduct(product);
-        cart.addItem(item1);
+        shoppingCart.addItem(item1);
         Position destination = new Position();
         Position origin = new Position();
-        checkout.setOrigin(origin);
-        checkout.setDestination(destination);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(origin).storePosition(destination).build();
+        checkout.setShippingInfo(shippingInfo);
         ValidationResponse response =
                 checkoutValidation.softValidation(checkout);
         assertFalse(response.isSolved());
@@ -68,22 +69,22 @@ public class CheckoutSoftValidationUnitTest {
     @Test
     public void shouldRejectCheckoutWhenProductIdNot100(){
         Checkout checkout = new Checkout();
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         Product product = new Product();
         product.setId(101L);
         item1.setProduct(product);
-        cart.addItem(item1);
+        shoppingCart.addItem(item1);
         Position destination = new Position();
         Position origin = new Position();
         origin.setLatitude(3.33F);
         origin.setLongitude(2F);
         StoreVariant storeVariant = new StoreVariant();
         storeVariant.setId(1L);
-        checkout.setCart(cart);
+        checkout.setShoppingCart(shoppingCart);
         checkout.setStoreVariant(storeVariant);
-        checkout.setOrigin(origin);
-        checkout.setDestination(destination);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(origin).storePosition(destination).build();
+        checkout.setShippingInfo(shippingInfo);
         ValidationResponse response =
                 checkoutValidation.softValidation(checkout);
         assertFalse(response.isSolved());
@@ -92,22 +93,22 @@ public class CheckoutSoftValidationUnitTest {
     @Test
     public void shouldAcceptCheckoutWhenProductIdIs100(){
         Checkout checkout = new Checkout();
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         Product product = new Product();
         product.setId(100L);
         item1.setProduct(product);
-        cart.addItem(item1);
+        shoppingCart.addItem(item1);
         Position destination = new Position();
         Position origin = new Position();
         origin.setLatitude(3.33F);
         origin.setLongitude(2F);
         StoreVariant storeVariant = new StoreVariant();
         storeVariant.setId(1L);
-        checkout.setCart(cart);
+        checkout.setShoppingCart(shoppingCart);
         checkout.setStoreVariant(storeVariant);
-        checkout.setOrigin(origin);
-        checkout.setDestination(destination);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(origin).storePosition(destination).build();
+        checkout.setShippingInfo(shippingInfo);
         ValidationResponse response =
                 checkoutValidation.softValidation(checkout);
         assertTrue(response.isSolved());
@@ -121,8 +122,8 @@ public class CheckoutSoftValidationUnitTest {
         StoreVariant storeVariant = new StoreVariant();
         storeVariant.setId(1L);
         checkout.setStoreVariant(storeVariant);
-        checkout.setOrigin(origin);
-        checkout.setDestination(destination);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(origin).storePosition(destination).build();
+        checkout.setShippingInfo(shippingInfo);
         ValidationResponse response =
                 checkoutValidation.softValidation(checkout);
         assertFalse(response.isSolved());
@@ -132,21 +133,21 @@ public class CheckoutSoftValidationUnitTest {
     public void shouldReturnMessageWhenOriginHasNoLatitude(){
         String expected = "Origin position attributes must be populated";
         Checkout checkout = new Checkout();
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         Product product = new Product();
         product.setId(100L);
         item1.setProduct(product);
-        cart.addItem(item1);
+        shoppingCart.addItem(item1);
         Position destination = new Position();
         Position origin = new Position();
         origin.setLongitude(2.222F);
         StoreVariant storeVariant = new StoreVariant();
         storeVariant.setId(1L);
-        checkout.setCart(cart);
+        checkout.setShoppingCart(shoppingCart);
         checkout.setStoreVariant(storeVariant);
-        checkout.setOrigin(origin);
-        checkout.setDestination(destination);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(origin).storePosition(destination).build();
+        checkout.setShippingInfo(shippingInfo);
         ValidationResponse response =
                 checkoutValidation.softValidation(checkout);
         assertEquals(expected,response.getErrorMessage());
@@ -156,22 +157,22 @@ public class CheckoutSoftValidationUnitTest {
     @Test
     public void shouldHasNoErrorMessageWhenCheckoutIsValid(){
         Checkout checkout = new Checkout();
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         Product product = new Product();
         product.setId(100L);
         item1.setProduct(product);
-        cart.addItem(item1);
+        shoppingCart.addItem(item1);
         Position destination = new Position();
         Position origin = new Position();
         origin.setLatitude(3.33F);
         origin.setLongitude(2F);
         StoreVariant storeVariant = new StoreVariant();
         storeVariant.setId(1L);
-        checkout.setCart(cart);
+        checkout.setShoppingCart(shoppingCart);
         checkout.setStoreVariant(storeVariant);
-        checkout.setOrigin(origin);
-        checkout.setDestination(destination);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(origin).storePosition(destination).build();
+        checkout.setShippingInfo(shippingInfo);
         ValidationResponse response =
                 checkoutValidation.softValidation(checkout);
         String errorMessage = response.getErrorMessage();

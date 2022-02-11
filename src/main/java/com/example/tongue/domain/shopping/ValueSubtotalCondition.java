@@ -1,8 +1,5 @@
 package com.example.tongue.domain.shopping;
 
-import com.example.tongue.domain.shopping.Cart;
-import com.example.tongue.domain.shopping.LineItem;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
@@ -18,8 +15,8 @@ public class ValueSubtotalCondition {
     @Column(name = "value_eq")
     private BigDecimal eq;
 
-    public Boolean isAccomplishedOn(Cart cart){
-        BigDecimal subtotal = getCartSubtotal(cart);
+    public Boolean isAccomplishedOn(ShoppingCart shoppingCart){
+        BigDecimal subtotal = getCartSubtotal(shoppingCart);
         if(leq !=null){
             int conditional_answer = subtotal.compareTo(leq);
             if(conditional_answer==1){
@@ -40,10 +37,10 @@ public class ValueSubtotalCondition {
         }
         return true;
     }
-    private BigDecimal getCartSubtotal(Cart cart){
+    private BigDecimal getCartSubtotal(ShoppingCart shoppingCart){
         BigDecimal subtotal = BigDecimal.ZERO;
         for (LineItem item:
-             cart.getItems()) {
+             shoppingCart.getItems()) {
             subtotal = subtotal.add(item.getProduct().getPrice());
         }
         return subtotal;

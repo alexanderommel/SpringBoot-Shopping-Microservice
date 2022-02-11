@@ -4,7 +4,7 @@ import com.example.tongue.domain.checkout.CheckoutAttribute;
 import com.example.tongue.domain.checkout.CheckoutAttributeName;
 import com.example.tongue.core.exceptions.JsonBadFormatException;
 import com.example.tongue.core.domain.Position;
-import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -70,20 +70,20 @@ public class CheckoutAttributeConverter {
                     return checkoutAttribute;
                 }
 
-                // Populate checkout attribute with cart
+                // Populate checkout attribute with shoppingCart
                 if (name.equalsIgnoreCase(String.valueOf(CheckoutAttributeName.CART))){
                     checkoutAttribute.setName(CheckoutAttributeName.CART);
-                    Object linkedHashMap = mapGetIgnoringCase(map,"cart");
+                    Object linkedHashMap = mapGetIgnoringCase(map,"shoppingCart");
                     if (linkedHashMap==null)
                         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                "Object 'cart' is missing");
+                                "Object 'shoppingCart' is missing");
                     if (linkedHashMap instanceof LinkedHashMap){
                         LinkedHashMap hashMap = (LinkedHashMap) linkedHashMap;
-                        Cart cart = LinkedHashMapConverter.toCart(hashMap);
-                        checkoutAttribute.setAttribute(cart);
+                        ShoppingCart shoppingCart = LinkedHashMapConverter.toCart(hashMap);
+                        checkoutAttribute.setAttribute(shoppingCart);
                     }else{
                         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                "Field 'cart' must be a json object");
+                                "Field 'shoppingCart' must be a json object");
                     }
                     return checkoutAttribute;
                 }

@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Cart {
+public class ShoppingCart {
 
     private @Id @GeneratedValue Long id;
 

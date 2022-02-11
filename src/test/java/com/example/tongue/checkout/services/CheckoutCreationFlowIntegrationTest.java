@@ -4,11 +4,12 @@ import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.FlowMessage;
 import com.example.tongue.core.genericdata.Store1DataGenerator;
 import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.ShippingInfo;
 import com.example.tongue.domain.merchant.Collection;
 import com.example.tongue.domain.merchant.CollectionProductAllocation;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.StoreVariant;
-import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
 import com.example.tongue.repositories.merchant.*;
@@ -85,7 +86,7 @@ public class CheckoutCreationFlowIntegrationTest {
         Long storeVariantId = storeVariantRepository.findAll().get(0).getId();
         System.out.println("Store Variant Id: "+storeVariantId);
         List<Collection> collections =
-                collectionRepository.findAllByStoreVariantId(storeVariantId,null ).getContent();
+                collectionRepository.findAllByStoreVariantId(storeVariantId );
         for (Collection c:collections
         ) {
             Long collectionId = c.getId();
@@ -123,6 +124,7 @@ public class CheckoutCreationFlowIntegrationTest {
         checkout = createBasicValidCheckout();
         /** **/
         FlowMessage flowMessage = checkoutCreationFlow.run(checkout,httpSession);
+        System.out.println(flowMessage.getErrorMessage());
         assertTrue(flowMessage.isSolved());
     }
 
@@ -130,7 +132,8 @@ public class CheckoutCreationFlowIntegrationTest {
     public void givenCheckoutWithoutOriginWhenCreatingThenReturnValidationErrorStage(){
         String expected = "Validation error";
         Checkout checkout = createBasicValidCheckout();
-        checkout.setOrigin(null);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(null).storePosition(null).build();
+        checkout.setShippingInfo(shippingInfo);
         FlowMessage flowMessage = checkoutCreationFlow.run(checkout,httpSession);
         assertEquals(flowMessage.getErrorStage(),expected);
 
@@ -140,28 +143,28 @@ public class CheckoutCreationFlowIntegrationTest {
     public void givenCheckoutWithNoExistingProductIdWhenCreatingThenReturnErrorMessage(){
         String expected = "No such Product with id '9994'";
         Checkout checkout = createBasicValidCheckout();
-        checkout.getCart().getItems().get(0).getProduct().setId(9994L);
+        checkout.getShoppingCart().getItems().get(0).getProduct().setId(9994L);
         FlowMessage flowMessage = checkoutCreationFlow.run(checkout,httpSession);
         assertEquals(expected,flowMessage.getErrorMessage());
     }
 
     private Checkout createBasicValidCheckout(){
         Checkout checkout = new Checkout();
-        Cart cart = new Cart();
-        cart.setInstructions("McLoving");
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setInstructions("McLoving");
         LineItem item= new LineItem();
         item.setQuantity(2);
         Product product = new Product();
-        product.setId(372L);
+        product.setId(371L);
         Position destination = Position.builder().latitude(22.2F).longitude(44.0F).build();
         Position origin = Position.builder().latitude(10.0F).longitude(5.552222F).build();
         StoreVariant storeVariant = new StoreVariant();
         storeVariant.setId(3L);
         item.setProduct(product);
-        cart.addItem(item);
-        checkout.setCart(cart);
-        checkout.setOrigin(origin);
-        checkout.setDestination(destination);
+        shoppingCart.addItem(item);
+        checkout.setShoppingCart(shoppingCart);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(origin).storePosition(destination).build();
+        checkout.setShippingInfo(shippingInfo);
         checkout.setStoreVariant(storeVariant);
         return checkout;
     }

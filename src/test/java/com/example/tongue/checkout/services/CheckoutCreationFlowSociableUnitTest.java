@@ -3,11 +3,12 @@ package com.example.tongue.checkout.services;
 import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.FlowMessage;
 import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.ShippingInfo;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.StoreVariant;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.repositories.merchant.ProductRepository;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
-import com.example.tongue.domain.shopping.Cart;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.services.CheckoutCreationFlow;
 import com.example.tongue.services.CheckoutSession;
@@ -84,13 +85,14 @@ public class CheckoutCreationFlowSociableUnitTest {
         Position origin = Position.builder().longitude(11.f).latitude(11.2f).build();
         StoreVariant storeVariant = new StoreVariant(); storeVariant.setId(1L);
         Product product = new Product(); product.setId(2L);
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item = new LineItem();
         item.setProduct(product);
-        cart.addItem(item);
-        checkout.setOrigin(origin);
+        shoppingCart.addItem(item);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(origin).storePosition(null).build();
+        checkout.setShippingInfo(shippingInfo);
         checkout.setStoreVariant(storeVariant);
-        checkout.setCart(cart);
+        checkout.setShoppingCart(shoppingCart);
         CheckoutCreationFlow creationFlow = new CheckoutCreationFlow(
                 checkoutValidation,
                 checkoutSession
@@ -105,13 +107,14 @@ public class CheckoutCreationFlowSociableUnitTest {
         Position origin = Position.builder().longitude(11.f).latitude(11.2f).build();
         StoreVariant storeVariant = new StoreVariant(); storeVariant.setId(1L);
         Product product = new Product(); product.setId(3L);
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item = new LineItem();
         item.setProduct(product);
-        cart.addItem(item);
-        checkout.setOrigin(origin);
+        shoppingCart.addItem(item);
+        ShippingInfo shippingInfo = ShippingInfo.builder().customerPosition(origin).storePosition(null).build();
+        checkout.setShippingInfo(shippingInfo);
         checkout.setStoreVariant(storeVariant);
-        checkout.setCart(cart);
+        checkout.setShoppingCart(shoppingCart);
         CheckoutCreationFlow creationFlow = new CheckoutCreationFlow(
                 checkoutValidation,
                 checkoutSession

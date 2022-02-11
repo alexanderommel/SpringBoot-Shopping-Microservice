@@ -4,7 +4,7 @@ import com.example.tongue.domain.merchant.enumerations.ProductsScope;
 import com.example.tongue.domain.merchant.enumerations.ValueType;
 import com.example.tongue.domain.merchant.Discount;
 import com.example.tongue.domain.merchant.Product;
-import com.example.tongue.domain.shopping.Cart;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.domain.shopping.LineItem;
 import org.junit.jupiter.api.Test;
 
@@ -17,11 +17,11 @@ public class CartUnitTest {
 
     @Test
     public void shouldUpdatePriceSuccessfullyWhenCartLevelDiscountIsProvided(){
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         Discount discount = new Discount();
         discount.setValueType(ValueType.FIXED_AMOUNT);
         discount.setValue(BigDecimal.valueOf(15.0));
-        cart.setDiscount(discount);
+        shoppingCart.setDiscount(discount);
         // Products
         Product product1 = new Product();
         product1.setPrice(BigDecimal.valueOf(10.0));
@@ -40,18 +40,18 @@ public class CartUnitTest {
         item3.setQuantity(2);
         item3.setProduct(product3);
         // Items
-        cart.addItem(item1);
-        cart.addItem(item2);
-        cart.addItem(item3);
+        shoppingCart.addItem(item1);
+        shoppingCart.addItem(item2);
+        shoppingCart.addItem(item3);
         // Method test
-        cart.updatePrice();
-        System.out.println("Cart final price is: "+cart.getPrice().getFinalPrice());
-        assert 105.0 == cart.getPrice().getFinalPrice().doubleValue(): "Test failure";
+        shoppingCart.updatePrice();
+        System.out.println("ShoppingCart final price is: "+ shoppingCart.getPrice().getFinalPrice());
+        assert 105.0 == shoppingCart.getPrice().getFinalPrice().doubleValue(): "Test failure";
 
     }
     @Test
     public void shouldUpdatePriceSuccessfullyWhenCartLevelDiscountIsNotProvided(){
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         // Products
         Product product1 = new Product();
         product1.setPrice(BigDecimal.valueOf(10.0));
@@ -78,20 +78,20 @@ public class CartUnitTest {
         item3.setDiscount(discount3);
         item1.setDiscount(discount1);
         // Items
-        cart.addItem(item1);
-        cart.addItem(item2);
-        cart.addItem(item3);
+        shoppingCart.addItem(item1);
+        shoppingCart.addItem(item2);
+        shoppingCart.addItem(item3);
         // TEST
-        cart.updatePrice();
-        System.out.println("Cart final price is: "+cart.getPrice().getFinalPrice());
-        assert 94.0 == cart.getPrice().getFinalPrice().doubleValue(): "Test failure";
+        shoppingCart.updatePrice();
+        System.out.println("ShoppingCart final price is: "+ shoppingCart.getPrice().getFinalPrice());
+        assert 94.0 == shoppingCart.getPrice().getFinalPrice().doubleValue(): "Test failure";
     }
 
     @Test
     public void shouldNotUpdatePriceWhenCartDiscountIsNotValidBecauseEntitlement(){
         /** The discount is not valid because one of the products
-         * in the shopping cart is not entitled**/
-        Cart cart = new Cart();
+         * in the shopping shoppingCart is not entitled**/
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item1 = new LineItem();
         Product product1 = new Product(); product1.setId(1L);
         product1.setPrice(BigDecimal.valueOf(10.0));
@@ -100,16 +100,16 @@ public class CartUnitTest {
         Product product2 = new Product(); product2.setId(2L);
         product2.setPrice(BigDecimal.valueOf(20.0));
         item2.setProduct(product2);
-        cart.addItem(item1);
-        cart.addItem(item2);
+        shoppingCart.addItem(item1);
+        shoppingCart.addItem(item2);
         //Discount instantiation
         Product product3 = new Product(); product3.setId(2L);
         Discount discount = new Discount();
         discount.setProductsScope(ProductsScope.ENTITLED_ONLY);
         discount.addEntitledProduct(product3);
-        cart.setDiscount(discount);
+        shoppingCart.setDiscount(discount);
         //Validation
-        Boolean updated = cart.updatePrice();
+        Boolean updated = shoppingCart.updatePrice();
         assertFalse(updated);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.tongue.checkout.webservices;
 
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.services.CheckoutCompletionFlow;
 import com.example.tongue.services.CheckoutCreationFlow;
 import com.example.tongue.services.CheckoutUpgradeFlow;
@@ -8,7 +9,6 @@ import com.example.tongue.domain.checkout.FlowMessage;
 import com.example.tongue.repositories.checkout.CheckoutRepository;
 import com.example.tongue.core.converters.CheckoutAttributeConverter;
 import com.example.tongue.domain.merchant.Product;
-import com.example.tongue.domain.shopping.Cart;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.resources.checkout.CheckoutWebService;
 import org.junit.Before;
@@ -87,9 +87,9 @@ public class CheckoutWebServiceUnitTest {
         Long expected = 1L;
         Checkout checkout = new Checkout();
         Product product = new Product(); product.setId(1L);
-        LineItem item =  new LineItem(); Cart cart = new Cart();
-        item.setProduct(product); cart.addItem(item);
-        checkout.setCart(cart);
+        LineItem item =  new LineItem(); ShoppingCart shoppingCart = new ShoppingCart();
+        item.setProduct(product); shoppingCart.addItem(item);
+        checkout.setShoppingCart(shoppingCart);
         FlowMessage flowMessage = new FlowMessage();
         flowMessage.setSolved(true);
         flowMessage.setAttribute(checkout,"checkout");
@@ -97,7 +97,7 @@ public class CheckoutWebServiceUnitTest {
         ResponseEntity<Map<String,Object>> response =
                 checkoutWebService.create(httpSession,checkout);
         Long current = ((Checkout) response.getBody().get("response"))
-                .getCart().getItems().get(0).getProduct().getId();
+                .getShoppingCart().getItems().get(0).getProduct().getId();
         assertEquals(expected,current);
     }
 

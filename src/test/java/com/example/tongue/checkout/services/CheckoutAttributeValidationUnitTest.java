@@ -6,10 +6,10 @@ import com.example.tongue.domain.checkout.ValidationResponse;
 import com.example.tongue.core.domain.Position;
 import com.example.tongue.domain.merchant.Discount;
 import com.example.tongue.domain.merchant.Product;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.repositories.merchant.DiscountRepository;
 import com.example.tongue.repositories.merchant.ModifierRepository;
 import com.example.tongue.repositories.merchant.ProductRepository;
-import com.example.tongue.domain.shopping.Cart;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.services.CheckoutValidation;
 import org.junit.Before;
@@ -80,9 +80,9 @@ public class CheckoutAttributeValidationUnitTest {
         CheckoutAttribute cartAttribute =
                 new CheckoutAttribute();
         cartAttribute.setName(CheckoutAttributeName.CART);
-        Cart cart = new Cart();
-        cart.setDiscount(new Discount());
-        cartAttribute.setAttribute(cart);
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setDiscount(new Discount());
+        cartAttribute.setAttribute(shoppingCart);
         ValidationResponse response =
                 checkoutValidation.attributeValidation(cartAttribute);
         assert Boolean.FALSE == response.isSolved();
@@ -93,14 +93,14 @@ public class CheckoutAttributeValidationUnitTest {
         CheckoutAttribute cartAttribute =
                 new CheckoutAttribute();
         cartAttribute.setName(CheckoutAttributeName.CART);
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item = new LineItem();
         Product product = new Product();
         product.setId(101L);
         item.setProduct(product);
         item.setQuantity(2);
-        cart.addItem(item);
-        cartAttribute.setAttribute(cart);
+        shoppingCart.addItem(item);
+        cartAttribute.setAttribute(shoppingCart);
         ValidationResponse response =
                 checkoutValidation.attributeValidation(cartAttribute);
         assertEquals("Product with id '101' not found",response.getErrorMessage());
@@ -111,7 +111,7 @@ public class CheckoutAttributeValidationUnitTest {
         CheckoutAttribute cartAttribute =
                 new CheckoutAttribute();
         cartAttribute.setName(CheckoutAttributeName.CART);
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item = new LineItem();
         Product product = new Product();
         product.setId(100L);
@@ -119,8 +119,8 @@ public class CheckoutAttributeValidationUnitTest {
         product.setStoreVariant(null);
         item.setProduct(product);
         item.setQuantity(2);
-        cart.addItem(item);
-        cartAttribute.setAttribute(cart);
+        shoppingCart.addItem(item);
+        cartAttribute.setAttribute(shoppingCart);
         ValidationResponse response =
                 checkoutValidation.attributeValidation(cartAttribute);
         assertTrue(response.isSolved());
@@ -133,7 +133,7 @@ public class CheckoutAttributeValidationUnitTest {
         CheckoutAttribute cartAttribute =
                 new CheckoutAttribute();
         cartAttribute.setName(CheckoutAttributeName.CART);
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item = new LineItem();
         Product product = new Product();
         product.setId(100L);
@@ -141,12 +141,12 @@ public class CheckoutAttributeValidationUnitTest {
         product.setStoreVariant(null);
         item.setProduct(product);
         item.setQuantity(2);
-        cart.addItem(item);
+        shoppingCart.addItem(item);
         /** No registered Discount **/
         Discount discount = new Discount();
         discount.setId(6L);
-        cart.setDiscount(discount);
-        cartAttribute.setAttribute(cart);
+        shoppingCart.setDiscount(discount);
+        cartAttribute.setAttribute(shoppingCart);
         /** Assert **/
         ValidationResponse response =
                 checkoutValidation.attributeValidation(cartAttribute);
@@ -159,7 +159,7 @@ public class CheckoutAttributeValidationUnitTest {
         CheckoutAttribute cartAttribute =
                 new CheckoutAttribute();
         cartAttribute.setName(CheckoutAttributeName.CART);
-        Cart cart = new Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         LineItem item = new LineItem();
         Product product = new Product();
         product.setId(100L);
@@ -167,12 +167,12 @@ public class CheckoutAttributeValidationUnitTest {
         product.setStoreVariant(null);
         item.setProduct(product);
         item.setQuantity(2);
-        cart.addItem(item);
+        shoppingCart.addItem(item);
         /** Registered Discount (Mocked)**/
         Discount discount = new Discount();
         discount.setId(99L);
-        cart.setDiscount(discount);
-        cartAttribute.setAttribute(cart);
+        shoppingCart.setDiscount(discount);
+        cartAttribute.setAttribute(shoppingCart);
         /** Assert **/
         ValidationResponse response =
                 checkoutValidation.attributeValidation(cartAttribute);
