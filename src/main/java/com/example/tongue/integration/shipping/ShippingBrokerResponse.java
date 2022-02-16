@@ -19,7 +19,7 @@ public class ShippingBrokerResponse {
     }
 
     public Object getMessage(String key){
-        return messages.get((String) key);
+        return messages.get(key);
     }
 
     public String getErrorMessage() {

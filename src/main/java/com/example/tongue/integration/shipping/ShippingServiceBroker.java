@@ -39,4 +39,9 @@ public class ShippingServiceBroker implements ShippingBroker {
         return response;
     }
 
+    public boolean validatePaymentSession(String sessionId){
+        log.info("Validating Shipping Session");
+        return true;
+    }
+
 }
