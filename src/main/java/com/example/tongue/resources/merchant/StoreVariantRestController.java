@@ -89,11 +89,13 @@ public class StoreVariantRestController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         response.put("response",collections);
+        log.info("Request status OK");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/stores/{id}/discounts")
     public ResponseEntity<Map<String,Object>> getDiscounts(@PathVariable("id") Long id){
+        log.info("Searching discounts for store id: "+id);
         Map<String,Object> response = new HashMap<>();
         List<Discount> discounts = discountRepository.findAllByStoreVariantId(id);
         if (discounts.isEmpty()){
@@ -102,6 +104,7 @@ public class StoreVariantRestController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         response.put("response",discounts);
+        log.info("Request status OK");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

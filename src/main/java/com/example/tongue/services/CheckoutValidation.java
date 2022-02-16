@@ -56,6 +56,7 @@ public class CheckoutValidation {
 
     /** Attribute Validation validates that everything that's in the shopping shoppingCart has a real id **/
     public ValidationResponse attributeValidation(CheckoutAttribute checkoutAttribute) {
+        log.info("Running attribute validation");
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
         if (checkoutAttribute == null) {
@@ -81,6 +82,7 @@ public class CheckoutValidation {
     }
 
     public ValidationResponse softValidation(Checkout checkout){
+        log.info("Running Soft Validation");
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
         Position origin = checkout.getShippingInfo().getCustomerPosition();
@@ -147,6 +149,7 @@ public class CheckoutValidation {
 
     /** It verifies that everything in the shoppingCart has an existing associated id (Except store variant)**/
     private ValidationResponse validateCartAttribute(CheckoutAttribute attribute) {
+        log.info("Validating Cart Attribute");
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
         ShoppingCart shoppingCart = (ShoppingCart) attribute.getAttribute();
