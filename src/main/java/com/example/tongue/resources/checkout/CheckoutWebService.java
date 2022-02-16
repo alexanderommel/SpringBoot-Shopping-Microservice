@@ -3,11 +3,16 @@ package com.example.tongue.resources.checkout;
 import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.CheckoutAttribute;
 import com.example.tongue.domain.checkout.FlowMessage;
+import com.example.tongue.integration.customers.Customer;
+import com.example.tongue.integration.customers.CustomerReplicationRepository;
+import com.example.tongue.integration.payments.PaymentServiceBroker;
+import com.example.tongue.integration.shipping.ShippingServiceBroker;
 import com.example.tongue.repositories.checkout.CheckoutRepository;
 import com.example.tongue.core.converters.CheckoutAttributeConverter;
 import com.example.tongue.services.CheckoutCompletionFlow;
 import com.example.tongue.services.CheckoutCreationFlow;
 import com.example.tongue.services.CheckoutUpgradeFlow;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,11 +24,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
+@Slf4j
 public class CheckoutWebService {
 
     private CheckoutRepository checkoutRepository;
@@ -31,18 +39,27 @@ public class CheckoutWebService {
     private CheckoutCreationFlow creationFlow;
     private CheckoutUpgradeFlow upgradeFlow;
     private CheckoutAttributeConverter attributeConverter;
+    private CustomerReplicationRepository customerReplicationRepository;
+    private PaymentServiceBroker paymentServiceBroker;
+    private ShippingServiceBroker shippingServiceBroker;
 
     public CheckoutWebService(@Autowired CheckoutRepository checkoutRepository,
                               @Autowired CheckoutCompletionFlow completionFlow,
                               @Autowired CheckoutCreationFlow creationFlow,
                               @Autowired CheckoutUpgradeFlow upgradeFlow,
-                              @Autowired CheckoutAttributeConverter attributeConverter){
+                              @Autowired CheckoutAttributeConverter attributeConverter,
+                              @Autowired CustomerReplicationRepository customerReplicationRepository,
+                              @Autowired PaymentServiceBroker paymentServiceBroker,
+                              @Autowired ShippingServiceBroker shippingServiceBroker){
 
         this.checkoutRepository = checkoutRepository;
         this.completionFlow=completionFlow;
         this.upgradeFlow=upgradeFlow;
         this.creationFlow=creationFlow;
         this.attributeConverter=attributeConverter;
+        this.customerReplicationRepository=customerReplicationRepository;
+        this.paymentServiceBroker = paymentServiceBroker;
+        this.shippingServiceBroker=shippingServiceBroker;
     }
 
 
@@ -62,22 +79,52 @@ public class CheckoutWebService {
     }
 
     @GetMapping("/checkout/complete")
-    public ResponseEntity<Map<String,Object>> complete(HttpSession session){
+    public ResponseEntity<Map<String,Object>> complete(HttpSession session, Principal principal){
+        log.info("Completing checkout...");
         Map<String,Object> response = new HashMap<>();
-        FlowMessage message = completionFlow.run(session);
-        if (!message.isSolved()){
-            response.put("error",message.getErrorMessage());
+        Optional<Customer> optional = customerReplicationRepository.findByUsername(principal.getName());
+        Object checkoutO = session.getAttribute("CHECKOUT");
+        if (checkoutO==null){
+            log.warn("Checkout not found on session!");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Checkout checkout = (Checkout) checkoutO;
+
+        Boolean validPaymentSession = paymentServiceBroker
+                .validatePaymentSession(checkout.getPaymentInfo().getPaymentSession());
+
+        Boolean validShippingSession = shippingServiceBroker
+                .validatePaymentSession(checkout.getShippingInfo().getShippingSession());
+
+        if (!validPaymentSession){
+            response.put("error","Not valid PaymentSession");
+            log.info("Not valid PaymentSession");
             return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
         }
-        Checkout checkout = (Checkout) message.getAttribute("checkout");
-        response.put("response",checkout);
+
+        if (!validShippingSession){
+            response.put("error","Not valid ShippingSession");
+            log.info("Not valid ShippingSession");
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+
+        FlowMessage message = completionFlow.run(session,optional.get());
+        if (!message.isSolved()){
+            response.put("error",message.getErrorMessage());
+            log.info("Error found on CompletionFlow ("+message.getErrorMessage()+")");
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+
+        Checkout checkout1 = (Checkout) message.getAttribute("CHECKOUT");
+        response.put("response",checkout1);
+        log.info("Responding with HttpStatus.OK");
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PostMapping(value = "/checkout/update")
     public ResponseEntity<Map<String,Object>> update(
             HttpSession session, @RequestBody  String checkoutAttributeJSON){
-
+        log.info("Updating Checkout...");
         Map<String,Object> response = new HashMap<>();
         CheckoutAttribute checkoutAttribute = attributeConverter.convert(checkoutAttributeJSON);
         return getMapResponseEntity(response, upgradeFlow.run(checkoutAttribute, session));
@@ -107,10 +154,12 @@ public class CheckoutWebService {
         FlowMessage message = run;
         if (!message.isSolved()){
             response.put("error",message.getErrorMessage());
+            log.info("FlowMessage for Updating has errors ("+message.getErrorMessage()+")");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         Checkout checkout = (Checkout) message.getAttribute("checkout");
         response.put("response",checkout);
+        log.info("Responding with HttpStatus.OK");
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
