@@ -1,4 +1,4 @@
-package com.example.tongue.integration.payments;
+package com.example.tongue.integration.orders;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Payment {
+public class Order {
     @Id
     private String id;
 }

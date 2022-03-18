@@ -2,7 +2,6 @@ package com.example.tongue.domain.checkout;
 
 import com.example.tongue.integration.customers.Customer;
 import com.example.tongue.domain.merchant.StoreVariant;
-import com.example.tongue.integration.payments.Payment;
 import com.example.tongue.domain.shopping.ShoppingCart;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -51,6 +50,8 @@ public class Checkout {
 
     private Instant FinishedAt;
 
+    private Instant expiresAt;
+
     private Instant cancelledAt;
 
     private String sourceDevice;
@@ -63,6 +64,10 @@ public class Checkout {
         price.setCartSubtotal(shoppingCart.getPrice().getFinalPrice());
         price.setCheckoutTotal(price.getCartTotal().add(price.getShippingTotal()));
         price.setCheckoutSubtotal(price.getCartSubtotal().add(price.getShippingSubtotal()));
+    }
+
+    public enum CheckoutStatus{
+        CREATED, EXPIRED, PACKAGING_REQUEST, PACKAGING, PACKAGING_ACCEPTED, SHIPPING_REQUEST, SHIPPING_ACCEPTED, FINISHED, CANCELED
     }
 
 }
