@@ -8,10 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -21,7 +18,7 @@ import javax.persistence.OneToOne;
 public class Fulfillment {
 
     @Id @GeneratedValue
-    private Long id;
+    private Long fulfillmentId;
     @OneToOne
     private Checkout checkout;
     @OneToOne

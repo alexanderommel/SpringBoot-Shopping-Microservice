@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Data
@@ -13,6 +14,6 @@ import javax.persistence.Id;
 @Builder
 @Entity
 public class Shipping {
-    @Id
-    private String shipping;
+    @Id @GeneratedValue
+    private String shippingId;
 }

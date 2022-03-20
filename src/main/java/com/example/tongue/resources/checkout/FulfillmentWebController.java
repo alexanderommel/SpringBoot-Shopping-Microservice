@@ -50,7 +50,7 @@ public class FulfillmentWebController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         Checkout checkout = wrapper.get();
-        if (checkout.getCustomer().getUsername().equalsIgnoreCase(principal.getName())){
+        if (!checkout.getCustomer().getUsername().equalsIgnoreCase(principal.getName())){
             log.warn("A user who's not the owner is trying to access a Checkout instance");
             response.put("error","Forbidden Access for User");
             return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
