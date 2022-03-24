@@ -19,6 +19,7 @@ public class Position {
     private Float latitude;
     private Float longitude;
     private String address;
+    private String owner="<span>";
 
     public Boolean isValid(){
         return  !(latitude==null || longitude==null);

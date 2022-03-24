@@ -17,7 +17,7 @@ public class PaymentInfo {
     private PaymentMethod paymentMethod;
     private String paymentSession;
 
-    enum PaymentMethod{
+    public enum PaymentMethod{
         CASH, CREDIT_CARD
     }
 }
