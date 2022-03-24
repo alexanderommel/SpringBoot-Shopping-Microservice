@@ -19,6 +19,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class RabbitAMQPConfig {
 
     private String orderRequestQueueName;
+    private String orderAcceptedQueueName;
+    private String shippingRequestQueueName;
     private String host;
     private String user;
     private String password;
@@ -26,12 +28,16 @@ public class RabbitAMQPConfig {
     private Integer port;
 
     public RabbitAMQPConfig(@Value("${shopping.queues.out.order.request}") String orderRequestQueueName,
+                            @Value("${shopping.queues.in.order.accept}") String orderAcceptedQueueName,
+                            @Value("${shopping.queues.out.shipping.request}") String shippingRequestQueueName,
                             @Value("${spring.rabbitmq.host}") String host,
                             @Value("${spring.rabbitmq.port}") Integer port,
                             @Value("${spring.rabbitmq.username}") String user,
                             @Value("${spring.rabbitmq.password}") String password){
 
         this.orderRequestQueueName=orderRequestQueueName;
+        this.orderAcceptedQueueName=orderAcceptedQueueName;
+        this.shippingRequestQueueName=shippingRequestQueueName;
         this.host=host;
         this.port=port;
         this.user=user;
@@ -66,4 +72,13 @@ public class RabbitAMQPConfig {
         return new Queue(orderRequestQueueName, false, false ,false);
     }
 
+    @Bean
+    public Queue orderAcceptedQueue(){
+        return new Queue(orderAcceptedQueueName, false, false, false);
+    }
+
+    @Bean
+    public Queue shippingRequestQueue(){
+        return new Queue(shippingRequestQueueName, false, false, false);
+    }
 }
