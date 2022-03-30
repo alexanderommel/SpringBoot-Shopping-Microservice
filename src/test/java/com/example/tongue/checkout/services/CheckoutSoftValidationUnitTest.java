@@ -3,10 +3,12 @@ package com.example.tongue.checkout.services;
 import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.ShippingInfo;
 import com.example.tongue.domain.checkout.ValidationResponse;
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.StoreVariant;
 import com.example.tongue.domain.shopping.ShoppingCart;
+import com.example.tongue.repositories.merchant.DiscountRepository;
+import com.example.tongue.repositories.merchant.ModifierRepository;
 import com.example.tongue.repositories.merchant.ProductRepository;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
 import com.example.tongue.domain.shopping.LineItem;
@@ -30,16 +32,22 @@ public class CheckoutSoftValidationUnitTest {
 
     @Mock
     private ProductRepository productRepository;
-
     @Mock
     private StoreVariantRepository storeVariantRepository;
+    @Mock
+    private DiscountRepository discountRepository;
+    @Mock
+    private ModifierRepository modifierRepository;
 
     @InjectMocks
     private CheckoutValidation checkoutValidation;
 
     @BeforeAll
     public void setUp(){
-        this.checkoutValidation = new CheckoutValidation();
+        this.checkoutValidation = new CheckoutValidation(discountRepository,
+                storeVariantRepository,
+                productRepository,
+                modifierRepository);
     }
 
     @Before

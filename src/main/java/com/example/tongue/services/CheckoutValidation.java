@@ -4,7 +4,7 @@ import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.CheckoutAttribute;
 import com.example.tongue.domain.checkout.CheckoutAttributeName;
 import com.example.tongue.domain.checkout.ValidationResponse;
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.merchant.Discount;
 import com.example.tongue.domain.merchant.Modifier;
 import com.example.tongue.domain.merchant.Product;
@@ -17,20 +17,30 @@ import com.example.tongue.repositories.merchant.StoreVariantRepository;
 import com.example.tongue.domain.shopping.LineItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 @Slf4j
 public class CheckoutValidation {
 
-    @Autowired
+
     private DiscountRepository discountRepository;
-    @Autowired
     private StoreVariantRepository storeVariantRepository;
-    @Autowired
     private ProductRepository productRepository;
-    @Autowired
     private ModifierRepository modifierRepository;
+
+    public CheckoutValidation(@Autowired DiscountRepository discountRepository,
+                              @Autowired StoreVariantRepository storeVariantRepository,
+                              @Autowired ProductRepository productRepository,
+                              @Autowired ModifierRepository modifierRepository){
+
+        this.discountRepository=discountRepository;
+        this.storeVariantRepository=storeVariantRepository;
+        this.productRepository=productRepository;
+        this.modifierRepository=modifierRepository;
+    }
 
     public ValidationResponse hardValidation(Checkout checkout){
         ValidationResponse response;

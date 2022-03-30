@@ -6,24 +6,20 @@ import com.example.tongue.domain.checkout.ValidationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
 
-@Component
+@Service
 @Slf4j
 public class CheckoutCreationFlow {
-
-    @Autowired
+    
     private CheckoutValidation checkoutValidation;
-    @Autowired
     private CheckoutSession checkoutSession;
 
-    public CheckoutCreationFlow(){}
-
-    public CheckoutCreationFlow(CheckoutValidation checkoutValidation,
-                                CheckoutSession checkoutSession){
-
+    public CheckoutCreationFlow(@Autowired CheckoutValidation checkoutValidation,
+                                @Autowired CheckoutSession checkoutSession){
         this.checkoutValidation=checkoutValidation;
         this.checkoutSession=checkoutSession;
     }

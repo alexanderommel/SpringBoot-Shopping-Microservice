@@ -5,8 +5,9 @@ import com.example.tongue.domain.checkout.FlowMessage;
 import com.example.tongue.domain.checkout.ShippingInfo;
 import com.example.tongue.domain.checkout.ValidationResponse;
 import com.example.tongue.domain.shopping.ShoppingCart;
+import com.example.tongue.integration.customers.Customer;
 import com.example.tongue.repositories.checkout.CheckoutRepository;
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.StoreVariant;
 import com.example.tongue.domain.shopping.LineItem;
@@ -77,13 +78,15 @@ public class CheckoutCompletionFlowUnitTest {
     @Test
     public void givenNoExistingCheckoutOnSessionWhenRunningThenReturnFalse(){
         Mockito.when(checkoutSession.get(httpSession)).thenReturn(null);
-        FlowMessage flowMessage = completionFlow.run(httpSession);
+        Customer customer = Customer.builder().username("a").build();
+        FlowMessage flowMessage = completionFlow.run(httpSession,customer);
         assertFalse(flowMessage.isSolved());
     }
 
     @Test
     public void shouldReturnNotNullFinishedAtFieldRunning(){
-        FlowMessage flowMessage = completionFlow.run(httpSession);
+        Customer customer = Customer.builder().username("a").build();
+        FlowMessage flowMessage = completionFlow.run(httpSession,customer);
         Checkout checkout = (Checkout) flowMessage.getAttribute("checkout");
         Instant instant = checkout.getFinishedAt();
         assertNotNull(instant);

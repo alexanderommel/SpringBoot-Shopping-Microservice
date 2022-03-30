@@ -2,7 +2,7 @@ package com.example.tongue.core.converters;
 
 import com.example.tongue.domain.checkout.CheckoutAttribute;
 import com.example.tongue.core.exceptions.JsonBadFormatException;
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.domain.shopping.LineItem;

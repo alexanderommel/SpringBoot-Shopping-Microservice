@@ -3,7 +3,7 @@ package com.example.tongue.checkout.services;
 import com.example.tongue.domain.checkout.CheckoutAttribute;
 import com.example.tongue.domain.checkout.CheckoutAttributeName;
 import com.example.tongue.domain.checkout.ValidationResponse;
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.merchant.Discount;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.shopping.ShoppingCart;
@@ -11,6 +11,7 @@ import com.example.tongue.repositories.merchant.DiscountRepository;
 import com.example.tongue.repositories.merchant.ModifierRepository;
 import com.example.tongue.repositories.merchant.ProductRepository;
 import com.example.tongue.domain.shopping.LineItem;
+import com.example.tongue.repositories.merchant.StoreVariantRepository;
 import com.example.tongue.services.CheckoutValidation;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
 
@@ -37,12 +39,19 @@ public class CheckoutAttributeValidationUnitTest {
     @Mock
     private DiscountRepository discountRepository;
 
+    @Autowired
+    private StoreVariantRepository storeVariantRepository;
+
     @InjectMocks
     private CheckoutValidation checkoutValidation;
 
     @BeforeAll
     public void setUp(){
-        this.checkoutValidation = new CheckoutValidation();
+        this.checkoutValidation = new CheckoutValidation(
+                discountRepository,
+                storeVariantRepository,
+                productRepository,
+                modifierRepository);
     }
 
     @Before

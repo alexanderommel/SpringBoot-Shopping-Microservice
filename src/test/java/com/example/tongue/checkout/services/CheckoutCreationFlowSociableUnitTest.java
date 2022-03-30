@@ -2,11 +2,13 @@ package com.example.tongue.checkout.services;
 
 import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.FlowMessage;
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.checkout.ShippingInfo;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.StoreVariant;
 import com.example.tongue.domain.shopping.ShoppingCart;
+import com.example.tongue.repositories.merchant.DiscountRepository;
+import com.example.tongue.repositories.merchant.ModifierRepository;
 import com.example.tongue.repositories.merchant.ProductRepository;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
 import com.example.tongue.domain.shopping.LineItem;
@@ -41,12 +43,21 @@ public class CheckoutCreationFlowSociableUnitTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private ModifierRepository modifierRepository;
+
+    @Mock
+    private DiscountRepository discountRepository;
+
     @InjectMocks
     private CheckoutValidation checkoutValidation;
 
     @BeforeAll
     public void setUp(){
-        checkoutValidation = new CheckoutValidation();
+        checkoutValidation = new CheckoutValidation(discountRepository,
+                storeVariantRepository,
+                productRepository,
+                modifierRepository);
     }
 
     @Before

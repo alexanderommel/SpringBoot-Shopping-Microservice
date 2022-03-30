@@ -2,11 +2,8 @@ package com.example.tongue.checkout.services;
 
 import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.FlowMessage;
-import com.example.tongue.core.genericdata.Store1DataGenerator;
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.checkout.ShippingInfo;
-import com.example.tongue.domain.merchant.Collection;
-import com.example.tongue.domain.merchant.CollectionProductAllocation;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.StoreVariant;
 import com.example.tongue.domain.shopping.ShoppingCart;
@@ -25,8 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -55,9 +50,6 @@ public class CheckoutCreationFlowIntegrationTest {
     @Autowired
     CollectionRepository collectionRepository;
     @Autowired
-    CollectionProductAllocationRepository
-    collectionProductAllocationRepository;
-    @Autowired
     HttpSession httpSession;
     @Autowired
     CheckoutValidation checkoutValidation;
@@ -69,39 +61,9 @@ public class CheckoutCreationFlowIntegrationTest {
     @BeforeAll
     public void setUp(){
         /** Generate data for testing **/
-        Store1DataGenerator.getInstance( productRepository,
-                 storeRepository,
-                 merchantRepository,
-                 storeVariantRepository,
-                 discountRepository,
-                 imageRepository,
-                 groupModifierRepository,
-                 modifierRepository,
-                 collectionRepository,
-                collectionProductAllocationRepository);
-        /** **/
     }
 
     private void describeGeneratedData(){
-        Long storeVariantId = storeVariantRepository.findAll().get(0).getId();
-        System.out.println("Store Variant Id: "+storeVariantId);
-        List<Collection> collections =
-                collectionRepository.findAllByStoreVariantId(storeVariantId );
-        for (Collection c:collections
-        ) {
-            Long collectionId = c.getId();
-            System.out.println("Collection id: "+collectionId);
-            System.out.println("Collection title: "+c.getTitle());
-            List<CollectionProductAllocation> allocations =
-                    collectionProductAllocationRepository.findAllByCollection_Id(collectionId,null).getContent();
-            List<Long> ids = new ArrayList<>();
-            for (CollectionProductAllocation a:allocations
-                 ) {
-                Long productId = a.getProduct().getId();
-                ids.add(productId);
-            }
-            System.out.println("Product ids: "+ids.toString());
-        }
     }
 
     @Before
