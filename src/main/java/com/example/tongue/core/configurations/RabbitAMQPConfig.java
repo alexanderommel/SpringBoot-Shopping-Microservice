@@ -20,7 +20,9 @@ public class RabbitAMQPConfig {
 
     private String orderRequestQueueName;
     private String orderAcceptedQueueName;
+    private String orderConfirmedQueueName;
     private String shippingRequestQueueName;
+    private String shipmentAcceptedQueueName;
     private String host;
     private String user;
     private String password;
@@ -29,7 +31,9 @@ public class RabbitAMQPConfig {
 
     public RabbitAMQPConfig(@Value("${shopping.queues.out.order.request}") String orderRequestQueueName,
                             @Value("${shopping.queues.in.order.accept}") String orderAcceptedQueueName,
+                            @Value("${shopping.queues.out.order.confirmation}") String orderConfirmationQueueName,
                             @Value("${shopping.queues.out.shipping.request}") String shippingRequestQueueName,
+                            @Value("${shopping.queues.in.shipping.accept}") String shipmentAcceptedQueueName,
                             @Value("${spring.rabbitmq.host}") String host,
                             @Value("${spring.rabbitmq.port}") Integer port,
                             @Value("${spring.rabbitmq.username}") String user,
@@ -37,7 +41,9 @@ public class RabbitAMQPConfig {
 
         this.orderRequestQueueName=orderRequestQueueName;
         this.orderAcceptedQueueName=orderAcceptedQueueName;
+        this.orderConfirmedQueueName=orderConfirmationQueueName;
         this.shippingRequestQueueName=shippingRequestQueueName;
+        this.shipmentAcceptedQueueName=shipmentAcceptedQueueName;
         this.host=host;
         this.port=port;
         this.user=user;
@@ -80,5 +86,15 @@ public class RabbitAMQPConfig {
     @Bean
     public Queue shippingRequestQueue(){
         return new Queue(shippingRequestQueueName, false, false, false);
+    }
+
+    @Bean
+    public Queue shipmentAcceptedQueue(){
+        return new Queue(shipmentAcceptedQueueName, false, false, false);
+    }
+
+    @Bean
+    public Queue orderConfirmedQueue(){
+        return new Queue(orderConfirmedQueueName, false, false, false);
     }
 }
