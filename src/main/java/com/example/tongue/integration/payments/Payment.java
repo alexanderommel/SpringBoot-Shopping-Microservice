@@ -14,6 +14,6 @@ import javax.persistence.Id;
 @Builder
 @Entity
 public class Payment {
-    @Id @GeneratedValue
+    @Id
     private String paymentId;
 }

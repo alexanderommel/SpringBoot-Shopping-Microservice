@@ -22,14 +22,16 @@ public class ShippingInfo {
     @AttributeOverrides({
             @AttributeOverride(name="longitude",column = @Column(name="origin_longitude")),
             @AttributeOverride(name="latitude",column=@Column(name="origin_latitude")),
-            @AttributeOverride(name = "address",column = @Column(name = "origin_address"))
+            @AttributeOverride(name = "address",column = @Column(name = "origin_address")),
+            @AttributeOverride(name = "owner",column = @Column(name = "origin_owner"))
     })
     private Position customerPosition;
 
     @AttributeOverrides({
             @AttributeOverride(name="longitude",column = @Column(name="destination_longitude")),
             @AttributeOverride(name="latitude",column=@Column(name="destination_latitude")),
-            @AttributeOverride(name = "address",column = @Column(name = "destination_address"))
+            @AttributeOverride(name = "address",column = @Column(name = "destination_address")),
+            @AttributeOverride(name = "owner",column = @Column(name = "destination_owner"))
     })
     private Position storePosition;
 
