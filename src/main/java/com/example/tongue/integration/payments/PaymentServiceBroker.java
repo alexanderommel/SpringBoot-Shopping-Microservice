@@ -26,6 +26,7 @@ public class PaymentServiceBroker {
     }
 
     public PaymentSession createSession(Customer customer, PaymentInfo paymentInfo){
+        log.info("Creating Payment Session");
         PaymentSession session = PaymentSession.builder()
                 .username(customer.getUsername())
                 .sessionId("2022")

@@ -3,18 +3,16 @@ package com.example.tongue.resources.checkout;
 import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.CheckoutPrice;
 import com.example.tongue.domain.checkout.PaymentInfo;
-import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.integration.customers.Customer;
 import com.example.tongue.integration.customers.CustomerReplicationRepository;
 import com.example.tongue.messaging.OrderQueuePublisher;
-import com.example.tongue.repositories.FulfillmentRepository;
+import com.example.tongue.repositories.checkout.FulfillmentRepository;
 import com.example.tongue.repositories.checkout.CheckoutRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,7 +21,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.security.Principal;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -7,7 +7,7 @@ import com.example.tongue.integration.payments.PaymentServiceBroker;
 import com.example.tongue.integration.shipping.ShipmentAcceptation;
 import com.example.tongue.integration.shipping.Shipping;
 import com.example.tongue.integration.shipping.ShippingRepository;
-import com.example.tongue.repositories.FulfillmentRepository;
+import com.example.tongue.repositories.checkout.FulfillmentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,6 @@ public class ShippingQueueConsumer {
         if (wrapper.isEmpty()){
             log.error("There's no checkout instance assigned to the received ID!!!");
         }
-
 
         Fulfillment fulfillment = wrapper.get();
 
