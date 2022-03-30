@@ -54,7 +54,7 @@ public class GroupModifierRestController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             Map<String,Object> response = new HashMap<>();
-            response.put("group_modifiers",groupModifiers);
+            response.put("response",groupModifiers);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -70,7 +70,7 @@ public class GroupModifierRestController {
                         "No modifiers associated with group_modifier id: "+id);
             }
             Map<String,Object> response = new HashMap<>();
-            response.put("modifiers",modifiers);
+            response.put("response",modifiers);
             return new ResponseEntity<>(response,HttpStatus.OK);
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

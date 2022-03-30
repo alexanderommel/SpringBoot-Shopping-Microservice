@@ -1,6 +1,6 @@
 package com.example.tongue.integration.orders;
 
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.merchant.StoreVariant;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
 import lombok.extern.slf4j.Slf4j;

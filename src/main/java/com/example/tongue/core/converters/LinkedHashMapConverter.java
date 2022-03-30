@@ -1,6 +1,6 @@
 package com.example.tongue.core.converters;
 
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.merchant.Discount;
 import com.example.tongue.domain.merchant.Modifier;
 import com.example.tongue.domain.merchant.Product;

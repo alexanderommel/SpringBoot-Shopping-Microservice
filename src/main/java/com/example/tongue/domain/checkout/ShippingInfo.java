@@ -1,6 +1,5 @@
 package com.example.tongue.domain.checkout;
 
-import com.example.tongue.core.domain.Position;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

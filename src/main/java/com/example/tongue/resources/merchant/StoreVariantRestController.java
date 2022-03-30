@@ -1,6 +1,6 @@
 package com.example.tongue.resources.merchant;
 
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.core.utilities.RestControllerRoutines;
 import com.example.tongue.domain.merchant.Collection;
 import com.example.tongue.domain.merchant.Discount;
@@ -20,10 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -51,8 +48,8 @@ public class StoreVariantRestController {
     }
 
 
-    @GetMapping("/stores")
-    public ResponseEntity<Map<String,Object>> getNearestRestaurants(Position position){
+    @GetMapping(value = "/stores",consumes = "application/json")
+    public ResponseEntity<Map<String,Object>> getNearestRestaurants(@RequestBody Position position){
         log.info("Retrieving restaurants by condition 'nearest'");
         Map<String, Object> response = new HashMap<>();
         List<StoreVariant> storeVariantList = orderServiceBroker.getNearestRestaurants(position);
@@ -65,8 +62,8 @@ public class StoreVariantRestController {
             Position destination = s.getLocation();
             ShippingBrokerResponse brokerResponse =
                     shippingServiceBroker.requestShippingSummary(position,destination);
-            if (brokerResponse.getSolved()){
-                shippingSummaries.add((ShippingSummary) brokerResponse.getMessage("summary"));
+            if (brokerResponse.getIsSolved()){
+                shippingSummaries.add((ShippingSummary) brokerResponse.getMessages().get("summary"));
                 continue;
             }
             log.info("Shipping Summary query failed for store_variant with id: "+s.getId());
@@ -108,16 +105,6 @@ public class StoreVariantRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/storevariants",params = {"page","size"})
-    public ResponseEntity<Map<String,Object>> all(@RequestParam(defaultValue = "0") int page
-            , @RequestParam(defaultValue = "50") int size){
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<StoreVariant> storeVariantPage = storeVariantRepository.findAll(pageable);
-        return RestControllerRoutines.getResponseEntityByPageable(
-                storeVariantPage,
-                "store_variants");
-    }
 
     @GetMapping(value = "/storevariants", params = {"food_type","page","size"})
     public ResponseEntity<Map<String,Object>> allByFilter(

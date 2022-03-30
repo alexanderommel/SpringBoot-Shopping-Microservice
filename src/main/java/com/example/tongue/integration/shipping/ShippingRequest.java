@@ -1,6 +1,6 @@
 package com.example.tongue.integration.shipping;
 
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

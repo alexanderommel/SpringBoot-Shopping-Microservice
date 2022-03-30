@@ -1,13 +1,13 @@
 package com.example.tongue.messaging;
 
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.checkout.*;
 import com.example.tongue.integration.customers.Customer;
 import com.example.tongue.integration.customers.CustomerReplicationRepository;
 import com.example.tongue.integration.orders.Order;
 import com.example.tongue.integration.orders.OrderAccepted;
 import com.example.tongue.integration.orders.OrderRepository;
-import com.example.tongue.repositories.FulfillmentRepository;
+import com.example.tongue.repositories.checkout.FulfillmentRepository;
 import com.example.tongue.repositories.checkout.CheckoutRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;

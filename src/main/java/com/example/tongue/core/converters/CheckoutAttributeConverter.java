@@ -3,7 +3,7 @@ package com.example.tongue.core.converters;
 import com.example.tongue.domain.checkout.CheckoutAttribute;
 import com.example.tongue.domain.checkout.CheckoutAttributeName;
 import com.example.tongue.core.exceptions.JsonBadFormatException;
-import com.example.tongue.core.domain.Position;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.shopping.ShoppingCart;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

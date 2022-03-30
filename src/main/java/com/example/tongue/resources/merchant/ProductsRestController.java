@@ -1,12 +1,15 @@
 package com.example.tongue.resources.merchant;
 
 import com.example.tongue.core.utilities.RestControllerRoutines;
+import com.example.tongue.domain.merchant.GroupModifier;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.ProductImage;
 import com.example.tongue.domain.merchant.enumerations.ProductStatus;
+import com.example.tongue.repositories.merchant.GroupModifierRepository;
 import com.example.tongue.repositories.merchant.ProductImageRepository;
 import com.example.tongue.repositories.merchant.ProductRepository;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,19 +25,23 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@RestController()
+@RestController
+@Slf4j
 public class ProductsRestController {
 
     private ProductRepository repository;
     private ProductImageRepository imageRepository;
     private StoreVariantRepository storeVariantRepository;
+    private GroupModifierRepository groupModifierRepository;
 
     public ProductsRestController(@Autowired ProductRepository repository,
                                   @Autowired ProductImageRepository imageRepository,
-                                  @Autowired StoreVariantRepository storeVariantRepository){
+                                  @Autowired StoreVariantRepository storeVariantRepository,
+                                  @Autowired GroupModifierRepository groupModifierRepository){
         this.repository = repository;
         this.imageRepository = imageRepository;
         this.storeVariantRepository=storeVariantRepository;
+        this.groupModifierRepository=groupModifierRepository;
     }
 
     /*
@@ -54,6 +61,26 @@ public class ProductsRestController {
     public ResponseEntity<Map<String,Object>> one(@PathVariable Long id){
             Product product = repository.getById(id);
             return getResponseEntityByProduct(product);
+    }
+
+    @GetMapping(value = "/products/{id}/group_modifiers")
+    public ResponseEntity<Map<String,Object>> getGroupModifiersByProductId(@PathVariable("id") Long id){
+        log.info("Searching Group Modifiers for Product id->"+id);
+        Map<String,Object> response = new HashMap<>();
+        try {
+            List<GroupModifier> groupModifiers = groupModifierRepository.findAllByProduct_Id(id);
+            if (groupModifiers==null || groupModifiers.isEmpty()){
+                log.info("No Groups found");
+                response.put("error","No Groups found for this product");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+            response.put("response",groupModifiers);
+            log.info("Request status OK");
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @GetMapping(value = "/products/{id}/images")

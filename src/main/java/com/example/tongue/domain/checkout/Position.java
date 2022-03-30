@@ -1,4 +1,4 @@
-package com.example.tongue.core.domain;
+package com.example.tongue.domain.checkout;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
