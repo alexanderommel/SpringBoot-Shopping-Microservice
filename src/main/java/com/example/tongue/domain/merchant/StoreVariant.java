@@ -1,7 +1,6 @@
 package com.example.tongue.domain.merchant;
 
-import com.example.tongue.core.domain.Position;
-import com.example.tongue.domain.merchant.Store;
+import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.domain.merchant.enumerations.StoreVariantType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

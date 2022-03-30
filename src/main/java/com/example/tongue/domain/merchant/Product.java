@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Entity
 @Data
@@ -36,6 +37,8 @@ public class Product {
             message = "Pattern must contain only numbers and letters," +
                     " also its size must be between 1 and 50")
     private String handle;
+
+    private Instant createdAt;
 
 
     @NotBlank(message = "Null value not admitted for title")

@@ -1,12 +1,20 @@
 package com.example.tongue.domain.merchant;
 
 import com.example.tongue.domain.merchant.GroupModifier;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Modifier {
 
     @Id
@@ -22,35 +30,4 @@ public class Modifier {
 
     private BigDecimal price= BigDecimal.valueOf(0.0);
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public GroupModifier getGroupModifier() {
-        return groupModifier;
-    }
-
-    public void setGroupModifier(GroupModifier groupModifier) {
-        this.groupModifier = groupModifier;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 }
