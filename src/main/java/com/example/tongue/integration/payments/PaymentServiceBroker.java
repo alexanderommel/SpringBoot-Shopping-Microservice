@@ -16,6 +16,10 @@ public class PaymentServiceBroker {
         return true;
     }
 
+    public Payment createPayment(){
+        return Payment.builder().paymentId("1092").build();
+    }
+
     public boolean updatePaymentAccount(){
         /** Change info such as credit card number, **/
         return true;
