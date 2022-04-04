@@ -27,7 +27,6 @@ public class CheckoutCreationFlow {
     public FlowMessage run(Checkout checkout, HttpSession session){
         log.info("Creating Checkout");
         boolean isNull = checkout == null;
-        log.info("Checkout entry is null? -> "+isNull);
         FlowMessage response = new FlowMessage();
         response.setSolved(false);
         ValidationResponse validationResponse = checkoutValidation.softValidation(checkout);
@@ -37,16 +36,18 @@ public class CheckoutCreationFlow {
             response.setErrorStage("Validation error");
             return response;
         }
-        checkout = populateDefaultValues(checkout);
-        checkoutSession.save(checkout,session);
+        try {
+            checkout = checkoutSession.createCheckout(checkout,session);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setSolved(false);
+            response.setErrorMessage("Inconsistent Ids");
+        }
         response.setAttribute(checkout,"checkout");
         response.setSolved(true);
         return response;
     }
 
-    private Checkout populateDefaultValues(Checkout checkout){
-        checkout.setCreated_at(Instant.now());
-        return checkout;
-    }
+
 
 }

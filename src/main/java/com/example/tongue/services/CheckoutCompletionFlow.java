@@ -42,7 +42,7 @@ public class CheckoutCompletionFlow {
         checkoutSession.delete(httpSession);
         response.setAttribute(checkout,"checkout");
         response.setSolved(true);
-        log.info("Process finished successfully");
+        log.info("Checkout completed successfully");
         return response;
     }
 
@@ -52,7 +52,7 @@ public class CheckoutCompletionFlow {
         checkout.setFinishedAt(Instant.now());
         checkout.setCustomer(customer);
         Checkout checkout1 = checkoutRepository.save(checkout);
-        checkoutSession.save(checkout,httpSession);
+        checkoutSession.save(checkout1,httpSession);
         return checkout1;
     }
 
