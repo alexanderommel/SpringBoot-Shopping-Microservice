@@ -1,10 +1,6 @@
 package com.example.tongue.services;
 
-import com.example.tongue.domain.checkout.Checkout;
-import com.example.tongue.domain.checkout.CheckoutAttribute;
-import com.example.tongue.domain.checkout.CheckoutAttributeName;
-import com.example.tongue.domain.checkout.ValidationResponse;
-import com.example.tongue.domain.checkout.Position;
+import com.example.tongue.domain.checkout.*;
 import com.example.tongue.domain.merchant.Discount;
 import com.example.tongue.domain.merchant.Modifier;
 import com.example.tongue.domain.merchant.Product;
@@ -43,8 +39,55 @@ public class CheckoutValidation {
     }
 
     public ValidationResponse hardValidation(Checkout checkout){
+        log.info("Running hard validation...");
         ValidationResponse response;
         response = validateAttributes(checkout);
+        response = validateSources(checkout);
+        log.info("Hard Validation finished");
+        return response;
+    }
+
+    private ValidationResponse validateSources(Checkout c){
+        log.info("Validating sources...");
+        ValidationResponse response = new ValidationResponse();
+        response.setSolved(false);
+        Long id = c.getStoreVariant().getId();
+        ShoppingCart shoppingCart = c.getShoppingCart();
+        List<LineItem> lineItems = shoppingCart.getItems();
+        Discount cartLevelDiscount =  shoppingCart.getDiscount();
+
+        if (cartLevelDiscount!=null && cartLevelDiscount.getStoreVariant()!=null){
+            Boolean discountTest = cartLevelDiscount.getStoreVariant().getId()==id;
+            if (discountTest==false){
+                response.setErrorMessage("CartLevelDiscount doesn't belong to the StoreVariant");
+                return response;
+            }
+        }
+
+        for (LineItem l:lineItems
+             ) {
+            Product p = l.getProduct();
+            if (p.getStoreVariant().getId()!=id){
+                response.setErrorMessage("Product with id '"+p.getId()+"' doesn't belong to the StoreVariant");
+                return response;
+            }
+            if (l.getDiscount()!=null){
+                if (l.getDiscount().getStoreVariant().getId()!=id){
+                    response.setErrorMessage("Discount with id '"+l.getDiscount().getId()+"' doesn't belong to the StoreVariant");
+                    return response;
+                }
+            }
+            for (Modifier m:l.getModifiers()
+                 ) {
+                if (m.getGroupModifier().getProduct().getId()!=p.getId()){
+                    response.setErrorMessage("Modifier with id '"+m.getId()+"' is not a modifier of product with id '"+p.getId());
+                    return response;
+                }
+            }
+        }
+
+        log.info("Sources validation successfully");
+        response.setSolved(true);
         return response;
     }
 
@@ -52,15 +95,15 @@ public class CheckoutValidation {
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
         ShoppingCart shoppingCart = checkout.getShoppingCart();
-        Position destination = checkout.getShippingInfo().getStorePosition();
-        Position origin = checkout.getShippingInfo().getCustomerPosition();
+        ShippingInfo shippingInfo = checkout.getShippingInfo();
+        PaymentInfo paymentInfo = checkout.getPaymentInfo();
         response = attributeValidation(new CheckoutAttribute(shoppingCart,CheckoutAttributeName.CART));
         if (!response.isSolved())
             return response;
-        response = attributeValidation(new CheckoutAttribute(destination,CheckoutAttributeName.DESTINATION));
+        response = attributeValidation(new CheckoutAttribute(shippingInfo,CheckoutAttributeName.SHIPPING));
         if (!response.isSolved())
             return response;
-        response = attributeValidation(new CheckoutAttribute(origin,CheckoutAttributeName.ORIGIN));
+        response = attributeValidation(new CheckoutAttribute(paymentInfo,CheckoutAttributeName.PAYMENT));
         return response;
     }
 
@@ -81,13 +124,13 @@ public class CheckoutValidation {
             response = validateCartAttribute(checkoutAttribute);
         }
 
-        if (checkoutAttribute.getName() == CheckoutAttributeName.DESTINATION) {
-            response = validateDestinationAttribute(checkoutAttribute);
+        if (checkoutAttribute.getName() == CheckoutAttributeName.SHIPPING) {
+            response = validateShippingInfoAttribute(checkoutAttribute);
         }
-
-        if (checkoutAttribute.getName() == CheckoutAttributeName.ORIGIN) {
-            response = validateDestinationAttribute(checkoutAttribute);
+        if (checkoutAttribute.getName() == CheckoutAttributeName.PAYMENT){
+            response = validatePaymentInfoAttribute(checkoutAttribute);
         }
+        log.info("Attribute validation finished");
         return response;
     }
 
@@ -136,24 +179,61 @@ public class CheckoutValidation {
             response.setErrorMessage("Please add at least one item to your Checkout instance");
             return response;
         }
+        log.info("Checkout is valid");
+        response.setSolved(true);
+        return response;
+    }
+
+    private ValidationResponse validatePaymentInfoAttribute(CheckoutAttribute checkoutAttribute){
+        log.info("Validating PaymentInfo Attribute");
+        ValidationResponse response = new ValidationResponse();
+        response.setSolved(false);
+        PaymentInfo paymentInfo = (PaymentInfo) checkoutAttribute.getAttribute();
+        if (paymentInfo==null){
+            response.setErrorMessage("PaymentInfo attribute is empty!");
+            return response;
+        }
+        if (paymentInfo.getPaymentMethod()==null){
+            response.setErrorMessage("PaymentMethod is empty!");
+            return response;
+        }
+        if (paymentInfo.getPaymentSession()==null){
+            response.setErrorMessage("PaymentSession id is empty!");
+            return response;
+        }
+        log.info("Payment Info Validation status is OK");
         response.setSolved(true);
         return response;
     }
 
 
-    private ValidationResponse validateDestinationAttribute(CheckoutAttribute checkoutAttribute){
+    private ValidationResponse validateShippingInfoAttribute(CheckoutAttribute checkoutAttribute){
+        log.info("Validating Shipping Info Attribute");
         ValidationResponse response = new ValidationResponse();
         response.setSolved(false);
-        Position destination = (Position) checkoutAttribute.getAttribute();
-        if (destination == null){
-            response.setErrorMessage("Origin position object is mandatory");
+        ShippingInfo shippingInfo = (ShippingInfo) checkoutAttribute.getAttribute();
+        if (shippingInfo==null){
+            response.setErrorMessage("ShippingInfo attribute is empty!");
             return response;
         }
-        if (!destination.isValid()){
-            response.setErrorMessage("Destination position object has no valid format");
+        if (shippingInfo.getCustomerPosition() == null){
+            response.setErrorMessage("Customer position object is mandatory");
+            return response;
+        }
+        if (!shippingInfo.getCustomerPosition().isValid()){
+            response.setErrorMessage("Customer position object has no valid format");
+            return response;
+        }
+        if (shippingInfo.getFee()==null){
+            response.setErrorMessage("Shipping Fee is empty!");
+            return response;
+        }
+        if (shippingInfo.getShippingSession()==null){
+            response.setErrorMessage("Shipping Session id is empty!");
             return response;
         }
         response.setSolved(true);
+        log.info("Shipping Info Validation status is OK");
         return response;
     }
 
@@ -208,6 +288,7 @@ public class CheckoutValidation {
                 }
             }
         }
+        log.info("Shopping Cart Validation status is OK");
         response.setSolved(true);
         return response;
     }
