@@ -67,7 +67,7 @@ public class CheckoutAttributeValidationUnitTest {
                 new CheckoutAttribute();
         Position location = new Position();
         locationAttribute.setAttribute(location);
-        locationAttribute.setName(CheckoutAttributeName.DESTINATION);
+        locationAttribute.setName(CheckoutAttributeName.SHIPPING);
         ValidationResponse response =
                 checkoutValidation.attributeValidation(locationAttribute);
         assert Boolean.FALSE == response.isSolved();

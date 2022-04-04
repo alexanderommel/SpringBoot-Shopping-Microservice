@@ -24,7 +24,7 @@ public class Checkout {
     @Id @GeneratedValue
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JsonIgnoreProperties("id")
     private ShoppingCart shoppingCart;
 
@@ -46,7 +46,7 @@ public class Checkout {
 
     private CheckoutPrice price=new CheckoutPrice();
 
-    private Instant created_at = Instant.now(); //ISO 8601;
+    private Instant created_at; //ISO 8601;
 
     private Instant FinishedAt;
 
@@ -60,6 +60,8 @@ public class Checkout {
 
     @JsonIgnore
     public void updateCheckout(){
+        price.setShippingTotal(shippingInfo.getFee());
+        price.setShippingSubtotal(shippingInfo.getFee());
         price.setCartTotal(shoppingCart.getPrice().getTotalPrice());
         price.setCartSubtotal(shoppingCart.getPrice().getFinalPrice());
         price.setCheckoutTotal(price.getCartTotal().add(price.getShippingTotal()));

@@ -2,15 +2,16 @@ package com.example.tongue.resources.checkout;
 
 import com.example.tongue.domain.checkout.Checkout;
 import com.example.tongue.domain.checkout.CheckoutAttribute;
+import com.example.tongue.domain.checkout.CheckoutAttributeName;
 import com.example.tongue.domain.checkout.FlowMessage;
 import com.example.tongue.integration.customers.Customer;
 import com.example.tongue.integration.customers.CustomerReplicationRepository;
 import com.example.tongue.integration.payments.PaymentServiceBroker;
 import com.example.tongue.integration.shipping.ShippingServiceBroker;
 import com.example.tongue.repositories.checkout.CheckoutRepository;
-import com.example.tongue.core.converters.CheckoutAttributeConverter;
 import com.example.tongue.services.CheckoutCompletionFlow;
 import com.example.tongue.services.CheckoutCreationFlow;
+import com.example.tongue.services.CheckoutSession;
 import com.example.tongue.services.CheckoutUpgradeFlow;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -38,16 +39,15 @@ public class CheckoutWebController {
     private CheckoutCompletionFlow completionFlow;
     private CheckoutCreationFlow creationFlow;
     private CheckoutUpgradeFlow upgradeFlow;
-    private CheckoutAttributeConverter attributeConverter;
     private CustomerReplicationRepository customerReplicationRepository;
     private PaymentServiceBroker paymentServiceBroker;
     private ShippingServiceBroker shippingServiceBroker;
+    private CheckoutSession checkoutSession;
 
     public CheckoutWebController(@Autowired CheckoutRepository checkoutRepository,
                                  @Autowired CheckoutCompletionFlow completionFlow,
                                  @Autowired CheckoutCreationFlow creationFlow,
                                  @Autowired CheckoutUpgradeFlow upgradeFlow,
-                                 @Autowired CheckoutAttributeConverter attributeConverter,
                                  @Autowired CustomerReplicationRepository customerReplicationRepository,
                                  @Autowired PaymentServiceBroker paymentServiceBroker,
                                  @Autowired ShippingServiceBroker shippingServiceBroker){
@@ -56,7 +56,6 @@ public class CheckoutWebController {
         this.completionFlow=completionFlow;
         this.upgradeFlow=upgradeFlow;
         this.creationFlow=creationFlow;
-        this.attributeConverter=attributeConverter;
         this.customerReplicationRepository=customerReplicationRepository;
         this.paymentServiceBroker = paymentServiceBroker;
         this.shippingServiceBroker=shippingServiceBroker;
@@ -72,13 +71,14 @@ public class CheckoutWebController {
         return getResponseEntityByPageable(checkoutPage);
     }
 
-    @GetMapping("/checkout/create")
+    @GetMapping(value = "/checkout/create", consumes = "application/json")
     public ResponseEntity<Map<String,Object>> create(HttpSession session, @RequestBody  Checkout checkout){
+        log.info("Creating Checkout for session id->"+session.getId());
         Map<String,Object> response = new HashMap<>();
         return getMapResponseEntity(response, creationFlow.run(checkout,session));
     }
 
-    @GetMapping("/checkout/complete")
+    @PostMapping("/checkout/complete")
     public ResponseEntity<Map<String,Object>> complete(HttpSession session, Principal principal){
         log.info("Completing checkout...");
         Map<String,Object> response = new HashMap<>();
@@ -115,19 +115,53 @@ public class CheckoutWebController {
             return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
         }
 
-        Checkout checkout1 = (Checkout) message.getAttribute("CHECKOUT");
+        Checkout checkout1 = (Checkout) message.getAttribute("checkout");
         response.put("response",checkout1);
         log.info("Responding with HttpStatus.OK");
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @PostMapping(value = "/checkout/update")
+    @PostMapping(value = "/checkout/update", consumes = "application/json")
     public ResponseEntity<Map<String,Object>> update(
-            HttpSession session, @RequestBody  String checkoutAttributeJSON){
-        log.info("Updating Checkout...");
+            HttpSession session
+            , @RequestBody Checkout checkout
+            , @RequestParam(name = "attribute") CheckoutAttributeName attribute){
+
+        log.info("Updating Checkout for session id '"+session.getId()+"'");
+        log.info("Attribute name to change is '"+attribute.name()+"'");
         Map<String,Object> response = new HashMap<>();
-        CheckoutAttribute checkoutAttribute = attributeConverter.convert(checkoutAttributeJSON);
-        return getMapResponseEntity(response, upgradeFlow.run(checkoutAttribute, session));
+
+        CheckoutAttribute checkoutAttribute = new CheckoutAttribute();
+        checkoutAttribute.setName(attribute);
+        if (attribute==CheckoutAttributeName.CART)
+            checkoutAttribute.setAttribute(checkout.getShoppingCart());
+        if (attribute==CheckoutAttributeName.PAYMENT)
+            checkoutAttribute.setAttribute(checkout.getPaymentInfo());
+        if (attribute==CheckoutAttributeName.SHIPPING)
+            checkoutAttribute.setAttribute(checkout.getShippingInfo());
+
+
+        FlowMessage message = upgradeFlow.run(checkoutAttribute,session);
+
+        if (!message.isSolved()){
+            response.put("error",message.getErrorMessage());
+            log.info("FlowMessage for Attribute Updating has errors ("+message.getErrorMessage()+")");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        Checkout c = (Checkout) message.getAttribute("checkout");
+        response.put("response",c);
+
+        log.info("Call to /checkout/update has been solved successfully!");
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/checkout")
+    public ResponseEntity<Map<String,Object>> getMyCheckoutOnSession(HttpSession session){
+        log.info("Retrieving current Checkout from HttpSession");
+        Map<String,Object> response = new HashMap<>();
+        Checkout checkout = (Checkout) session.getAttribute("CHECKOUT");
+        response.put("response",checkout);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     //----------------------------------- PRIVATE METHODS ------------------------------------------------
@@ -143,8 +177,10 @@ public class CheckoutWebController {
             response.put("checkouts",checkouts);
             response.put("page",page.getNumber());
             response.put("pages",page.getTotalPages());
+            log.info("Ok");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e){
+            log.info("Error");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

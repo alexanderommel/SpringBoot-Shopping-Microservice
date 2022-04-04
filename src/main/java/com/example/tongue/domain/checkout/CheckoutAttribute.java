@@ -1,30 +1,19 @@
 package com.example.tongue.domain.checkout;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CheckoutAttribute {
 
     private Object attribute;
     private CheckoutAttributeName name;
 
-    public CheckoutAttribute(){}
 
-    public CheckoutAttribute(Object attribute,CheckoutAttributeName name){
-        this.attribute=attribute;
-        this.name=name;
-    }
-
-    public Object getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(Object attribute) {
-        this.attribute = attribute;
-    }
-
-    public CheckoutAttributeName getName() {
-        return name;
-    }
-
-    public void setName(CheckoutAttributeName name) {
-        this.name = name;
-    }
 }
