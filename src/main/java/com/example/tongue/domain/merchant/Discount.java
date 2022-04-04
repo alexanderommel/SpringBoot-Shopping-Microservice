@@ -7,6 +7,10 @@ import com.example.tongue.domain.shopping.LineItemPriceCondition;
 import com.example.tongue.domain.shopping.ValueSubtotalCondition;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.UniqueElements;
 
@@ -20,6 +24,10 @@ import java.util.Objects;
 
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Discount {
 
     @Id @GeneratedValue
@@ -97,16 +105,16 @@ public class Discount {
 
 
     @Embedded
-    private LineItemPriceCondition lineItemPriceCondition=null;
+    private LineItemPriceCondition lineItemPriceCondition;
 
 
     @Embedded
-    private ValueSubtotalCondition valueSubtotalCondition=null;
+    private ValueSubtotalCondition valueSubtotalCondition;
 
 
     @ManyToMany
     @UniqueElements(message = "Entitled products must be unique")
-    private List<Product> entitledProducts=null;
+    private List<Product> entitledProducts;
 
     @OneToMany(mappedBy = "customer")
     private List<DiscountCustomerEntitlement> entitledCustomers;
@@ -124,135 +132,14 @@ public class Discount {
 
     //METHODS
 
-
-    public ValueType getValueType() {
-        return valueType;
-    }
-
-    public void setValueType(ValueType valueType) {
-        this.valueType = valueType;
-    }
-
-    public DiscountType getDiscountType() {
-        return discountType;
-    }
-
-    public void setDiscountType(DiscountType discountType) {
-        this.discountType = discountType;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Boolean getAutoApplicable() {
-        return autoApplicable;
-    }
-
-    public void setAutoApplicable(Boolean autoApplicable) {
-        this.autoApplicable = autoApplicable;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(Instant expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-
-    public int getUsageLimit() {
-        return usageLimit;
-    }
-
-    public void setUsageLimit(int usageLimit) {
-        this.usageLimit = usageLimit;
-    }
-
-    public DiscountScope getDiscountScope() {
-        return discountScope;
-    }
-
-    public void setDiscountScope(DiscountScope discountScope) {
-        this.discountScope = discountScope;
-    }
-
-    public ProductsScope getProductsScope() {
-        return productsScope;
-    }
-
-    public void setProductsScope(ProductsScope productsScope) {
-        this.productsScope = productsScope;
-    }
-
-    public CustomerScope getCustomersScope() {
-        return customersScope;
-    }
-
-    public void setCustomersScope(CustomerScope customersScope) {
-        this.customersScope = customersScope;
-    }
-
     @JsonIgnoreProperties(value = {"adjustments","description","handle","type","status","tags","vendor","inventorId","originalPrice"})
     public List<Product> getExcludedProducts() {
         return excludedProducts;
     }
 
-    public void setExcludedProducts(List<Product> excludedProducts) {
-        this.excludedProducts = excludedProducts;
-    }
-
     @JsonIgnore
     public StoreVariant getStoreVariant() {
         return storeVariant;
-    }
-
-    public void setStoreVariant(StoreVariant storeVariant) {
-        this.storeVariant = storeVariant;
-    }
-
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
-
-    public Double getMaximumAmount() {
-        return maximumAmount;
-    }
-
-    public void setMaximumAmount(Double maximumAmount) {
-        this.maximumAmount = maximumAmount;
     }
 
     //@JsonIgnore
@@ -288,22 +175,6 @@ public class Discount {
 
     public void setEntitledCustomers(List<DiscountCustomerEntitlement> entitledCustomers) {
         this.entitledCustomers = entitledCustomers;
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
-    public String getRequiredCompanions() {
-        return requiredCompanions;
-    }
-
-    public void setRequiredCompanions(String requiredCompanions) {
-        this.requiredCompanions = requiredCompanions;
     }
 
     @Override

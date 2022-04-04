@@ -22,7 +22,7 @@ public class ShoppingCart {
 
     private @Id @GeneratedValue Long id;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<LineItem> items= new ArrayList<>();
 
     private String instructions=null;

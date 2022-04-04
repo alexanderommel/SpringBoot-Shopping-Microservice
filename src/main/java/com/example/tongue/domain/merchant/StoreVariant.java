@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Data
@@ -38,6 +40,10 @@ public class StoreVariant {
     private Boolean hasActiveDiscounts=false; //Useful to avoid searching for discounts
 
     private String storeImageURL;
+
+    @NotEmpty(message = "Currency code must not be empty")
+    @Pattern(regexp = "(USD)") //ISO 4217
+    private String currency;
 
     // Tongue Machine Learning server must provide the most probable
     // classification on creation time
