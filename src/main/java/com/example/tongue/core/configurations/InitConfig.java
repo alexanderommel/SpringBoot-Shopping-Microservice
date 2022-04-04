@@ -4,8 +4,12 @@ import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.core.utilities.DataGenerator;
 import com.example.tongue.domain.merchant.*;
 import com.example.tongue.domain.merchant.enumerations.StoreVariantType;
+import com.example.tongue.integration.customers.Customer;
+import com.example.tongue.integration.customers.CustomerReplicationRepository;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
 import com.example.tongue.repositories.merchant.*;
+import com.example.tongue.services.ProductModifierPersistenceService;
+import com.example.tongue.services.ProductPersistenceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -28,6 +32,9 @@ public class InitConfig {
     private MerchantRepository merchantRepository;
     private StoreRepository storeRepository;
     private StoreVariantRepository storeVariantRepository;
+    private ProductPersistenceService productPersistenceService;
+    private ProductModifierPersistenceService modifierPersistenceService;
+    private CustomerReplicationRepository customerRepository;
 
     public InitConfig(@Autowired ProductRepository productRepository,
                       @Autowired ProductImageRepository productImageRepository,
@@ -37,8 +44,12 @@ public class InitConfig {
                       @Autowired CollectionRepository collectionRepository,
                       @Autowired MerchantRepository merchantRepository,
                       @Autowired StoreRepository storeRepository,
-                      @Autowired StoreVariantRepository storeVariantRepository){
+                      @Autowired StoreVariantRepository storeVariantRepository,
+                      @Autowired ProductPersistenceService productPersistenceService,
+                      @Autowired ProductModifierPersistenceService modifierPersistenceService,
+                      @Autowired CustomerReplicationRepository customerRepository){
 
+        this.customerRepository=customerRepository;
         this.productRepository=productRepository;
         this.productImageRepository=productImageRepository;
         this.discountRepository=discountRepository;
@@ -48,6 +59,8 @@ public class InitConfig {
         this.merchantRepository=merchantRepository;
         this.storeRepository=storeRepository;
         this.storeVariantRepository=storeVariantRepository;
+        this.productPersistenceService=productPersistenceService;
+        this.modifierPersistenceService=modifierPersistenceService;
 
     }
 
@@ -57,7 +70,16 @@ public class InitConfig {
     }
 
     @Bean
-    public void initDefaultData() {
+    public void initCustomerAccounts(){
+        log.info("Creating Customer Testing Accounts 'bunny' and 'dummy'");
+        Customer c1 = Customer.builder().username("bunny").build();
+        Customer c2 = Customer.builder().username("dummy").build();
+        customerRepository.save(c1);
+        customerRepository.save(c2);
+    }
+
+    @Bean
+    public void initDefaultData() throws Exception {
 
         log.info("Loading default data...");
 
@@ -90,6 +112,7 @@ public class InitConfig {
                 .representative("Andrea Danhez")
                 .representativePhone("5930955******")
                 .hasActiveDiscounts(false)
+                .currency("USD")
                 .store(store)
                 .build();
 
@@ -103,6 +126,7 @@ public class InitConfig {
                 .representative("Daniel Star")
                 .representativePhone("5930931******")
                 .hasActiveDiscounts(false)
+                .currency("USD")
                 .store(store)
                 .build();
 
@@ -116,6 +140,7 @@ public class InitConfig {
                 .representative("Gustavo Fring")
                 .representativePhone("5930911******")
                 .hasActiveDiscounts(false)
+                .currency("USD")
                 .store(store)
                 .build();
 
@@ -134,7 +159,7 @@ public class InitConfig {
                         DataGenerator.generateRandomizedProducts(6,s,c,"product");
                 for (Product p:
                      products) {
-                    p = productRepository.save(p);
+                    p = productPersistenceService.create(p);
                     List<GroupModifier> groupModifiers =
                             DataGenerator.generateGroupModifiers(1,3,s,p,"group");
                     for (GroupModifier g:
@@ -143,7 +168,7 @@ public class InitConfig {
                         List<Modifier> modifiers = DataGenerator.generateRandomizedModifiers(4,g,"modifier");
                         for (Modifier m:
                              modifiers) {
-                            m = modifierRepository.save(m);
+                            m = modifierPersistenceService.createModifier(m);
                         }
                     }
                 }
