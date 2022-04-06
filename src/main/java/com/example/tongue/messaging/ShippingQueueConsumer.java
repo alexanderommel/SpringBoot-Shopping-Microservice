@@ -5,9 +5,11 @@ import com.example.tongue.integration.orders.OrderConfirmation;
 import com.example.tongue.integration.payments.Payment;
 import com.example.tongue.integration.payments.PaymentServiceBroker;
 import com.example.tongue.integration.shipping.ShipmentAcceptation;
+import com.example.tongue.integration.shipping.ShipmentContinuation;
 import com.example.tongue.integration.shipping.Shipping;
 import com.example.tongue.integration.shipping.ShippingRepository;
 import com.example.tongue.repositories.checkout.FulfillmentRepository;
+import com.example.tongue.services.FulfillmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +23,36 @@ import java.util.Optional;
 public class ShippingQueueConsumer {
 
     private String acceptedQueueName;
+    private String shippingContinuationQueueName;
     private PaymentServiceBroker paymentServiceBroker;
     private ShippingRepository shippingRepository;
     private FulfillmentRepository fulfillmentRepository;
     private OrderQueuePublisher orderQueuePublisher;
+    private FulfillmentService fulfillmentService;
 
     public ShippingQueueConsumer(@Value("${shopping.queues.in.shipping.accept}") String acceptedQueueName,
+                                 @Value("${shopping.queues.in.shipping.continue}") String shippingContinuationQueueName,
                                  @Autowired PaymentServiceBroker paymentServiceBroker,
                                  @Autowired ShippingRepository shippingRepository,
                                  @Autowired FulfillmentRepository fulfillmentRepository,
-                                 @Autowired OrderQueuePublisher orderQueuePublisher){
+                                 @Autowired OrderQueuePublisher orderQueuePublisher,
+                                 @Autowired FulfillmentService fulfillmentService){
 
         this.acceptedQueueName=acceptedQueueName;
+        this.shippingContinuationQueueName=shippingContinuationQueueName;
         this.paymentServiceBroker=paymentServiceBroker;
         this.shippingRepository=shippingRepository;
         this.fulfillmentRepository=fulfillmentRepository;
         this.orderQueuePublisher=orderQueuePublisher;
+        this.fulfillmentService=fulfillmentService;
 
+    }
+
+    @RabbitListener(queues = "${shopping.queues.in.shipping.continue}")
+    public void receiveShipmentContinuationMessage(ShipmentContinuation shipmentContinuation){
+        log.info("Consuming ShipmentAccepted Message from Queue: "+shippingContinuationQueueName);
+        log.info("Processing Content: "+shipmentContinuation);
+        fulfillmentService.shipOrder(shipmentContinuation);
     }
 
     @RabbitListener(queues = {"${shopping.queues.in.shipping.accept}"})
