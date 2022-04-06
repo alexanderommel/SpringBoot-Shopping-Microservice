@@ -17,12 +17,21 @@ public class PaymentServiceBroker {
     }
 
     public Payment createPayment(){
+        log.info("Payment Creation Request to Payment Service");
+        log.info("Ok");
         return Payment.builder().paymentId("1092").build();
     }
 
     public boolean updatePaymentAccount(){
         /** Change info such as credit card number, **/
         return true;
+    }
+
+    public Payment continueShoppingPayment(Payment payment){
+        log.info("Continuing payment flow...");
+        log.info("Ok");
+        payment.setStatusCode(Payment.PaymentStatusCode.P3);
+        return payment;
     }
 
     public PaymentSession createSession(Customer customer, PaymentInfo paymentInfo){
