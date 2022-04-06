@@ -16,4 +16,11 @@ import javax.persistence.Id;
 public class Payment {
     @Id
     private String paymentId;
+    private PaymentStatusCode statusCode;
+
+    public enum PaymentStatusCode{
+        P1,P2,P3,P4,P5
+    }
+
+
 }
