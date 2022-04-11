@@ -35,6 +35,7 @@ public class InitConfig {
     private ProductPersistenceService productPersistenceService;
     private ProductModifierPersistenceService modifierPersistenceService;
     private CustomerReplicationRepository customerRepository;
+    private DataGenerator dataGenerator;
 
     public InitConfig(@Autowired ProductRepository productRepository,
                       @Autowired ProductImageRepository productImageRepository,
@@ -47,7 +48,8 @@ public class InitConfig {
                       @Autowired StoreVariantRepository storeVariantRepository,
                       @Autowired ProductPersistenceService productPersistenceService,
                       @Autowired ProductModifierPersistenceService modifierPersistenceService,
-                      @Autowired CustomerReplicationRepository customerRepository){
+                      @Autowired CustomerReplicationRepository customerRepository,
+                      @Autowired DataGenerator dataGenerator){
 
         this.customerRepository=customerRepository;
         this.productRepository=productRepository;
@@ -61,6 +63,7 @@ public class InitConfig {
         this.storeVariantRepository=storeVariantRepository;
         this.productPersistenceService=productPersistenceService;
         this.modifierPersistenceService=modifierPersistenceService;
+        this.dataGenerator=dataGenerator;
 
     }
 
@@ -69,19 +72,24 @@ public class InitConfig {
         return builder.build();
     }
 
+
     @Bean
     public void initCustomerAccounts(){
         log.info("Creating Customer Testing Accounts 'bunny' and 'dummy'");
         Customer c1 = Customer.builder().username("bunny").build();
         Customer c2 = Customer.builder().username("dummy").build();
+        Customer c3 = Customer.builder().username("funny").build();
         customerRepository.save(c1);
         customerRepository.save(c2);
+        customerRepository.save(c3);
     }
 
     @Bean
     public void initDefaultData() throws Exception {
 
         log.info("Loading default data...");
+        log.info("Data Generator Autowired fields empty? ->"
+                + String.valueOf(dataGenerator.storeVariantRepository==null));
 
         Merchant merchant = Merchant.builder()
                 .ownerName("Alexander Rommel")
@@ -151,21 +159,21 @@ public class InitConfig {
             s = storeVariantRepository.save(s);
             log.info("Creating Store Variant with id->"+s.getId());
             List<Collection> collections =
-                    DataGenerator.generateRandomizedCollections(5,s,"collection");
+                    dataGenerator.generateRandomizedCollections(5,s,"collection");
             for (Collection c:
                  collections) {
                 c = collectionRepository.save(c);
                 List<Product> products =
-                        DataGenerator.generateRandomizedProducts(6,s,c,"product");
+                        dataGenerator.generateRandomizedProducts(6,s,c,"product");
                 for (Product p:
                      products) {
                     p = productPersistenceService.create(p);
                     List<GroupModifier> groupModifiers =
-                            DataGenerator.generateGroupModifiers(1,3,s,p,"group");
+                            dataGenerator.generateGroupModifiers(1,3,s,p,"group");
                     for (GroupModifier g:
                          groupModifiers) {
                         g = groupModifierRepository.save(g);
-                        List<Modifier> modifiers = DataGenerator.generateRandomizedModifiers(4,g,"modifier");
+                        List<Modifier> modifiers = dataGenerator.generateRandomizedModifiers(4,g,"modifier");
                         for (Modifier m:
                              modifiers) {
                             m = modifierPersistenceService.createModifier(m);

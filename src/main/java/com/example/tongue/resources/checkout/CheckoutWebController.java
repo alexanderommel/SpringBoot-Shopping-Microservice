@@ -1,13 +1,14 @@
 package com.example.tongue.resources.checkout;
 
-import com.example.tongue.domain.checkout.Checkout;
-import com.example.tongue.domain.checkout.CheckoutAttribute;
-import com.example.tongue.domain.checkout.CheckoutAttributeName;
-import com.example.tongue.domain.checkout.FlowMessage;
+import com.example.tongue.core.utilities.DataGenerator;
+import com.example.tongue.domain.checkout.*;
+import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.integration.customers.Customer;
 import com.example.tongue.integration.customers.CustomerReplicationRepository;
 import com.example.tongue.integration.payments.PaymentServiceBroker;
+import com.example.tongue.integration.shipping.ShippingBrokerResponse;
 import com.example.tongue.integration.shipping.ShippingServiceBroker;
+import com.example.tongue.integration.shipping.ShippingSummary;
 import com.example.tongue.repositories.checkout.CheckoutRepository;
 import com.example.tongue.services.CheckoutCompletionFlow;
 import com.example.tongue.services.CheckoutCreationFlow;
@@ -16,6 +17,7 @@ import com.example.tongue.services.CheckoutUpgradeFlow;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,10 +28,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.Flow;
 
 @RestController
 @Slf4j
@@ -42,7 +42,8 @@ public class CheckoutWebController {
     private CustomerReplicationRepository customerReplicationRepository;
     private PaymentServiceBroker paymentServiceBroker;
     private ShippingServiceBroker shippingServiceBroker;
-    private CheckoutSession checkoutSession;
+    private Environment environment;
+    private DataGenerator dataGenerator;
 
     public CheckoutWebController(@Autowired CheckoutRepository checkoutRepository,
                                  @Autowired CheckoutCompletionFlow completionFlow,
@@ -50,7 +51,9 @@ public class CheckoutWebController {
                                  @Autowired CheckoutUpgradeFlow upgradeFlow,
                                  @Autowired CustomerReplicationRepository customerReplicationRepository,
                                  @Autowired PaymentServiceBroker paymentServiceBroker,
-                                 @Autowired ShippingServiceBroker shippingServiceBroker){
+                                 @Autowired ShippingServiceBroker shippingServiceBroker,
+                                 @Autowired Environment environment,
+                                 @Autowired DataGenerator dataGenerator){
 
         this.checkoutRepository = checkoutRepository;
         this.completionFlow=completionFlow;
@@ -59,6 +62,8 @@ public class CheckoutWebController {
         this.customerReplicationRepository=customerReplicationRepository;
         this.paymentServiceBroker = paymentServiceBroker;
         this.shippingServiceBroker=shippingServiceBroker;
+        this.environment = environment;
+        this.dataGenerator=dataGenerator;
     }
 
 
@@ -90,11 +95,11 @@ public class CheckoutWebController {
         }
         Checkout checkout = (Checkout) checkoutO;
 
-        Boolean validPaymentSession = paymentServiceBroker
-                .validatePaymentSession(checkout.getPaymentInfo().getPaymentSession());
-
         Boolean validShippingSession = shippingServiceBroker
                 .validatePaymentSession(checkout.getShippingInfo().getShippingSession());
+
+        Boolean validPaymentSession = paymentServiceBroker
+                .validatePaymentSession(checkout.getPaymentInfo().getPaymentSession());
 
         if (!validPaymentSession){
             response.put("error","Not valid PaymentSession");
@@ -162,6 +167,74 @@ public class CheckoutWebController {
         Checkout checkout = (Checkout) session.getAttribute("CHECKOUT");
         response.put("response",checkout);
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/dev/checkout/generate")
+    public ResponseEntity<Map<String, Object>> generateCheckout(HttpSession session){
+        log.info("'Generate Checkout' Developer Profile end point called");
+        if (Arrays.asList(environment.getActiveProfiles()).contains("dev")){
+            log.info("Profile accepted");
+            log.info("Generating a Checkout instance on Session for testing...");
+            Checkout checkout = dataGenerator.generateCheckout();
+            PaymentInfo paymentInfo = checkout.getPaymentInfo();
+            ShippingInfo shippingInfo = checkout.getShippingInfo();
+            ShoppingCart shoppingCart = checkout.getShoppingCart();
+            try {
+                creationFlow.run(checkout,session);
+                checkout.setPaymentInfo(paymentInfo);
+                checkout.setShoppingCart(shoppingCart);
+                checkout.setShippingInfo(shippingInfo);
+
+                CheckoutAttribute shoppingCartCheckoutAttribute = CheckoutAttribute
+                        .builder()
+                        .attribute(checkout.getShoppingCart())
+                        .name(CheckoutAttributeName.CART)
+                        .build();
+
+                upgradeFlow.run(shoppingCartCheckoutAttribute,session);
+                checkout.setPaymentInfo(paymentInfo);
+                checkout.setShippingInfo(shippingInfo);
+
+                log.info("Calling Shipping Service to get Shipping Summary");
+                ShippingBrokerResponse brokerResponse =
+                shippingServiceBroker.requestShippingSummary(shippingInfo.getCustomerPosition(),shippingInfo.getStorePosition());
+                ShippingSummary summary = (ShippingSummary) brokerResponse.getMessages().get("summary");
+
+                shippingInfo.setShippingSession(summary.getShippingFee().getTemporalAccessToken().getBase64Encoding());
+                shippingInfo.setFee(summary.getShippingFee().getFee());
+
+                checkout.setShippingInfo(shippingInfo);
+
+                CheckoutAttribute shippingInfoCheckoutAttribute = CheckoutAttribute
+                        .builder()
+                        .attribute(checkout.getShippingInfo())
+                        .name(CheckoutAttributeName.SHIPPING)
+                        .build();
+
+                upgradeFlow.run(shippingInfoCheckoutAttribute,session);
+                checkout.setPaymentInfo(paymentInfo);
+
+                CheckoutAttribute paymentInfoCheckoutAttribute = CheckoutAttribute
+                        .builder()
+                        .attribute(checkout.getPaymentInfo())
+                        .name(CheckoutAttributeName.PAYMENT)
+                        .build();
+
+                upgradeFlow.run(paymentInfoCheckoutAttribute,session);
+
+                Checkout checkout1 = (Checkout) session.getAttribute("CHECKOUT");
+
+                Map<String,Object> response = new HashMap<>();
+                response.put("response",checkout1);
+                log.info("Checkout generated on Session successfully");
+                return new ResponseEntity<>(response,HttpStatus.OK);
+
+            }catch (Exception e){
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        log.info("This endpoint is callable only if current profile is 'dev'");
+        return new ResponseEntity<>(HttpStatus.GONE);
     }
 
     //----------------------------------- PRIVATE METHODS ------------------------------------------------

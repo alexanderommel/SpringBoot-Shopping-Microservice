@@ -1,20 +1,122 @@
 package com.example.tongue.core.utilities;
 
+import com.example.tongue.domain.checkout.Checkout;
+import com.example.tongue.domain.checkout.PaymentInfo;
+import com.example.tongue.domain.checkout.Position;
+import com.example.tongue.domain.checkout.ShippingInfo;
 import com.example.tongue.domain.merchant.*;
 import com.example.tongue.domain.merchant.enumerations.CollectionStatus;
 import com.example.tongue.domain.merchant.enumerations.GroupModifierType;
 import com.example.tongue.domain.merchant.enumerations.ProductStatus;
+import com.example.tongue.domain.shopping.LineItem;
+import com.example.tongue.domain.shopping.ShoppingCart;
+import com.example.tongue.repositories.merchant.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+
+@Service
 @Slf4j
 public class DataGenerator {
 
-    public static List<Collection> generateRandomizedCollections(int size, StoreVariant storeVariant, String prefix){
+    public StoreVariantRepository storeVariantRepository;
+    private ProductRepository productRepository;
+    private CollectionRepository collectionRepository;
+    private GroupModifierRepository groupModifierRepository;
+    private ModifierRepository modifierRepository;
+
+    public DataGenerator(@Autowired StoreVariantRepository storeVariantRepository,
+                         @Autowired ProductRepository productRepository,
+                         @Autowired CollectionRepository collectionRepository,
+                         @Autowired GroupModifierRepository groupModifierRepository,
+                         @Autowired ModifierRepository modifierRepository){
+
+        this.storeVariantRepository=storeVariantRepository;
+        this.productRepository=productRepository;
+        this.collectionRepository=collectionRepository;
+        this.groupModifierRepository=groupModifierRepository;
+        this.modifierRepository=modifierRepository;
+    }
+
+    public Checkout generateCheckout(){
+        log.info("Generating Random Checkout");
+        log.info("Shipping and Payment Sessions won't be valid sessions when created");
+        StoreVariant s = storeVariantRepository.findAll().get(0);
+        Collection c = collectionRepository.findAllByStoreVariantId(s.getId()).get(0);
+        List<Product> products = productRepository.findAllByCollection_IdAndStatus(c.getId(),ProductStatus.ACTIVE);
+
+        log.info("Filling Shopping Cart");
+
+        List<LineItem> items = new ArrayList<>();
+        for (int i = 0; i < products.size(); i++) {
+            if (i==4)
+                break;
+
+            LineItem l = LineItem.builder()
+                    .product(products.get(i))
+                    .quantity((i%2)+1)
+                    .instructions((i==2?"Extra ketchup":null))
+                    .build();
+
+            List<GroupModifier> groupModifiers = groupModifierRepository.findAllByProduct_Id(products.get(i).getId());
+
+            if ((i%2)==0 && !groupModifiers.isEmpty()){
+                List<Modifier> modifiers = modifierRepository.findAllByGroupModifier_Id(groupModifiers.get(0).getId());
+                l.setModifiers(modifiers);
+            }
+
+            items.add(l);
+        }
+
+        ShoppingCart shoppingCart = ShoppingCart.builder()
+                .items(items)
+                .instructions("Take care")
+                .build();
+
+        log.info("Filling Shipping Info");
+        ShippingInfo shippingInfo = ShippingInfo.builder()
+                .customerPosition(Position.builder()
+                        .address("Quito")
+                        .owner("Alexander")
+                        .longitude(1.0000f)
+                        .latitude(2.0000f)
+                        .build())
+                .storePosition(Position.builder()
+                        .address("Quito")
+                        .owner("Not necessary")
+                        .longitude(1.0000f)
+                        .latitude(-2.0000f)
+                        .build())
+                .fee(BigDecimal.ONE)
+                .shippingSession("RandomShippingSessionNumber")
+                .build();
+
+        log.info("Filling Payment Info");
+        PaymentInfo paymentInfo = PaymentInfo.builder()
+                .paymentMethod(PaymentInfo.PaymentMethod.CASH)
+                .paymentSession("RandomPaymentSessionNumber")
+                .build();
+
+        Checkout checkout = Checkout.builder()
+                .storeVariant(s)
+                .shoppingCart(shoppingCart)
+                .shippingInfo(shippingInfo)
+                .paymentInfo(paymentInfo)
+                .build();
+
+        log.info("Checkout created!");
+        return checkout;
+    }
+
+    public List<Collection> generateRandomizedCollections(int size, StoreVariant storeVariant, String prefix){
 
         log.info("Generating "+size
                 +" collections for store variant id '"+storeVariant.getId()
@@ -34,7 +136,7 @@ public class DataGenerator {
         return collectionList;
     }
 
-    public static List<Modifier> generateRandomizedModifiers(int size, GroupModifier groupModifier, String prefix){
+    public List<Modifier> generateRandomizedModifiers(int size, GroupModifier groupModifier, String prefix){
 
         //log.info("Generating "+size
         //        +" modifiers for group modifier with id '"+groupModifier.getId()+"'.");
@@ -57,14 +159,17 @@ public class DataGenerator {
         return modifiers;
     }
 
-    public static List<GroupModifier> generateGroupModifiers(int mandatorySize, int optionalSize,
+    public List<GroupModifier> generateGroupModifiers(int mandatorySize, int optionalSize,
                                                              StoreVariant storeVariant, Product product, String prefix){
 
+        /*
         log.info("Generating "+mandatorySize
                 +" mandatory and "+optionalSize
                 +" optional group modifiers for store variant id '"+storeVariant.getId()
                 +"' and product id '"+product.getId()
                 +"'.");
+
+         */
 
         List<GroupModifier> groupModifiers = new ArrayList<>();
 
@@ -93,7 +198,7 @@ public class DataGenerator {
         return groupModifiers;
     }
 
-    public static List<Product> generateRandomizedProducts(int size, StoreVariant storeVariant, Collection collection, String prefix){
+    public List<Product> generateRandomizedProducts(int size, StoreVariant storeVariant, Collection collection, String prefix){
 
         log.info("Generating "+size
                 +" products for store variant id '"+storeVariant.getId()
