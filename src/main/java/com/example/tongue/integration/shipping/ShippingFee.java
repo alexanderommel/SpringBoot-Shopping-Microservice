@@ -14,6 +14,6 @@ import java.math.BigDecimal;
 public class ShippingFee {
 
     private BigDecimal fee;
-    private String shippingSession;
+    private TemporalAccessToken temporalAccessToken;
 
 }

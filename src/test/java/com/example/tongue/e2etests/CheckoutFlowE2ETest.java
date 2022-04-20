@@ -8,9 +8,7 @@ import com.example.tongue.domain.merchant.enumerations.ProductStatus;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.integration.payments.PaymentServiceBroker;
-import com.example.tongue.integration.shipping.ShippingBrokerResponse;
-import com.example.tongue.integration.shipping.ShippingServiceBroker;
-import com.example.tongue.integration.shipping.ShippingSummary;
+import com.example.tongue.integration.shipping.*;
 import com.example.tongue.repositories.merchant.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -179,11 +177,15 @@ public class CheckoutFlowE2ETest {
          * Checkout Update Service assumes that the values related to the shipping are OK.
          * **/
 
+        ShippingFee shippingFee = ShippingFee.builder()
+                .fee(BigDecimal.valueOf(1.90))
+                .temporalAccessToken(TemporalAccessToken.builder().base64Encoding("RandomSessionNumber").build())
+                .build();
+
         ShippingSummary summary = ShippingSummary.builder()
                 .arrivalTime(LocalTime.of(0,31))
                 .distance(new Distance(28, Metrics.KILOMETERS))
-                .fee(BigDecimal.valueOf(1.80))
-                .shippingSession("RandomSessionNumber")
+                .shippingFee(shippingFee)
                 .build();
 
         checkout.getShippingInfo().setCustomerPosition(Position.builder()
@@ -193,8 +195,8 @@ public class CheckoutFlowE2ETest {
                 .address("Calle Ruta 8")
                 .build());
 
-        checkout.getShippingInfo().setFee(summary.getFee());
-        checkout.getShippingInfo().setShippingSession(summary.getShippingSession());
+        checkout.getShippingInfo().setFee(summary.getShippingFee().getFee());
+        checkout.getShippingInfo().setShippingSession(summary.getShippingFee().getTemporalAccessToken().getBase64Encoding());
 
         log.info("Customer updates Shipping Info");
 

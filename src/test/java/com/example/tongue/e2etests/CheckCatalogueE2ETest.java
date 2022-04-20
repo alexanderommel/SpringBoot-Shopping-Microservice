@@ -5,9 +5,7 @@ import com.example.tongue.domain.merchant.*;
 import com.example.tongue.domain.merchant.Collection;
 import com.example.tongue.domain.merchant.enumerations.GroupModifierType;
 import com.example.tongue.domain.merchant.enumerations.ProductStatus;
-import com.example.tongue.integration.shipping.ShippingBrokerResponse;
-import com.example.tongue.integration.shipping.ShippingServiceBroker;
-import com.example.tongue.integration.shipping.ShippingSummary;
+import com.example.tongue.integration.shipping.*;
 import com.example.tongue.repositories.merchant.CollectionRepository;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
 import com.example.tongue.resources.merchant.StoreVariantRestController;
@@ -100,8 +98,13 @@ public class CheckCatalogueE2ETest {
                 .webAppContextSetup(context)
                 .build();
 
-        ShippingSummary shippingSummary =  ShippingSummary.builder()
+        ShippingFee shippingFee = ShippingFee.builder()
                 .fee(BigDecimal.valueOf(1.90))
+                .temporalAccessToken(TemporalAccessToken.builder().base64Encoding("sessionNumber").build())
+                .build();
+
+        ShippingSummary shippingSummary =  ShippingSummary.builder()
+                .shippingFee(shippingFee)
                 .arrivalTime(LocalTime.now())
                 .distance(new Distance(110, Metrics.KILOMETERS))
                 .build();
