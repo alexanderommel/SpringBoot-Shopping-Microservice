@@ -90,7 +90,7 @@ public class OrderQueueConsumer {
                 .build();
 
         shippingQueuePublisher.publishShippingRequest(request);
-
+        log.info("Ok");
     }
 
 }

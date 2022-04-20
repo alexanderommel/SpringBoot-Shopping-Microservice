@@ -62,11 +62,11 @@ public class CustomerRestController {
     }
 
     @PostMapping("/customers/authenticate")
-    public ResponseEntity authenticate(Principal p){
+    public ResponseEntity<String> authenticate(Principal p){
         if (p==null)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         log.info("User "+p.getName()+" authenticated!");
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity("User authenticated!",HttpStatus.OK);
     }
 
     private String createValidJWTToken(String username) {

@@ -42,6 +42,8 @@ public class CheckoutValidation {
         log.info("Running hard validation...");
         ValidationResponse response;
         response = validateAttributes(checkout);
+        if (!response.isSolved())
+            return response;
         response = validateSources(checkout);
         log.info("Hard Validation finished");
         return response;

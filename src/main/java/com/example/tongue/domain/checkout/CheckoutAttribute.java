@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CheckoutAttribute {
+public class CheckoutAttribute<T> {
 
-    private Object attribute;
+    private T attribute;
     private CheckoutAttributeName name;
 
 

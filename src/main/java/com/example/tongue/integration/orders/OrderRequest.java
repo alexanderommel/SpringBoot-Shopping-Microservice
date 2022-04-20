@@ -1,5 +1,6 @@
 package com.example.tongue.integration.orders;
 
+import com.example.tongue.domain.checkout.PaymentInfo;
 import com.example.tongue.domain.shopping.ShoppingCart;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,21 +17,8 @@ import java.math.BigDecimal;
 public class OrderRequest {
 
     private String artifactId;
-    private ShoppingCart shoppingCart;
-    private Billing billing;
+    private String shoppingCartId;
+    private BigDecimal total;
+    private PaymentInfo.PaymentMethod paymentMethod;
 
-    @Embeddable
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class Billing{
-
-        BigDecimal total;
-        PaymentMethod paymentMethod;
-
-    }
-    public enum PaymentMethod{
-        CASH,CREDIT
-    }
 }

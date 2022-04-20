@@ -54,30 +54,27 @@ public class FulfillmentWebController {
             return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         }
         log.info("Creating Order Request and Fulfillment");
-        OrderRequest.Billing billing = new OrderRequest.Billing();
+        PaymentInfo.PaymentMethod paymentMethod = null;
         if (checkout.getPaymentInfo().getPaymentMethod()== PaymentInfo.PaymentMethod.CASH){
-            billing = OrderRequest.Billing.builder()
-                    .paymentMethod(OrderRequest.PaymentMethod.CASH)
-                    .total(checkout.getPrice().getCartSubtotal())
-                    .build();
+            paymentMethod = PaymentInfo.PaymentMethod.CASH;
         }
-        if (checkout.getPaymentInfo().getPaymentMethod()== PaymentInfo.PaymentMethod.CREDIT_CARD){
-            billing = OrderRequest.Billing.builder()
-                    .paymentMethod(OrderRequest.PaymentMethod.CREDIT)
-                    .total(checkout.getPrice().getCartSubtotal())
-                    .build();
+        else{
+            paymentMethod = PaymentInfo.PaymentMethod.CREDIT_CARD;
         }
         OrderRequest orderRequest = OrderRequest.builder()
                 .artifactId(String.valueOf(checkout.getId()))
-                .shoppingCart(checkout.getShoppingCart())
-                .billing(billing)
+                .shoppingCartId(String.valueOf(checkout.getShoppingCart().getId()))
+                .total(checkout.getPrice().getCartSubtotal())
+                .paymentMethod(paymentMethod)
                 .build();
+
         Fulfillment fulfillment = Fulfillment.builder()
                 .checkout(checkout)
                 .build();
-        fulfillment = fulfillmentRepository.save(fulfillment);
         orderQueuePublisher.publishOrderRequest(orderRequest);
+        fulfillment = fulfillmentRepository.save(fulfillment);
         response.put("response",fulfillment);
+        log.info("Call solved properly");
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
