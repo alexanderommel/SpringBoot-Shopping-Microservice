@@ -2,15 +2,12 @@ package com.example.tongue.e2etests;
 
 import com.example.tongue.domain.checkout.*;
 import com.example.tongue.domain.merchant.*;
-import com.example.tongue.domain.merchant.enumerations.DiscountScope;
-import com.example.tongue.domain.merchant.enumerations.DiscountType;
 import com.example.tongue.domain.merchant.enumerations.ProductStatus;
 import com.example.tongue.domain.shopping.LineItem;
 import com.example.tongue.domain.shopping.ShoppingCart;
 import com.example.tongue.integration.payments.PaymentServiceBroker;
 import com.example.tongue.integration.shipping.*;
 import com.example.tongue.repositories.merchant.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -28,7 +24,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,13 +31,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -104,7 +97,7 @@ public class CheckoutFlowE2ETest {
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .build();
-        Mockito.when(shippingServiceBroker.validatePaymentSession(ArgumentMatchers.anyString())).thenReturn(true);
+        Mockito.when(shippingServiceBroker.validateShippingSession(ArgumentMatchers.anyString())).thenReturn(true);
         Mockito.when(paymentServiceBroker.validatePaymentSession(ArgumentMatchers.anyString())).thenReturn(true);
 
         principal = Mockito.mock(Principal.class);

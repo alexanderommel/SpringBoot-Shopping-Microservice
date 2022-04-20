@@ -12,7 +12,6 @@ import com.example.tongue.integration.shipping.ShippingSummary;
 import com.example.tongue.repositories.checkout.CheckoutRepository;
 import com.example.tongue.services.CheckoutCompletionFlow;
 import com.example.tongue.services.CheckoutCreationFlow;
-import com.example.tongue.services.CheckoutSession;
 import com.example.tongue.services.CheckoutUpgradeFlow;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +28,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.*;
-import java.util.concurrent.Flow;
 
 @RestController
 @Slf4j
@@ -96,7 +94,7 @@ public class CheckoutWebController {
         Checkout checkout = (Checkout) checkoutO;
 
         Boolean validShippingSession = shippingServiceBroker
-                .validatePaymentSession(checkout.getShippingInfo().getShippingSession());
+                .validateShippingSession(checkout.getShippingInfo().getShippingSession());
 
         Boolean validPaymentSession = paymentServiceBroker
                 .validatePaymentSession(checkout.getPaymentInfo().getPaymentSession());
