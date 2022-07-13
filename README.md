@@ -37,7 +37,7 @@ Once a catalog of products has been registered, a customer can access to the pub
 
 ## How it works
 
-This service provides a set of endpoints to be accessed from a web page or mobile client such as Tongue Customers App, some of the endpoints that you might call are GET : shopping/storevariants to obtain a JSON array of available stores, GET: /shipping/collections?storeVariantId can be used to get the list of available collections of products provided by the merchant of the stor and so on.
+This service provides a set of endpoints to be accessed from a web page or mobile client such as Tongue Customers App, some of the endpoints that you might call are GET : shopping/storevariants to obtain a JSON array of available stores, GET: /shipping/collections?storeVariantId can be used to get the list of available collections of products provided by the merchant of the store.
 
 For Merchants a web page built in React is going to be used to contact Shopping Service and publish their products.
 
