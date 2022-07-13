@@ -20,13 +20,19 @@ Once a catalog of products has been registered, a customer can access to the pub
 
 - REST services
 
-- Google Authentication through JWT Filters
+- Google Authentication with JWT
 
 - Catalogue
 
 - Uber Eats based service
 
 - Modifiers and discounts for products
+
+- AMQP
+
+- Unit and Integration tests
+
+- Documentation
 
 
 ## How it works
