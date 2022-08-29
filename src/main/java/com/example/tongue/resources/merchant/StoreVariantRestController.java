@@ -1,15 +1,15 @@
 package com.example.tongue.resources.merchant;
 
+import com.example.tongue.core.contracts.ApiResponse;
 import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.core.utilities.RestControllerRoutines;
 import com.example.tongue.domain.merchant.Collection;
 import com.example.tongue.domain.merchant.Discount;
 import com.example.tongue.domain.merchant.enumerations.StoreVariantType;
 import com.example.tongue.domain.merchant.StoreVariant;
+import com.example.tongue.domain.shopping.TongueStore;
 import com.example.tongue.integration.orders.OrderServiceBroker;
-import com.example.tongue.integration.shipping.ShippingBrokerResponse;
-import com.example.tongue.integration.shipping.ShippingServiceBroker;
-import com.example.tongue.integration.shipping.ShippingSummary;
+import com.example.tongue.integration.shipping.*;
 import com.example.tongue.repositories.merchant.CollectionRepository;
 import com.example.tongue.repositories.merchant.DiscountRepository;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
@@ -18,10 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.*;
 
 @Slf4j
@@ -48,46 +52,53 @@ public class StoreVariantRestController {
     }
 
 
-    @GetMapping(value = "/stores",consumes = "application/json")
-    public ResponseEntity<Map<String,Object>> getNearestRestaurants(@RequestBody Position position){
+    @PostMapping(value = "/stores",consumes = "application/json")
+    public ResponseEntity<ApiResponse> getNearestRestaurants(@RequestBody Position position){
         log.info("Retrieving restaurants by condition 'nearest'");
-        Map<String, Object> response = new HashMap<>();
         List<StoreVariant> storeVariantList = orderServiceBroker.getNearestRestaurants(position);
-        List<ShippingSummary> shippingSummaries = new ArrayList<>();
+        List<TongueStore> tongueStores = new ArrayList<>();
         if (storeVariantList==null){
             log.info("No restaurants found for position {"+position+"}");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         for (StoreVariant s:storeVariantList) {
+            ShippingSummary shippingSummary = null;
             Position destination = s.getLocation();
             ShippingBrokerResponse brokerResponse =
-                    shippingServiceBroker.requestShippingSummary(position,destination);
+                    ShippingBrokerResponse.builder().isSolved(true).build(); // Esta linea no es
+                    //shippingServiceBroker.requestShippingSummary(position,destination); // Esta si es de igualar
             if (brokerResponse.getIsSolved()){
-                shippingSummaries.add((ShippingSummary) brokerResponse.getMessages().get("summary"));
-                continue;
+                // Esta linea de abajo es solo para pruebas
+                shippingSummary = ShippingSummary.builder()
+                        .arrivalTime(LocalTime.now().plusMinutes(40))
+                        .distance(new Distance(100.0, Metrics.KILOMETERS))
+                        .shippingFee(ShippingFee.builder()
+                                .fee(BigDecimal.valueOf(3.50))
+                                .temporalAccessToken(TemporalAccessToken.builder()
+                                        .base64Encoding("Token")
+                                        .build())
+                                .build())
+                        .build();
+                // Esta linea de abajo es la correcta
+                //shippingSummary = (ShippingSummary) brokerResponse.getMessages().get("summary");
             }
-            log.info("Shipping Summary query failed for store_variant with id: "+s.getId());
-            shippingSummaries.add(null);
+
+            TongueStore tongueStore = new TongueStore(s,shippingSummary);
+            tongueStores.add(tongueStore);
         }
-        response.put("stores",storeVariantList);
-        response.put("shipping_summaries",shippingSummaries);
-        log.info("Request status OK");
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        return ResponseEntity.of(Optional.of(ApiResponse.success(tongueStores)));
     }
 
     @GetMapping("/stores/{id}/menu")
-    public ResponseEntity<Map<String,Object>> getMenu(@PathVariable("id") Long id){
+    public ResponseEntity<ApiResponse> getMenu(@PathVariable("id") Long id){
         log.info("Searching menu for store id: "+id);
-        Map<String,Object> response = new HashMap<>();
         List<Collection> collections = collectionRepository.findAllByStoreVariantId(id);
         if (collections.isEmpty()){
             log.info("No collections found");
-            response.put("error","No collections found for this store");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        response.put("response",collections);
         log.info("Request status OK");
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.of(Optional.of(ApiResponse.success(collections)));
     }
 
     @GetMapping("/stores/{id}/discounts")

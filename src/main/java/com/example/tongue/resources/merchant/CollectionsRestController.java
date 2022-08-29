@@ -1,5 +1,6 @@
 package com.example.tongue.resources.merchant;
 
+import com.example.tongue.core.contracts.ApiResponse;
 import com.example.tongue.domain.merchant.Product;
 import com.example.tongue.domain.merchant.enumerations.ProductStatus;
 import com.example.tongue.repositories.merchant.CollectionRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -31,15 +33,12 @@ public class CollectionsRestController{
     }
 
     @GetMapping("/collections/{id}/products")
-    public ResponseEntity<Map<String,Object>> getProducts(@PathVariable("id") Long id){
-        Map<String,Object> response = new HashMap<>();
+    public ResponseEntity<ApiResponse> getProducts(@PathVariable("id") Long id){
         List<Product> productList = productRepository.findAllByCollection_IdAndStatus(id, ProductStatus.ACTIVE);
         if (productList.isEmpty()){
             log.info("No products for collection 'id->"+id);
-            response.put("error","No products found for this collection");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        response.put("response",productList);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.of(Optional.of(ApiResponse.success(productList)));
     }
 }
