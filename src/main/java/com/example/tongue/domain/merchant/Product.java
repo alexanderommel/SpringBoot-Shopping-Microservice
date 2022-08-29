@@ -88,6 +88,9 @@ public class Product {
 
     private String adjustments; // {price:25.50,date:25-06-2021}
 
+    @Lob
+    private String imageUrl;
+
     @ManyToOne
     private Collection collection;
 
