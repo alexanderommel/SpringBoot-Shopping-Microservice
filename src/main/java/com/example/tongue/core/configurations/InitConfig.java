@@ -8,6 +8,8 @@ import com.example.tongue.integration.customers.Customer;
 import com.example.tongue.integration.customers.CustomerReplicationRepository;
 import com.example.tongue.repositories.merchant.StoreVariantRepository;
 import com.example.tongue.repositories.merchant.*;
+import com.example.tongue.security.domain.MerchantAccount;
+import com.example.tongue.security.MerchantAccountRepository;
 import com.example.tongue.services.ProductModifierPersistenceService;
 import com.example.tongue.services.ProductPersistenceService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,7 @@ public class InitConfig {
     private ProductModifierPersistenceService modifierPersistenceService;
     private CustomerReplicationRepository customerRepository;
     private DataGenerator dataGenerator;
+    private MerchantAccountRepository merchantAccountRepository;
 
     public InitConfig(@Autowired ProductRepository productRepository,
                       @Autowired ProductImageRepository productImageRepository,
@@ -44,6 +47,7 @@ public class InitConfig {
                       @Autowired ModifierRepository modifierRepository,
                       @Autowired CollectionRepository collectionRepository,
                       @Autowired MerchantRepository merchantRepository,
+                      @Autowired MerchantAccountRepository merchantAccountRepository,
                       @Autowired StoreRepository storeRepository,
                       @Autowired StoreVariantRepository storeVariantRepository,
                       @Autowired ProductPersistenceService productPersistenceService,
@@ -64,6 +68,7 @@ public class InitConfig {
         this.productPersistenceService=productPersistenceService;
         this.modifierPersistenceService=modifierPersistenceService;
         this.dataGenerator=dataGenerator;
+        this.merchantAccountRepository = merchantAccountRepository;
 
     }
 
@@ -91,10 +96,15 @@ public class InitConfig {
         log.info("Data Generator Autowired fields empty? ->"
                 + String.valueOf(dataGenerator.storeVariantRepository==null));
 
+        MerchantAccount account = new MerchantAccount("alexanderommelsw@gmail.com","12345678");
+
+        account = merchantAccountRepository.save(account);
+
         Merchant merchant = Merchant.builder()
                 .ownerName("Alexander Rommel")
                 .phoneNumber("5930959******")
                 .email("alexander.rommel9988@gmail.com")
+                .account(account)
                 .build();
 
         merchant = merchantRepository.save(merchant);
@@ -112,8 +122,12 @@ public class InitConfig {
 
         StoreVariant s1 = StoreVariant.builder()
                 .name("Sushi Store 6 De Diciembre")
-                .storeImageURL("https://images.com/44")
-                .location(Position.builder().latitude(-0.59222f).longitude(-0.61922f).build())
+                .storeImageURL("https://as01.epimg.net/epik/imagenes/2020/06/08/portada/1591616374_194956_1591616478_noticia_normal.jpg")
+                .location(Position.builder()
+                        .latitude(-0.59222f)
+                        .longitude(-0.61922f)
+                        .address("6 de diciembre y calle Quito")
+                        .build())
                 .storeFoodType(StoreVariantType.SUSHI)
                 .allowCashPayments(true)
                 .postalCode("EC")
@@ -126,8 +140,12 @@ public class InitConfig {
 
         StoreVariant s2 = StoreVariant.builder()
                 .name("Hamburguesas De Colores")
-                .storeImageURL("https://images.com/45")
-                .location(Position.builder().latitude(-0.51222f).longitude(-0.71922f).build())
+                .storeImageURL("https://as01.epimg.net/epik/imagenes/2020/06/08/portada/1591616374_194956_1591616478_noticia_normal.jpg")
+                .location(Position.builder()
+                        .latitude(-0.51222f)
+                        .longitude(-0.71922f)
+                        .address("6 de diciembre y calle Quito")
+                        .build())
                 .storeFoodType(StoreVariantType.HAMBURGER)
                 .allowCashPayments(true)
                 .postalCode("EC")
@@ -140,8 +158,12 @@ public class InitConfig {
 
         StoreVariant s3 = StoreVariant.builder()
                 .name("Los Pollos Hermanos")
-                .storeImageURL("https://images.com/46")
-                .location(Position.builder().latitude(-0.71282f).longitude(-0.71922f).build())
+                .storeImageURL("https://as01.epimg.net/epik/imagenes/2020/06/08/portada/1591616374_194956_1591616478_noticia_normal.jpg")
+                .location(Position.builder()
+                        .latitude(-0.71282f)
+                        .longitude(-0.71922f)
+                        .address("6 de diciembre y calle Quito")
+                        .build())
                 .storeFoodType(StoreVariantType.CHICKEN)
                 .allowCashPayments(true)
                 .postalCode("EC")
