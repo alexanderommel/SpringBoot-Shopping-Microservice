@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Embeddable
@@ -14,7 +15,7 @@ import javax.persistence.Embeddable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Position {
+public class Position implements Serializable {
 
     private Float latitude;
     private Float longitude;

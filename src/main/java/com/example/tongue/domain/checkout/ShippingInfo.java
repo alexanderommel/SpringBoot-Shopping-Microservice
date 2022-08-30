@@ -9,6 +9,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Embeddable
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ShippingInfo {
+public class ShippingInfo implements Serializable {
 
     @AttributeOverrides({
             @AttributeOverride(name="longitude",column = @Column(name="origin_longitude")),

@@ -57,13 +57,14 @@ public class FulfillmentWebControllerTest {
         FulfillmentWebController controller = new FulfillmentWebController(
                 fulfillmentRepository,
                 checkoutRepository,
-                orderQueuePublisher
+                orderQueuePublisher,
+                null
         );
 
         Principal principal = Mockito.mock(Principal.class);
         Mockito.when(principal.getName()).thenReturn("alexander");
         checkout.setId(5L);
-        ResponseEntity responseEntity = controller.begin(checkout.getId(),principal);
+        ResponseEntity responseEntity = controller.begin(checkout,principal);
         boolean condition = !responseEntity.getStatusCode().is2xxSuccessful();
         assertTrue(condition);
     }
@@ -73,12 +74,13 @@ public class FulfillmentWebControllerTest {
         FulfillmentWebController controller = new FulfillmentWebController(
                 fulfillmentRepository,
                 checkoutRepository,
-                orderQueuePublisher
+                orderQueuePublisher,
+                null
         );
 
         Principal principal = Mockito.mock(Principal.class);
         Mockito.when(principal.getName()).thenReturn("dummy");
-        ResponseEntity responseEntity = controller.begin(checkout.getId(),principal);
+        ResponseEntity responseEntity = controller.begin(checkout,principal);
         boolean condition = !responseEntity.getStatusCode().is2xxSuccessful();
         assertTrue(condition);
     }
@@ -88,11 +90,12 @@ public class FulfillmentWebControllerTest {
         FulfillmentWebController controller = new FulfillmentWebController(
                 fulfillmentRepository,
                 checkoutRepository,
-                orderQueuePublisher
+                orderQueuePublisher,
+                null
         );
         Principal principal = Mockito.mock(Principal.class);
         Mockito.when(principal.getName()).thenReturn("alexander");
-        controller.begin(checkout.getId(),principal);
+        controller.begin(checkout,principal);
         Mockito.verify(orderQueuePublisher, Mockito.times(1))
                 .publishOrderRequest(ArgumentMatchers.any());
     }

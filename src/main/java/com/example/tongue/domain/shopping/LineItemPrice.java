@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Embeddable
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LineItemPrice {
+public class LineItemPrice implements Serializable {
 
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;

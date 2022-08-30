@@ -6,13 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 @Embeddable
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PaymentInfo {
+public class PaymentInfo implements Serializable {
 
     private PaymentMethod paymentMethod;
     private String paymentSession;

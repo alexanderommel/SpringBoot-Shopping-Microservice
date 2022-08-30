@@ -7,9 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.Positive;
+import java.io.Serializable;
 
 @Entity
-public class ProductImage {
+public class ProductImage implements Serializable {
 
     //FIELDS
     @Id @GeneratedValue

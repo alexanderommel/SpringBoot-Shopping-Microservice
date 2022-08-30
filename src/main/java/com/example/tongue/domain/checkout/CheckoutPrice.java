@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Embeddable
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CheckoutPrice {
+public class CheckoutPrice implements Serializable {
     
     private BigDecimal cartTotal;
     private BigDecimal cartSubtotal;

@@ -2,11 +2,12 @@ package com.example.tongue.domain.shopping;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
 @Embeddable
-public class ValueSubtotalCondition {
+public class ValueSubtotalCondition implements Serializable {
 
     @Column(name = "value_leq")
     private BigDecimal leq;

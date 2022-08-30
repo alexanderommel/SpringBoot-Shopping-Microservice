@@ -11,13 +11,14 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StoreVariant {
+public class StoreVariant implements Serializable {
 
     private @Id @GeneratedValue Long id;
 

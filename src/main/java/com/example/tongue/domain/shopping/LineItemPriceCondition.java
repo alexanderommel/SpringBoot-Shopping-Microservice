@@ -4,13 +4,14 @@ import com.example.tongue.domain.merchant.Product;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Embeddable
-public class LineItemPriceCondition {
+public class LineItemPriceCondition implements Serializable {
     //FIELDS
     @Column(name = "price_leq")
     private BigDecimal leq;

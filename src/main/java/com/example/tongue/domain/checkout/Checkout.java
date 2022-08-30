@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.Instant;
 
 /** Checkout is a process that has several stages that a customer follows in order**/
@@ -20,7 +21,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Checkout {
+public class Checkout implements Serializable {
     @Id @GeneratedValue
     private Long id;
 

@@ -7,9 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
-public class TongueStore {
+public class TongueStore implements Serializable {
 
     private StoreVariant storeVariant;
     private ShippingSummary shippingSummary;

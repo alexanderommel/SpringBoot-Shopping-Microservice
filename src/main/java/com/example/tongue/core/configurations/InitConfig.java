@@ -3,6 +3,7 @@ package com.example.tongue.core.configurations;
 import com.example.tongue.domain.checkout.Position;
 import com.example.tongue.core.utilities.DataGenerator;
 import com.example.tongue.domain.merchant.*;
+import com.example.tongue.domain.merchant.enumerations.CollectionStatus;
 import com.example.tongue.domain.merchant.enumerations.StoreVariantType;
 import com.example.tongue.integration.customers.Customer;
 import com.example.tongue.integration.customers.CustomerReplicationRepository;
@@ -204,6 +205,65 @@ public class InitConfig {
                 }
             }
         }
+
+    }
+
+    private void generateStoreVariant1(Store store){
+
+        StoreVariant storeVariant = StoreVariant.builder()
+                .name("Los Pollos Hermanos")
+                .storeImageURL("https://as01.epimg.net/epik/imagenes/2020/06/08/portada/1591616374_194956_1591616478_noticia_normal.jpg")
+                .location(Position.builder()
+                        .latitude(-0.71282f)
+                        .longitude(-0.71922f)
+                        .address("6 de diciembre y calle Quito")
+                        .build())
+                .storeFoodType(StoreVariantType.CHICKEN)
+                .allowCashPayments(true)
+                .postalCode("EC")
+                .representative("Gustavo Fring")
+                .representativePhone("5930911******")
+                .hasActiveDiscounts(false)
+                .currency("USD")
+                .store(store)
+                .build();
+
+        storeVariant = storeVariantRepository.save(storeVariant);
+
+        /** Create some Collections **/
+
+        Collection collection1 = Collection.builder()
+                .storeVariant(storeVariant)
+                .status(CollectionStatus.ACTIVE)
+                .imageUrl("<no-image>")
+                .title("Hamburguesas")
+                .build();
+
+        Collection collection2 = Collection.builder()
+                .storeVariant(storeVariant)
+                .status(CollectionStatus.ACTIVE)
+                .imageUrl("<no-image>")
+                .title("Hamburguesas")
+                .build();
+
+        Collection collection3 = Collection.builder()
+                .storeVariant(storeVariant)
+                .status(CollectionStatus.ACTIVE)
+                .imageUrl("<no-image>")
+                .title("Hamburguesas")
+                .build();
+
+        Collection collection4 = Collection.builder()
+                .storeVariant(storeVariant)
+                .status(CollectionStatus.ACTIVE)
+                .imageUrl("<no-image>")
+                .title("Hamburguesas")
+                .build();
+
+        collection1 = collectionRepository.save(collection1);
+        collection2 = collectionRepository.save(collection2);
+        collection3 = collectionRepository.save(collection3);
+        collection4 = collectionRepository.save(collection4);
 
     }
 
