@@ -1,5 +1,6 @@
 package com.example.tongue.resources.checkout;
 
+import com.example.tongue.core.contracts.ApiResponse;
 import com.example.tongue.core.utilities.DataGenerator;
 import com.example.tongue.domain.checkout.*;
 import com.example.tongue.domain.shopping.ShoppingCart;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.SerializationUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -74,17 +76,117 @@ public class CheckoutWebController {
         return getResponseEntityByPageable(checkoutPage);
     }
 
-    @GetMapping(value = "/checkout/create", consumes = "application/json")
-    public ResponseEntity<Map<String,Object>> create(HttpSession session, @RequestBody  Checkout checkout){
+    /** TEMPORAL!!! **/
+
+    @PostMapping(value = "/checkout/v2/complete", consumes = "application/json")
+    public ResponseEntity<ApiResponse> complete(
+            HttpSession session,
+            @RequestBody Checkout checkout,
+            Principal principal){
+
+        log.info(checkout.toString());
+
+        /** CREATE **/
+
+        byte[] serializedCheckout = SerializationUtils.serialize(checkout);
+        byte[] serializedCheckout2 = SerializationUtils.serialize(checkout);
+
+        Checkout deserializedCopy = (Checkout) SerializationUtils.deserialize(serializedCheckout);
+        Checkout deserializedCopy2 = (Checkout) SerializationUtils.deserialize(serializedCheckout2);
+
         log.info("Creating Checkout for session id->"+session.getId());
-        Map<String,Object> response = new HashMap<>();
-        return getMapResponseEntity(response, creationFlow.run(checkout,session));
+        FlowMessage message = creationFlow.run(deserializedCopy,session);
+        if (!message.isSolved()){
+            log.info("FlowMessage for Updating has errors ("+message.getErrorMessage()+")");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+
+
+        Checkout createdCheckout = (Checkout) message.getAttribute("checkout");
+
+        /** UPDATE **/
+
+        CheckoutAttribute checkoutAttribute = new CheckoutAttribute();
+
+        Checkout copy1 = deserializedCopy2;
+
+        checkoutAttribute.setName(CheckoutAttributeName.CART);
+        checkoutAttribute.setAttribute(copy1.getShoppingCart());
+
+        FlowMessage updateCartMessage = upgradeFlow.run(checkoutAttribute,session);
+
+        if (!updateCartMessage.isSolved()){
+            log.info("FlowMessage for Attribute Updating has errors " +
+                    "("+updateCartMessage.getErrorMessage()+")");
+            return new ResponseEntity<>(ApiResponse.error(updateCartMessage.getErrorMessage()),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+
+        log.info(deserializedCopy2.toString());
+
+        checkoutAttribute.setName(CheckoutAttributeName.PAYMENT);
+        checkoutAttribute.setAttribute(deserializedCopy2.getPaymentInfo());
+
+        FlowMessage updatePaymentMessage = upgradeFlow.run(checkoutAttribute,session);
+        if (!updatePaymentMessage.isSolved()){
+            log.info("FlowMessage for Attribute Updating has errors " +
+                    "("+updatePaymentMessage.getErrorMessage()+")");
+            return new ResponseEntity<>(ApiResponse.error(updatePaymentMessage.getErrorMessage()),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        Checkout copy3 = checkout;
+
+        checkoutAttribute.setName(CheckoutAttributeName.SHIPPING);
+        checkoutAttribute.setAttribute(copy3.getShippingInfo());
+
+        FlowMessage updateShippingMessage = upgradeFlow.run(checkoutAttribute,session);
+        if (!updateShippingMessage.isSolved()){
+            log.info("FlowMessage for Attribute Updating has errors " +
+                    "("+updateShippingMessage.getErrorMessage()+")");
+            return new ResponseEntity<>(ApiResponse.error(updateShippingMessage.getErrorMessage()),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        /** COMPLETE **/
+
+        log.info("Completing checkout for session id ->"+session.getId());
+
+        Optional<Customer> optional = customerReplicationRepository.findByUsername(principal.getName());
+        Object checkoutO = session.getAttribute("CHECKOUT");
+        if (checkoutO==null){
+            log.warn("Checkout not found on session!");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Checkout almostCompletedCheckout = (Checkout) checkoutO;
+
+        Boolean validShippingSession = true;
+        Boolean validPaymentSession = true;
+
+        FlowMessage completionMessage = completionFlow.run(session,optional.get());
+        if (!completionMessage.isSolved()){
+            log.info("Error found on CompletionFlow ("+completionMessage.getErrorMessage()+")");
+            return new ResponseEntity<>(ApiResponse.error(completionMessage.getErrorMessage()),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        Checkout completedCheckout = (Checkout) completionMessage.getAttribute("checkout");
+
+        log.info("Responding with HttpStatus.OK");
+        return ResponseEntity.of(Optional.of(ApiResponse.success(completedCheckout)));
+    }
+
+    @PostMapping(value = "/checkout/create", consumes = "application/json")
+    public ResponseEntity<ApiResponse> create(HttpSession session, @RequestBody  Checkout checkout){
+        log.info("Creating Checkout for session id->"+session.getId());
+        return getMapResponseEntity(creationFlow.run(checkout,session));
     }
 
     @PostMapping("/checkout/complete")
-    public ResponseEntity<Map<String,Object>> complete(HttpSession session, Principal principal){
-        log.info("Completing checkout...");
-        Map<String,Object> response = new HashMap<>();
+    public ResponseEntity<ApiResponse> complete(HttpSession session, Principal principal){
+        log.info("Completing checkout for session id ->"+session.getId());
         Optional<Customer> optional = customerReplicationRepository.findByUsername(principal.getName());
         Object checkoutO = session.getAttribute("CHECKOUT");
         if (checkoutO==null){
@@ -93,46 +195,47 @@ public class CheckoutWebController {
         }
         Checkout checkout = (Checkout) checkoutO;
 
-        Boolean validShippingSession = shippingServiceBroker
-                .validateShippingSession(checkout.getShippingInfo().getShippingSession());
+        Boolean validShippingSession = true;
+        Boolean validPaymentSession = true;
 
-        Boolean validPaymentSession = paymentServiceBroker
-                .validatePaymentSession(checkout.getPaymentInfo().getPaymentSession());
+        //Boolean validShippingSession = shippingServiceBroker
+          //      .validateShippingSession(checkout.getShippingInfo().getShippingSession());
+
+        //Boolean validPaymentSession = paymentServiceBroker
+          //      .validatePaymentSession(checkout.getPaymentInfo().getPaymentSession());
 
         if (!validPaymentSession){
-            response.put("error","Not valid PaymentSession");
             log.info("Not valid PaymentSession");
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ApiResponse.error("Not valid PaymentSession"),
+                    HttpStatus.BAD_REQUEST);
         }
 
         if (!validShippingSession){
-            response.put("error","Not valid ShippingSession");
             log.info("Not valid ShippingSession");
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ApiResponse.error("Not valid ShippingSession"),
+                    HttpStatus.BAD_REQUEST);
         }
 
         FlowMessage message = completionFlow.run(session,optional.get());
         if (!message.isSolved()){
-            response.put("error",message.getErrorMessage());
             log.info("Error found on CompletionFlow ("+message.getErrorMessage()+")");
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ApiResponse.error(message.getErrorMessage()),
+                    HttpStatus.BAD_REQUEST);
         }
 
         Checkout checkout1 = (Checkout) message.getAttribute("checkout");
-        response.put("response",checkout1);
         log.info("Responding with HttpStatus.OK");
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        return ResponseEntity.of(Optional.of(ApiResponse.success(checkout1)));
     }
 
     @PostMapping(value = "/checkout/update", consumes = "application/json")
-    public ResponseEntity<Map<String,Object>> update(
+    public ResponseEntity<ApiResponse> update(
             HttpSession session
             , @RequestBody Checkout checkout
             , @RequestParam(name = "attribute") CheckoutAttributeName attribute){
 
         log.info("Updating Checkout for session id '"+session.getId()+"'");
         log.info("Attribute name to change is '"+attribute.name()+"'");
-        Map<String,Object> response = new HashMap<>();
 
         CheckoutAttribute checkoutAttribute = new CheckoutAttribute();
         checkoutAttribute.setName(attribute);
@@ -147,15 +250,13 @@ public class CheckoutWebController {
         FlowMessage message = upgradeFlow.run(checkoutAttribute,session);
 
         if (!message.isSolved()){
-            response.put("error",message.getErrorMessage());
             log.info("FlowMessage for Attribute Updating has errors ("+message.getErrorMessage()+")");
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ApiResponse.error(message.getErrorMessage()), HttpStatus.BAD_REQUEST);
         }
         Checkout c = (Checkout) message.getAttribute("checkout");
-        response.put("response",c);
 
         log.info("Call to /checkout/update has been solved successfully!");
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        return ResponseEntity.of(Optional.of(ApiResponse.success(c)));
     }
 
     @GetMapping("/checkout")
@@ -257,17 +358,15 @@ public class CheckoutWebController {
     }
 
     @NotNull
-    private ResponseEntity<Map<String, Object>> getMapResponseEntity(Map<String, Object> response, FlowMessage run) {
+    private ResponseEntity<ApiResponse> getMapResponseEntity(FlowMessage run) {
         FlowMessage message = run;
         if (!message.isSolved()){
-            response.put("error",message.getErrorMessage());
             log.info("FlowMessage for Updating has errors ("+message.getErrorMessage()+")");
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Checkout checkout = (Checkout) message.getAttribute("checkout");
-        response.put("response",checkout);
         log.info("Responding with HttpStatus.OK");
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        return ResponseEntity.of(Optional.of(ApiResponse.success(checkout)));
     }
 
 
