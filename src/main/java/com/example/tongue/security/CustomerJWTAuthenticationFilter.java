@@ -17,9 +17,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class CustomerJWTAuthenticationFilter extends OncePerRequestFilter {
@@ -49,6 +53,29 @@ public class CustomerJWTAuthenticationFilter extends OncePerRequestFilter {
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         log.info("Customer Management Service Authorization");
+
+        Map<String, String> map = new HashMap<String, String>();
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies!=null){
+            for (Cookie c:cookies
+            ) {
+                log.info("Cookie name: ");
+                log.info(c.getName());
+                log.info("Cookie value: ");
+                log.info(c.getValue());
+            }
+        }
+
+        Enumeration headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            log.info(key);
+            String value = request.getHeader(key);
+            log.info(value);
+            map.put("header: " + key, value);
+        }
+
         Authentication a = SecurityContextHolder.getContext().getAuthentication();
         if (a!=null){
             log.info("Aborting since the user is already authenticated");
