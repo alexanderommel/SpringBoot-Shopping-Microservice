@@ -40,6 +40,7 @@ public class StoreVariant implements Serializable {
 
     private Boolean hasActiveDiscounts=false; //Useful to avoid searching for discounts
 
+    @Lob
     private String storeImageURL;
 
     @NotEmpty(message = "Currency code must not be empty")

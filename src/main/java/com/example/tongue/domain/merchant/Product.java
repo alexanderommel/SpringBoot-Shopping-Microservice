@@ -28,8 +28,8 @@ public class Product implements Serializable {
     Long id;
 
 
-    @Size(max = 200,
-            message = "Description must be between 0 and 200 characters")
+    //@Size(max = 200,
+      //      message = "Description must be between 0 and 200 characters")
     private String description;
 
 

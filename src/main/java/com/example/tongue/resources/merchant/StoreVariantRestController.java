@@ -69,11 +69,20 @@ public class StoreVariantRestController {
                     //shippingServiceBroker.requestShippingSummary(position,destination); // Esta si es de igualar
             if (brokerResponse.getIsSolved()){
                 // Esta linea de abajo es solo para pruebas
+
+                Double[] randomCosts = {2.0,1.50,3.50,5.0,1.25,2.75};
+                int[] randomTimes = {10,20,35,40,55};
+
+                Random random = new Random();
+
+                int costPosition = random.nextInt(randomCosts.length);
+                int timePosition = random.nextInt(randomTimes.length);
+
                 shippingSummary = ShippingSummary.builder()
-                        .arrivalTime(LocalTime.now().plusMinutes(40))
+                        .arrivalTime(LocalTime.now().plusMinutes(randomTimes[timePosition]))
                         .distance(new Distance(100.0, Metrics.KILOMETERS))
                         .shippingFee(ShippingFee.builder()
-                                .fee(BigDecimal.valueOf(3.50))
+                                .fee(BigDecimal.valueOf(randomCosts[costPosition]))
                                 .temporalAccessToken(TemporalAccessToken.builder()
                                         .base64Encoding("Token")
                                         .build())
