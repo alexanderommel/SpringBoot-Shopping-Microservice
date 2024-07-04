@@ -24,7 +24,7 @@ Once a catalog of products has been registered, a customer can access to the pub
 
 - Catalogue
 
-- Uber Eats and Rappi based service
+- Delivery based service
 
 - Modifiers and discounts for products
 
