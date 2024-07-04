@@ -1,6 +1,6 @@
 # Tongue - Shopping Service
 
-Shopping service based on Uber Eats backend for customers and merchants. Merchants can register their stores on ShoppingService and publish their products, group them in families, apply any discount available from a wide set of discount features, add modifiers to a unit or a group of products, such as 'extra ketchup', 'colors' and so on. 
+Shopping service based on Uber Eats and Rappi backend for customers and merchants. Merchants can register their stores on ShoppingService and publish their products, group them in families, apply any discount available from a wide set of discount features, add modifiers to a unit or a group of products, such as 'extra ketchup', 'colors' and so on. 
 
 Once a catalog of products has been registered, a customer can access to the published stores by using any web or mobile client such as Tongue Customers App. 
 
@@ -24,7 +24,7 @@ Once a catalog of products has been registered, a customer can access to the pub
 
 - Catalogue
 
-- Uber Eats based service
+- Uber Eats and Rappi based service
 
 - Modifiers and discounts for products
 
